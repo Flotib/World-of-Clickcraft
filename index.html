@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" content="user-scalable=no">
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	<link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<div id="app">
+		
+		<div id="content" style="margin-top: 20px">
+
+			<div class="enemytab">
+				<div class="damagezone" @click="(enemies[0].hp-=player.damage) && (totalClicks++)">
+					<div class="portrait">
+						<div class="levelindicator"><p class="yellowlevel">{{ enemies[0].level }}</p></div>
+					</div>
+				</div>
+				<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[0])">
+					<div class="hpbar" :style="'width:'+Math.max(enemies[0].hp/enemies[0].maxHp*100, 0)+'%'"></div>
+				</div>
+				<div class="emptyressourcebar" :data-label="(10-(step/50)).toFixed(1)+'s'">
+					<div class="timebar" :style="'width:'+(100-(step/50)*10)+'%'"></div>
+				</div>
+			</div>
+			
+			<div><p style="color: #f0f">{{ totalClicks }}</p></div>
+		</div>
+	</div>
+	
+	<script src="js/script.js"></script>
+</body>
