@@ -1,7 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@font-face {
+    font-family: "Morpheus";
+    src: url('../assets/fonts/Morpheus.ttf') format('truetype');
+    src: url('../assets/fonts/Morpheus.eot');
+    src: url('../assets/fonts/Morpheus.eot?#iefix') format('embedded-opentype'),
+        url('../assets/fonts/Morpheus.woff2') format('woff2'),
+        url('../assets/fonts/Morpheus.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "BlizQuadrata Web";
+    src: url('../assets/fonts/BlizQuadrataWeb.ttf') format('truetype');
+    src: url('../assets/fonts/BlizQuadrataWeb.eot');
+    src: url('../assets/fonts/BlizQuadrataWeb.eot?#iefix') format('embedded-opentype'),
+        url('../assets/fonts/BlizQuadrataWeb.woff2') format('woff2'),
+        url('../assets/fonts/BlizQuadrataWeb.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
 	margin: 0;
 	padding: 0;
 	scroll-behavior: smooth;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+html, body, button {
+	cursor: url("../assets/cursors/point.cur"), auto !important;
+	font-family: BlizQuadrata Web;
 }
 
 body {
@@ -27,7 +63,6 @@ body {
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	background-color: #f000ff88;
 }
 
 .enemytab > * {
@@ -39,6 +74,7 @@ body {
 }
 
 .damagezone {
+	border-radius: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -46,25 +82,70 @@ body {
 	width: 280px;
 	height: 280px;
 	overflow: visible;
+	cursor: url("../assets/cursors/attack.cur"), auto !important;
 }
 
 .portrait {
-	background-color: #00ff0088;
 	width: 100%;
 	height: 100%;
-	background-position: center;
-	background-size: cover;
-	background-repeat: no-repeat;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	border-radius: 100%;
 	transition-duration: 250ms;
+}
+
+.portrait-border {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 100%;
+	background-image: url('../assets/img/ui/portrait/enemyframe.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.portrait-mob-image {
+	position: absolute;
+	width: 90%;
+	height: 90%;
+	border-radius: 100%;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 .damagezone:active .portrait {
 	transform: scale(0.975);
 }
 
+.levelframe {
+	user-select: none;
+	width: 40px;
+	height: 40px;
+	border-radius: 5000px;
+	display: flex;
+	position: absolute;
+	right: 45px;
+	bottom: 10px;
+	justify-content: center;
+	align-items: center;
+	background-image: url('../assets/img/ui/portrait/levelframe.png');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
 .levelindicator {
-	font-size: 220px;
+	user-select: none;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	font-size: 16px;
 }
 
 .graylevel {
@@ -84,12 +165,23 @@ body {
 }
 
 .redlevel {
-	color: #ff1a1a;
+	color: #e91817;
 }
 
 .skulllevel {
+	width: 23px;
+	height: 23px;
 	color: transparent;
-	/* background-image: url('') Skull image*/
+	background-image: url('../assets/img/ui/portrait/skull-level.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.enemyname {
+	font-family: Morpheus; 
+	color: #fafa00;
+	font-size: 22px;
 }
 
 .emptyressourcebar {
@@ -108,15 +200,7 @@ body {
     height: 100%;
     color: #fff;
     text-align: center;
-    text-shadow: 
-        2px 0 0 #000, 
-        -2px 0 0 #000, 
-        0 2px 0 #000, 
-        0 -2px 0 #000, 
-        1px 1px #000, 
-        -1px -1px 0 #000, 
-        1px -1px 0 #000, 
-        -1px 1px 0 #000;
+    text-shadow: 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000;
     justify-content: center;
     align-items: center;
 }

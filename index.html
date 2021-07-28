@@ -17,8 +17,15 @@
 			<div class="enemytab">
 				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy]) + (totalClicks++)">
 					<div class="portrait">
+						<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'.png);'"></div>
+						<div class="portrait-border"></div>
+					</div>
+					<div class="levelframe">
 						<div class="levelindicator"><p :class="difficultyColor(enemies[currentEnemy])">{{ enemies[currentEnemy].level }}</p></div>
 					</div>
+				</div>
+				<div class="enemyname">
+					<p>{{ enemies[currentEnemy].name }}</p>
 				</div>
 				<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[currentEnemy])">
 					<div class="hpbar" :style="'width:'+Math.max(enemies[currentEnemy].hp/enemies[currentEnemy].maxHp*100, 0)+'%'"></div>
@@ -32,7 +39,8 @@
 			<div><p style="color: #ff0">{{ player.money }}</p></div>
 			<div><p style="color: #0f0">{{ player.progression }}</p></div>
 			<div><p style="color: #0ff">{{ player.level }}</p></div>
-			<button @click="currentEnemy++">next</button>
+			<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
+			<button v-if="enemies[currentEnemy+1]!=null" @click="currentEnemy++">next</button>
 			<button @click="player.level++">+1 lvl</button>
 			<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
 			
