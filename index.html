@@ -33,14 +33,15 @@
 				<div class="emptyressourcebar" :data-label="(10-(step/50)).toFixed(1)+'s'">
 					<div class="timebar" :style="'width:'+(100-(step/50)*10)+'%'"></div>
 				</div>
+				<p style="color: #ffff00">{{ enemies[currentEnemy].minMoney }} - {{ enemies[currentEnemy].maxMoney }}</p>
 			</div>
 			
 			<div><p style="color: #f0f">{{ totalClicks }}</p></div>
-			<div><p style="color: #ff0">{{ player.money }}</p></div>
+			<div><p style="color: #ff0">{{ moneyStylizer(player.money) }}</p></div>
 			<div><p style="color: #0f0">{{ player.progression }}</p></div>
 			<div><p style="color: #0ff">{{ player.level }}</p></div>
 			<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
-			<button v-if="enemies[currentEnemy+1]!=null" @click="currentEnemy++">next</button>
+			<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
 			<button @click="player.level++">+1 lvl</button>
 			<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
 			

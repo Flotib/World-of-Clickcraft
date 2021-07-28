@@ -21,6 +21,8 @@ var app = new Vue({
 				level: null,
 				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite'
 				killCount: 0,
+				minMoney: null,
+				maxMoney: null,
 			},
 			{
 				name: 'Boar',
@@ -28,8 +30,10 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
-				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite'
+				type: 'normal',
 				killCount: 0,
+				minMoney: null,
+				maxMoney: null,
 			},
 		],
 		totalClicks: 0,
@@ -37,8 +41,9 @@ var app = new Vue({
 	},
 	
 	watch: {
-		currentEnemy: function (enemy) {
-			console.log(this.enemies[enemy].name)
+		currentEnemy: function (enemy, oldenemy) {
+			this.enemies[oldenemy].hp = this.enemies[oldenemy].maxHp
+			this.step = 0
 		},
 		
 		'player.level': function () {
@@ -52,7 +57,7 @@ var app = new Vue({
 
 	methods: {
 		
-		difficultyColor(enemy) {
+		difficultyColor(enemy) { //One day I'll rework this shit
 			if (this.player.level >= 1 && this.player.level <= 9) {
 				if (this.player.level - 5 >= enemy.level) {
 					return 'graylevel'
@@ -131,6 +136,15 @@ var app = new Vue({
 			}
 		},
 		
+		autoMoneyAttri(enemy) { //https://www.desmos.com/calculator?lang=fr
+			if (enemy.minMoney == null) {
+				enemy.minMoney = Math.round((4*(enemy.level**2))/60+(enemy.level**2)/5+enemy.level)
+			}
+			if (enemy.maxMoney == null) {
+				enemy.maxMoney = Math.round((5*(enemy.level**2))/60+(enemy.level**2)/5+3*enemy.level)
+			}
+		},
+		
 		damageEnemy(enemy) {
 			enemy.hp-=this.rand(this.player.damageMin, this.player.damageMax)
 		},
@@ -147,24 +161,30 @@ var app = new Vue({
 		enemyDeadEvent(enemy) {
 			enemy.hp = enemy.maxHp
 			enemy.killCount++
-			this.player.money += this.rand(((4*(enemy.level**2))/60+(enemy.level**2)/5+enemy.level), ((5*(enemy.level**2))/60+(enemy.level**2)/5+3*enemy.level)) //https://www.desmos.com/calculator?lang=fr
+			this.player.money += this.rand(enemy.minMoney, enemy.maxMoney)
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
 			this.step = 0
 		},
 		
-		switchEnemy(currentEnemy, whichone) { // whichone can be either prev or next
-			currentEnemy.hp = currentEnemy.maxHp
-			// incrémenter de 1 l'array pour changer l'énemi selon la valeur de whichone
-		}
+		moneyStylizer(money) {
+			let copper = money % 100
+			let silver = Math.floor(money/100)
+			if (silver >= 100) {
+				silver = silver % 100
+			}
+			let gold = Math.floor(money/10000)
+			return gold+'g '+silver+'s '+copper+'c'
+		},
 		
 	},
 
 	mounted() {
-	
+		
 		for (const monster of this.enemies) {
 			this.autoLevelAttri(monster)
+			this.autoMoneyAttri(monster)
 		}
 	
 		setInterval(() => {
