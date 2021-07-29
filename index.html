@@ -14,7 +14,7 @@
 		
 		<div id="content" style="margin-top: 20px">
 
-			<div class="enemytab">
+			<div class="enemytab" style="visibility: hidden">
 				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy]) + (totalClicks++)">
 					<div class="portrait">
 						<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'.png);'"></div>
@@ -37,14 +37,16 @@
 			</div>
 			
 			<div><p style="color: #f0f">{{ totalClicks }}</p></div>
-			<div><p style="color: #ff0">{{ moneyStylizer(player.money) }}</p></div>
+			<div class="playermoneyui"><p v-html="moneyStylizer(player.money)"></p></div>
 			<div><p style="color: #0f0">{{ player.progression }}</p></div>
 			<div><p style="color: #0ff">{{ player.level }}</p></div>
 			<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
 			<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
 			<button @click="player.level++">+1 lvl</button>
 			<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
-			
+			<button @click="player.money+=49">+49 lvl copper</button>
+			<button @click="player.money+=4900">+49 lvl silver</button>
+			<button @click="player.money+=490000">+49 lvl gold</button>
 		</div>
 	</div>
 	

@@ -49,7 +49,7 @@ body {
 
 #content {
 	display: flex;
-	flex-direction: rows;
+	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: start;
 	justify-content: center; /*May change later*/
@@ -219,4 +219,30 @@ body {
 .timebar {
 	height: 100%;
 	background-color: #f7b934;
+}
+
+.playermoneyui p {
+	display: flex;
+	align-items: center;
+	color: #fff;
+	font-size: 17px;
+	font-family: Arial Narrow;
+}
+
+.playermoneyui p span {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-direction: row;
+	width: 40px;
+	height: 20px;
+}
+
+.playermoneyui p span:first-child {
+	width: 90px;
+	height: 20px;
+}
+
+.playermoneyui p img {
+	margin-left: 2px;
 }

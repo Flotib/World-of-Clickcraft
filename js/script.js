@@ -37,6 +37,9 @@ var app = new Vue({
 			},
 		],
 		totalClicks: 0,
+		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
+		silverimg: '<img v-if="g>0" src="assets/img/ui/money/silver.png">',
+		copperimg: '<img v-if="g>0" src="assets/img/ui/money/copper.png">',
 		
 	},
 	
@@ -175,7 +178,17 @@ var app = new Vue({
 				silver = silver % 100
 			}
 			let gold = Math.floor(money/10000)
-			return gold+'g '+silver+'s '+copper+'c'
+			
+			
+			if (gold == 0) {
+				if (silver == 0) {
+					return '<span></span><span></span><span>'+copper+this.copperimg+'</span>'
+				} else {
+					return '<span></span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+				}
+			} else {
+				return '<span>'+gold+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+			}
 		},
 		
 	},
