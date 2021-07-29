@@ -24,6 +24,18 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: "Arial Narrow";
+    src: url('../assets/fonts/ArialNarrow.ttf') format('truetype');
+    src: url('../assets/fonts/ArialNarrow.eot');
+    src: url('../assets/fonts/ArialNarrow.eot?#iefix') format('embedded-opentype'),
+        url('../assets/fonts/ArialNarrow.woff2') format('woff2'),
+        url('../assets/fonts/ArialNarrow.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -230,7 +242,7 @@ body {
 }
 
 .playermoneyui p span {
-	display: flex;
+	display: inline-flex;
 	justify-content: flex-end;
 	align-items: center;
 	flex-direction: row;
@@ -239,10 +251,82 @@ body {
 }
 
 .playermoneyui p span:first-child {
-	width: 90px;
-	height: 20px;
+	width: 115px;
 }
 
 .playermoneyui p img {
 	margin-left: 2px;
+}
+
+.enemymoneyui {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+	flex-wrap: unwrap;
+}
+
+.enemymoneyui p {
+	display: flex;
+	align-items: center;
+	flex-wrap: unwrap;
+	color: #fff;
+	font-size: 17px;
+	font-family: Arial Narrow;
+}
+
+.enemymoneyui p:nth-of-type(2) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+}
+
+.enemymoneyui p span {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-direction: row;
+	width: auto;
+	height: 20px;
+	margin-left: 6px;
+}
+
+.enemymoneyui p img {
+	margin-left: 2px;
+}
+
+.emptyxpbar {
+	position: fixed;
+	bottom: 0;
+	height: 25px;
+	width: 80%;
+	background-color: #000;
+}
+
+.emptyxpbar:before {
+	content: attr(data-label);
+    font-size: 14px;
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000;
+    justify-content: center;
+    align-items: center;
+}
+
+.emptyxpbar > * {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.xpbar {
+	position: relative;
+	z-index: -1;
+	height: 100%;
+	background-color: #8e038b;
 }

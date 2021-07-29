@@ -7,7 +7,7 @@ var app = new Vue({
 			damageMin: 1, //test
 			damageMax: 2000,
 			level: 1,
-			xpToNextLevel: 400, // function later 
+			xpToNextLevel: null,
 			xp: 0,
 			progression: 0,
 			money: 0,
@@ -40,6 +40,7 @@ var app = new Vue({
 		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
 		silverimg: '<img v-if="g>0" src="assets/img/ui/money/silver.png">',
 		copperimg: '<img v-if="g>0" src="assets/img/ui/money/copper.png">',
+		hoverxp: false,
 		
 	},
 	
@@ -50,7 +51,13 @@ var app = new Vue({
 		},
 		
 		'player.level': function () {
-			this.difficultyColor(this.enemies[this.currentEnemy])
+			this.xpToNextLevelCalc()
+		},
+		
+		'player.xp': function () {
+			if (this.player.xp >= this.player.xpToNextLevel) {
+				this.levelup()
+			}
 		},
 	},
 
@@ -60,28 +67,32 @@ var app = new Vue({
 
 	methods: {
 		
+		between(x, min, max) {
+			return x >= min && x <= max
+		},
+		
 		difficultyColor(enemy) { //One day I'll rework this shit
-			if (this.player.level >= 1 && this.player.level <= 9) {
+			if (this.between(this.player.level, 1, 9)) {
 				if (this.player.level - 5 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 4 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 10 && this.player.level <= 19) {
+			} else if (this.between(this.player.level, 10, 19)) {
 				if (this.player.level - 6 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 5 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 20 && this.player.level <= 29) {
+			} else if (this.between(this.player.level, 20, 29)) {
 				if (this.player.level - 7 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 6 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 30 && this.player.level <= 39) {
+			} else if (this.between(this.player.level, 30, 39)) {
 				if (this.player.level - 8 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 7 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 40 && this.player.level <= 49) {
+			} else if (this.between(this.player.level, 40, 49)) {
 				if (this.player.level - 9 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 8 <= enemy.level && this.player.level - 3 >= enemy.level) {
@@ -91,12 +102,12 @@ var app = new Vue({
 					return 'graylevel'
 				} else if (this.player.level - 9 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 51 && this.player.level <= 54) {
+			} else if (this.between(this.player.level, 51, 54)) {
 				if (this.player.level - 11 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 10 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 55 && this.player.level <= 56) {
+			} else if (this.between(this.player.level, 55, 56)) {
 				if (this.player.level - 12 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 11 <= enemy.level && this.player.level - 3 >= enemy.level) {
@@ -106,7 +117,7 @@ var app = new Vue({
 					return 'graylevel'
 				} else if (this.player.level - 8 <= enemy.level && this.player.level - 3 >= enemy.level) {
 					return 'greenlevel' }
-			} else if (this.player.level >= 58 && this.player.level <= 59) {
+			} else if (this.between(this.player.level, 58, 59)) {
 				if (this.player.level - 12 >= enemy.level) {
 					return 'graylevel'
 				} else if (this.player.level - 11 <= enemy.level && this.player.level - 3 >= enemy.level) {
@@ -164,11 +175,92 @@ var app = new Vue({
 		enemyDeadEvent(enemy) {
 			enemy.hp = enemy.maxHp
 			enemy.killCount++
+			this.monsterXp(enemy)
 			this.player.money += this.rand(enemy.minMoney, enemy.maxMoney)
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
 			this.step = 0
+		},
+		
+		monsterXp(enemy) {
+			let xp = 0
+			if (this.difficultyColor(enemy)=='graylevel') {
+				return
+			}
+			if (this.player.level == enemy.level) {
+				xp =  this.MXP(this.player.level)
+			} else if (this.player.level < enemy.level) {
+				xp = this.MXP(this.player.level) * (1 + 0.05 * (enemy.level - this.player.level))
+			} else if (this.player.level > enemy.level) {
+				xp = this.MXP(this.player.level) * (1 - (this.player.level - enemy.level)/this.ZD())
+			}
+			
+			if (enemy.type == 'elite') {
+				xp*=2
+			}
+			
+			this.player.xp+=Math.round(xp)
+		},
+		
+		ZD() {
+			if (this.between(this.player.level, 1, 7)) {
+				return 5
+			} else if (this.between(this.player.level, 8, 9)) {
+				return 6
+			} else if (this.between(this.player.level, 10, 11)) {
+				return 7
+			} else if (this.between(this.player.level, 12, 15)) {
+				return 8
+			} else if (this.between(this.player.level, 16, 19)) {
+				return 9
+			} else if (this.between(this.player.level, 20, 29)) {
+				return 11
+			} else if (this.between(this.player.level, 30, 39)) {
+				return 12
+			} else if (this.between(this.player.level, 40, 44)) {
+				return 13
+			} else if (this.between(this.player.level, 45, 49)) {
+				return 14
+			} else if (this.between(this.player.level, 50, 54)) {
+				return 15
+			} else if (this.between(this.player.level, 55, 59)) {
+				return 16
+			} else if (this.player.level >= 60) {
+				return 17
+			}
+		},
+		
+		questXp(quest) {
+			
+		},
+		
+		xpToNextLevelCalc() {
+			this.player.xpToNextLevel = Math.round(((8 * this.player.level) + this.Diff(this.player.level)) * this.MXP(this.player.level)/100)*100
+		},
+		
+		Diff(CL) {
+			if (CL <= 28) {
+				return 0
+			} else if (CL == 29) {
+				return 1
+			} else if (CL == 30) {
+				return 3
+			} else if (CL == 31) {
+				return 6
+			} else if (CL >= 32 && CL <= 59) {
+				return 5*(CL-30)
+			}
+		},
+		
+		MXP(CL) {
+			return 45 + (5 * CL)
+		},
+		
+		levelup() {
+			this.player.level++
+			this.player.xp = this.player.xp - this.player.xpToNextLevel
+			this.xpToNextLevelCalc()
 		},
 		
 		moneyStylizer(money) {
@@ -184,16 +276,18 @@ var app = new Vue({
 				if (silver == 0) {
 					return '<span></span><span></span><span>'+copper+this.copperimg+'</span>'
 				} else {
-					return '<span></span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+					return '<span></span><span>'+silver+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
 				}
-			} else {
-				return '<span>'+gold+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+			} else { // gold.toLocaleString() works too
+				return '<span>'+gold.toLocaleString().split(/\s/).join(' ')+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
 			}
 		},
 		
 	},
 
 	mounted() {
+		
+		this.xpToNextLevelCalc()
 		
 		for (const monster of this.enemies) {
 			this.autoLevelAttri(monster)
