@@ -2,10 +2,17 @@ var app = new Vue({
 	el: '#app',
 	data: {
 		step: 0,
+		fps: 50,
+		cursorX: null,
+		cursorY: null,
+		damageParticlesDuration: 6,
+		damageParticles: [],
 		currentEnemy: 0,
 		player: {
-			damageMin: 1, //test
-			damageMax: 2000,
+			baseMinDamage: 0,
+			baseMaxDamage: 1,
+			weaponMinDamage: 1,
+			weaponMaxDamage: 1,
 			level: 1,
 			xpToNextLevel: null,
 			xp: 0,
@@ -122,6 +129,11 @@ var app = new Vue({
 
 	methods: {
 		
+		getMouseCoords(e){
+			this.cursorX = e.pageX;
+			this.cursorY = e.pageY;
+		},
+		
 		between(x, min, max) {
 			return x >= min && x <= max
 		},
@@ -214,8 +226,20 @@ var app = new Vue({
 			}
 		},
 		
+		totalMinDamage() {
+			let minDamage = this.player.baseMinDamage + this.player.weaponMinDamage
+			return Math.floor(minDamage)
+		},
+		
+		totalMaxDamage() {
+			let maxDamage = this.player.baseMaxDamage + this.player.weaponMaxDamage
+			return Math.floor(maxDamage)
+		},
+		
 		damageEnemy(enemy) {
-			enemy.hp-=this.rand(this.player.damageMin, this.player.damageMax)
+			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
+			this.clickParticles(damage)
+			enemy.hp-=damage
 		},
 
 		formatHpLabel(enemy) {
@@ -338,9 +362,20 @@ var app = new Vue({
 			}
 		},
 		
+		clickParticles(damage) {
+			this.damageParticles.push({'posX': this.cursorX-8, 'posY': this.cursorY-14 , 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks}) //6sec
+			setTimeout(() => {			
+				this.damageParticles.shift();
+			}, (this.damageParticlesDuration-1)*1000); //be sure to delete it as soon as it disappear
+		},
+		
 	},
 
 	mounted() {
+		
+		window.addEventListener('mousemove',this.getMouseCoords);
+	
+		//todo: a game initializing function
 		
 		this.xpToNextLevelCalc()
 		
@@ -350,13 +385,13 @@ var app = new Vue({
 		}
 	
 		setInterval(() => {
-			if (this.step % 500 == 0) {
+			if (this.step % (this.fps*10) == 0) {
 				this.step = 0;
 				for (const enemy of this.enemies) {
 					enemy.hp = enemy.maxHp
 				}
 			}
 			this.step++
-		}, 1000/50)
+		}, 1000/this.fps)
 	},
 })

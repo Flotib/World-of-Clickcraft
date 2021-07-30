@@ -330,3 +330,29 @@ body {
 	height: 100%;
 	background-color: #8e038b;
 }
+
+.damageparticle {
+	position: absolute;
+	z-index: 10000;
+	font-size: 32px; /*Maybe random later*/
+	pointer-events: none;
+	animation-timing-function: ease-out;
+	animation-name: fadeouttotop;
+	color: #fff; /*Delete this later*/
+	opacity: 0;
+}
+
+.normaldamage {
+	color: #fff;
+}
+
+.criticaldamage {
+	color: #f4dd18;
+}
+
+@keyframes fadeouttotop {
+  0% { opacity: 1; }
+  15% { opacity: 1; }
+  25% { opacity: 0; }
+  100% { opacity: 0; transform: translate(0px, -90px);}
+}
