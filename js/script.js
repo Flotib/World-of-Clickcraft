@@ -394,12 +394,12 @@ var app = new Vue({
 		},
 		
 		clickParticles(damage) {
-			this.damageParticles.push({'posX': this.cursorX-8, 'posY': this.cursorY-14 , 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks}) //6sec
-			setTimeout(() => {			
+			this.damageParticles.push({'posX': this.cursorX-this.rand(4, 16), 'posY': this.cursorY-34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks}) //6sec - X:8px and Y:14px to center on the knife point
+			setTimeout(() => {
 				this.damageParticles.shift();
 			}, (this.damageParticlesDuration-1)*1000); //to be sure to delete it as soon as it disappear
 		},
-		
+
 	},
 
 	mounted() {

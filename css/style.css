@@ -354,5 +354,5 @@ body {
   0% { opacity: 1; }
   15% { opacity: 1; }
   25% { opacity: 0; }
-  100% { opacity: 0; transform: translate(0px, -90px);}
+  100% { opacity: 0; transform: translateY(-150px);}
 }
