@@ -270,7 +270,10 @@ var app = new Vue({
 			if (this.player.level == enemy.level) {
 				xp =  this.MXP(this.player.level)
 			} else if (this.player.level < enemy.level) {
-				xp = this.MXP(this.player.level) * (1 + 0.05 * (enemy.level - this.player.level))
+				xp = this.player.level + 4 > enemy.level ? (
+					this.MXP(this.player.level) * (1 + 0.05 * (enemy.level - this.player.level))
+				) : (
+					this.MXP(this.player.level) * 1.2)
 			} else if (this.player.level > enemy.level) {
 				xp = this.MXP(this.player.level) * (1 - (this.player.level - enemy.level)/this.ZD())
 			}
