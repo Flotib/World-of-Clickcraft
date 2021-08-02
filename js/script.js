@@ -3,6 +3,7 @@ var app = new Vue({
 	data: {
 		step: 0,
 		fps: 50,
+		countdown: 10, //sec
 		cursorX: null,
 		cursorY: null,
 		damageParticlesDuration: 6,
@@ -26,7 +27,7 @@ var app = new Vue({
 				maxHp: 120,
 				hp: 120,
 				level: null,
-				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite'
+				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
 				killCount: 0,
 				minMoney: null,
 				maxMoney: null,
@@ -99,6 +100,7 @@ var app = new Vue({
 			},
 		],
 		totalClicks: 0,
+		moneyPow: 2.6,
 		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
 		silverimg: '<img v-if="g>0" src="assets/img/ui/money/silver.png">',
 		copperimg: '<img v-if="g>0" src="assets/img/ui/money/copper.png">',
@@ -110,6 +112,7 @@ var app = new Vue({
 		currentEnemy: function (enemy, oldenemy) {
 			this.enemies[oldenemy].hp = this.enemies[oldenemy].maxHp
 			this.step = 0
+			this.countdown = this.enemies[enemy].type != 'normal' ? 30 : 10 // May change later
 		},
 		
 		'player.level': function () {
@@ -128,6 +131,15 @@ var app = new Vue({
 	},
 
 	methods: {
+		
+		gameInit(){
+			this.xpToNextLevelCalc()
+			
+			for (const monster of this.enemies) {
+				this.autoLevelAttri(monster)
+				this.autoMoneyAttri(monster)
+			}
+		},
 		
 		getMouseCoords(e){
 			this.cursorX = e.pageX;
@@ -218,11 +230,27 @@ var app = new Vue({
 		},
 		
 		autoMoneyAttri(enemy) { //https://www.desmos.com/calculator?lang=fr
-			if (enemy.minMoney == null) {
-				enemy.minMoney = Math.round((4*(enemy.level**2))/60+(enemy.level**2)/5+enemy.level)
-			}
-			if (enemy.maxMoney == null) {
-				enemy.maxMoney = Math.round((5*(enemy.level**2))/60+(enemy.level**2)/5+3*enemy.level)
+			if (enemy.level < 16) {
+				if (enemy.minMoney == null) {
+					enemy.minMoney = Math.round(enemy.level**1.9)
+				}
+				if (enemy.maxMoney == null) {
+					enemy.maxMoney = Math.round(3*(enemy.level**1.6))
+				}
+			} else if (this.between(enemy.level, 16, 35)) {
+				if (enemy.minMoney == null) {
+					enemy.minMoney = Math.round((((enemy.level**this.moneyPow)/36)*2000)/(36**(this.moneyPow-1)))
+				}
+				if (enemy.maxMoney == null) {
+					enemy.maxMoney = Math.round((((enemy.level**this.moneyPow)/40)*3100)/(40**(this.moneyPow-1)))
+				}
+			} else if (enemy.level > 35) {
+				if (enemy.minMoney == null) {
+					enemy.minMoney = Math.round((((enemy.level**this.moneyPow)/60)*10000)/(60**(this.moneyPow-1)))
+				}
+				if (enemy.maxMoney == null) {
+					enemy.maxMoney = Math.round((((enemy.level**this.moneyPow)/70)*18000)/(70**(this.moneyPow-1)))
+				}
 			}
 		},
 		
@@ -245,7 +273,7 @@ var app = new Vue({
 		formatHpLabel(enemy) {
 			if (enemy.hp <= 0) {
 				this.enemyDeadEvent(enemy)
-				return "Dead"
+				return "Dead" // a bit useless I know
 			}
 
 			return Math.ceil(enemy.hp) + " / " + Math.ceil(enemy.maxHp)
@@ -369,7 +397,7 @@ var app = new Vue({
 			this.damageParticles.push({'posX': this.cursorX-8, 'posY': this.cursorY-14 , 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks}) //6sec
 			setTimeout(() => {			
 				this.damageParticles.shift();
-			}, (this.damageParticlesDuration-1)*1000); //be sure to delete it as soon as it disappear
+			}, (this.damageParticlesDuration-1)*1000); //to be sure to delete it as soon as it disappear
 		},
 		
 	},
@@ -377,18 +405,11 @@ var app = new Vue({
 	mounted() {
 		
 		window.addEventListener('mousemove',this.getMouseCoords);
-	
-		//todo: a game initializing function
 		
-		this.xpToNextLevelCalc()
+		this.gameInit()
 		
-		for (const monster of this.enemies) {
-			this.autoLevelAttri(monster)
-			this.autoMoneyAttri(monster)
-		}
-	
 		setInterval(() => {
-			if (this.step % (this.fps*10) == 0) {
+			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0;
 				for (const enemy of this.enemies) {
 					enemy.hp = enemy.maxHp

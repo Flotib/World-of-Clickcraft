@@ -30,8 +30,8 @@
 				<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[currentEnemy])">
 					<div class="hpbar" :style="'width:'+Math.max(enemies[currentEnemy].hp/enemies[currentEnemy].maxHp*100, 0)+'%'"></div>
 				</div>
-				<div class="emptyressourcebar" :data-label="(10-(step/fps)).toFixed(1)+'s'">
-					<div class="timebar" :style="'width:'+(100-(step/fps)*10)+'%'"></div>
+				<div class="emptyressourcebar" :data-label="(countdown-(step/fps)).toFixed(1)+'s'">
+					<div class="timebar" :style="'width:'+(100-(step/fps)/countdown*100)+'%'"></div>
 				</div>
 				<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p>-</p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
 			</div>
@@ -49,10 +49,10 @@
 			<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
 			<input type="number" v-model.number="enemies[currentEnemy].minMoney" style="width: 30px">
 			<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
+			<input type="number" v-model.number="currentEnemy" style="width: 30px">
 			<div class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel : ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
 				<div class="xpbar" :style="'width:'+(player.xp/player.xpToNextLevel)*100+'%'"></div>
 			</div>
-			
 		</div>
 	</div>
 	
