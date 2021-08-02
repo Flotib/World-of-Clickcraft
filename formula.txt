@@ -27,3 +27,4 @@ max:
 (((x**n)/70)*18000)/(70**(n-1))
 
 
+https://www.desmos.com/calculator/ypxnj0xzlg
