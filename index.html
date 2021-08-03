@@ -33,26 +33,42 @@
 				<div class="emptyressourcebar" :data-label="(countdown-(step/fps)).toFixed(1)+'s'">
 					<div class="timebar" :style="'width:'+(100-(step/fps)/countdown*100)+'%'"></div>
 				</div>
+				<template v-if="showEnemyInformations">
 				<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p>-</p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
+				<div><p class="xpamount">{{ monsterXp(enemies[currentEnemy]) }} xp</p></div>
+				<div v-if="killToLevelUp(enemies[currentEnemy])!='noxp'"><p class="xpamount">{{ killToLevelUp(enemies[currentEnemy]) }} kill{{ killToLevelUp(enemies[currentEnemy])>1 ? 's' : ''}} left</p></div>
+				</template>
+				<button @click="showEnemyInformations=!showEnemyInformations" class="showenemyinfobutton">{{ showEnemyInformations ? '-' : '+' }}</button>
+			</div>
+
+			<div class="playertab" style="background-color: #00ffff88;">
+				<div><p>{{ totalMinDamage() }} - {{ totalMaxDamage() }}</p></div>
+				<div class="playercurrencycontainer">
+					<div class="playermoneyui"><p v-html="moneyStylizer(player.money)"></p></div>
+				</div>
 			</div>
 			
-			
-			<div class="playermoneyui"><p v-html="moneyStylizer(player.money)"></p></div>
-			<div><p style="color: #0f0">{{ player.progression }}</p></div>
-			<div><p style="color: #0ff">{{ player.level }}</p></div>
-			<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
-			<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
-			<button @click="player.level++">+1 lvl</button>
-			<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
-			<input type="number" v-model.number="player.level" style="width: 30px">
-			<input type="number" v-model.number="player.money" style="width: 30px">
-			<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
-			<input type="number" v-model.number="enemies[currentEnemy].minMoney" style="width: 30px">
-			<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
-			<input type="number" v-model.number="currentEnemy" style="width: 30px">
+			<div style="display: inline-block; position: absolute; bottom: 35px;">
+				<div><p style="color: #0f0">{{ player.progression }}</p></div>
+				<div><p style="color: #0ff">{{ player.level }}</p></div>
+				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
+				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
+				<button @click="player.level++">+1 lvl</button>
+				<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
+				<button @click="enemies[currentEnemy].hp=0">instant kill</button>
+				<input type="number" v-model.number="player.xp" style="width: 30px">
+				<input type="number" v-model.number="player.level" style="width: 30px">
+				<input type="number" v-model.number="player.money" style="width: 30px">
+				<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
+				<input type="number" v-model.number="enemies[currentEnemy].minMoney" style="width: 30px">
+				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
+				<input type="number" v-model.number="currentEnemy" style="width: 30px">
+			</div>
+
 			<div class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel : ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
 				<div class="xpbar" :style="'width:'+(player.xp/player.xpToNextLevel)*100+'%'"></div>
 			</div>
+
 		</div>
 	</div>
 	

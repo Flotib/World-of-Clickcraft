@@ -9,6 +9,7 @@ var app = new Vue({
 		damageParticlesDuration: 6,
 		damageParticles: [],
 		currentEnemy: 0,
+		showEnemyInformations: false,
 		player: {
 			baseMinDamage: 0,
 			baseMaxDamage: 1,
@@ -24,8 +25,8 @@ var app = new Vue({
 			{
 				name: 'Wolf',
 				portrait: 'wolf1',
-				maxHp: 120,
-				hp: 120,
+				maxHp: 60,
+				hp: 60,
 				level: null,
 				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
 				killCount: 0,
@@ -35,8 +36,8 @@ var app = new Vue({
 			{
 				name: 'Boar',
 				portrait: 'wolf1',
-				maxHp: 200,
-				hp: 200,
+				maxHp: 110,
+				hp: 110,
 				level: null,
 				type: 'normal',
 				killCount: 0,
@@ -46,8 +47,8 @@ var app = new Vue({
 			{
 				name: 'Kobold',
 				portrait: 'wolf1',
-				maxHp: 200,
-				hp: 200,
+				maxHp: 190,
+				hp: 190,
 				level: null,
 				type: 'normal',
 				killCount: 0,
@@ -57,8 +58,8 @@ var app = new Vue({
 			{
 				name: 'Scorpid',
 				portrait: 'wolf1',
-				maxHp: 200,
-				hp: 200,
+				maxHp: 280,
+				hp: 280,
 				level: null,
 				type: 'normal',
 				killCount: 0,
@@ -278,22 +279,31 @@ var app = new Vue({
 
 			return Math.ceil(enemy.hp) + " / " + Math.ceil(enemy.maxHp)
 		},
+
+		killToLevelUp(enemy) {
+			let x = Math.ceil((this.player.xpToNextLevel-this.player.xp)/this.monsterXp(enemy))
+			return x == 'Infinity' ? 'noxp' : x
+		},
 		
 		enemyDeadEvent(enemy) {
 			enemy.hp = enemy.maxHp
 			enemy.killCount++
-			this.monsterXp(enemy)
+			this.playerXp(enemy)
 			this.player.money += this.rand(enemy.minMoney, enemy.maxMoney)
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
 			this.step = 0
 		},
+
+		playerXp(enemy) {
+			this.player.xp+=this.monsterXp(enemy)
+		},
 		
 		monsterXp(enemy) {
 			let xp = 0
 			if (this.difficultyColor(enemy)=='graylevel') {
-				return
+				return 0
 			}
 			if (this.player.level == enemy.level) {
 				xp =  this.MXP(this.player.level)
@@ -310,7 +320,7 @@ var app = new Vue({
 				xp*=2
 			}
 			
-			this.player.xp+=Math.round(xp)
+			return Math.round(xp)
 		},
 		
 		ZD() {
