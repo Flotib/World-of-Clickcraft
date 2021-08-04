@@ -8,6 +8,7 @@ var app = new Vue({
 		cursorY: null,
 		damageParticlesDuration: 6,
 		damageParticles: [],
+		errorMessages: [],
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
 		showEnemyInformations: false,
 		player: {
@@ -21,6 +22,7 @@ var app = new Vue({
 			xp: 0,
 			progression: 0,
 			money: 0,
+			diamond: 0,
 		},
 		enemies: [ // It will be converted to json later if I can
 			{
@@ -125,6 +127,7 @@ var app = new Vue({
 		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
 		silverimg: '<img v-if="g>0" src="assets/img/ui/money/silver.png">',
 		copperimg: '<img v-if="g>0" src="assets/img/ui/money/copper.png">',
+		diamondimg: '<img v-if="g>0" src="assets/img/ui/money/diamond.png">',
 		hoverxp: false,
 		
 	},
@@ -143,6 +146,14 @@ var app = new Vue({
 		'player.xp': function () {
 			if (this.player.xp >= this.player.xpToNextLevel) {
 				this.levelup()
+			}
+		},
+
+		'player.money': function () {
+			let diamondvalue = 100000000000
+			if (this.player.money >= diamondvalue) {
+				this.player.diamond++
+				this.player.money-=diamondvalue
 			}
 		},
 	},
@@ -403,7 +414,7 @@ var app = new Vue({
 			this.xpToNextLevelCalc()
 		},
 		
-		moneyStylizer(money) {
+		moneyStylizer(money, diamond) {
 			let copper = money % 100
 			let silver = Math.floor(money/100)
 			if (silver >= 100) {
@@ -411,15 +422,18 @@ var app = new Vue({
 			}
 			let gold = Math.floor(money/10000)
 			
-			
-			if (gold == 0) {
-				if (silver == 0) {
-					return '<span></span><span></span><span>'+copper+this.copperimg+'</span>'
-				} else {
-					return '<span></span><span>'+silver+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+			if (diamond == 0 || diamond == null) {
+				if (gold == 0) {
+					if (silver == 0) {
+						return '<span></span><span></span><span></span><span>'+copper+this.copperimg+'</span>'
+					} else {
+						return '<span></span><span></span><span>'+silver+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+					}
+				} else { // gold.toLocaleString() works too
+					return '<span></span><span>'+gold.toLocaleString().split(/\s/).join(' ')+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
 				}
-			} else { // gold.toLocaleString() works too
-				return '<span>'+gold.toLocaleString().split(/\s/).join(' ')+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+			} else {
+				return '<span>'+diamond.toLocaleString().split(/\s/).join(' ')+this.diamondimg+'</span><span>'+gold.toLocaleString().split(/\s/).join(' ')+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
 			}
 		},
 		
@@ -428,6 +442,29 @@ var app = new Vue({
 			setTimeout(() => {
 				this.damageParticles.shift();
 			}, (this.damageParticlesDuration-1)*1000); //to be sure to delete it as soon as it disappear
+		},
+
+		error(message) { // todo : div in html for the error message + css animation
+			this.errorMessages.push({'msg': message})
+			setTimeout(() => {
+				this.errorMessages.shift();
+			}, 3000)
+		},
+		
+		buyItem(item, price) { //early function just to add diamond currency
+			if (price > this.player.money) {
+				if (this.player.diamond==0) {
+					this.error('Not enough money.')
+					return
+				} else {
+					this.player.diamond
+					this.player.money
+				}
+			} else {
+				this.player.money-=price
+			}
+
+			// add item to player
 		},
 
 	},

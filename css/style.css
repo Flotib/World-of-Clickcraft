@@ -240,7 +240,7 @@ a {
 	position: relative;
 	height: 35px;
 	width: 90%;
-	background-color: #000;
+	background-color: #121212;
 }
 
 .emptyressourcebar:before {
@@ -290,8 +290,12 @@ a {
 	height: 20px;
 }
 
-.playermoneyui p span:first-child {
-	width: 115px;
+.playermoneyui p span:first-child{
+	width: 80px;
+}
+
+.playermoneyui p span:nth-child(2){
+	width: 86px;
 }
 
 .playermoneyui p img {
@@ -305,10 +309,13 @@ a {
 .playercurrencycontainer {
 	width: 90%;
 	height: auto;
-	background-color: black;
+	background-color: #131211;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+	border-radius: 4px;
+	border: 1px solid #867a53;
+	padding: 0 3px 0 3px;
 }
 
 .enemymoneyui {
