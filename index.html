@@ -11,7 +11,10 @@
 <body>
 
 	<div id="app">
+
+		<div class="backgroundEnvironment" :style="'background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);'"></div>
 		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s;'">{{ particle.output }}</div>
+		
 		<div id="content" style="margin-top: 20px">
 
 			<div class="enemytab">
@@ -27,30 +30,31 @@
 				<div class="enemyname">
 					<p>{{ enemies[currentEnemy].name }}</p>
 				</div>
-				<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[currentEnemy])">
+				<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[currentEnemy])" style="margin-top: 10px;">
 					<div class="hpbar" :style="'width:'+Math.max(enemies[currentEnemy].hp/enemies[currentEnemy].maxHp*100, 0)+'%'"></div>
 				</div>
 				<div class="emptyressourcebar" :data-label="(countdown-(step/fps)).toFixed(1)+'s'">
 					<div class="timebar" :style="'width:'+(100-(step/fps)/countdown*100)+'%'"></div>
 				</div>
-				<template v-if="showEnemyInformations">
-				<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p>-</p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
-				<div><p class="xpamount">{{ monsterXp(enemies[currentEnemy]) }} xp</p></div>
-				<div v-if="killToLevelUp(enemies[currentEnemy])!='noxp'"><p class="xpamount">{{ killToLevelUp(enemies[currentEnemy]) }} kill{{ killToLevelUp(enemies[currentEnemy])>1 ? 's' : ''}} left</p></div>
-				</template>
 				<button @click="showEnemyInformations=!showEnemyInformations" class="showenemyinfobutton">{{ showEnemyInformations ? '-' : '+' }}</button>
+				<div :style="'height:'+(showEnemyInformations ? '140' : '0')+'px;'" class="enemyInformations">
+					<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p>-</p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
+					<p class="xpamount">{{ monsterXp(enemies[currentEnemy]) }} xp</p>
+					<div v-if="killToLevelUp(enemies[currentEnemy])!='noxp'"><p class="killsleft">{{ killToLevelUp(enemies[currentEnemy]) }} kill{{ killToLevelUp(enemies[currentEnemy])>1 ? 's' : ''}} left</p></div>
+					<p class="killcount">Killed {{ enemies[currentEnemy].killCount }} time{{enemies[currentEnemy].killCount>1 ? 's' : ''}}</p>
+				</div>
 			</div>
 
-			<div class="playertab" style="background-color: #00ffff88;">
-				<div><p>{{ totalMinDamage() }} - {{ totalMaxDamage() }}</p></div>
+			<div class="playertab">
+				<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
+				<p>Level {{ player.level }}</p>
+				<p>Damages: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p>
 				<div class="playercurrencycontainer">
 					<div class="playermoneyui"><p v-html="moneyStylizer(player.money)"></p></div>
 				</div>
 			</div>
 			
 			<div style="display: inline-block; position: absolute; bottom: 35px;">
-				<div><p style="color: #0f0">{{ player.progression }}</p></div>
-				<div><p style="color: #0ff">{{ player.level }}</p></div>
 				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
 				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
 				<button @click="player.level++">+1 lvl</button>

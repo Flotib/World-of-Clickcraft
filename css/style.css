@@ -61,8 +61,22 @@ button, input[type="submit"], input[type="reset"] { /*Remove the shitty default 
 
 body {
 	background-color: #121212;
-	width: 100%;
-	height: auto;
+	overflow-x: hidden;
+}
+
+img {
+    pointer-events: none;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: #00000000 !important;
+}
+
+#app {
 	overflow-x: hidden;
 }
 
@@ -100,7 +114,6 @@ body {
 .enemytab {
 	display: flex;
 	flex-direction: column;
-	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
 	background-color: #000000;
@@ -110,10 +123,6 @@ body {
 
 .enemytab > * {
 	margin-bottom: 10px;
-}
-
-.enemytab > .emptyressourcebar:nth-of-type(2) {
-	margin-top: 20px;
 }
 
 .damagezone {
@@ -346,16 +355,16 @@ body {
 
 .xpamount {
 	color: #be00bb;
-	font-size: 20px;
 }
 
 .emptyxpbar {
 	position: fixed;
 	bottom: 0;
-	height: 25px;
+	height: 20px;
 	width: 80%;
 	background-color: #000;
-	border-radius: 10px;
+	border-radius: 100px;
+	border: 1px solid #999;
 	overflow: hidden;
 }
 
@@ -418,19 +427,26 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 50px;
-	color: #fff;
-	font-family: Arial Narrow;
-	background-color: #777777;
+	font-size: 40px;
+	color: #ece256;
+	font-family: Morpheus;
+	background: linear-gradient(0deg, #49050d 0%, #6d060d 28%, #810404 50%, #6d060d 72%, #49050d 100%);
 	margin-top: 10px;
+	border-radius: 10px;
+	padding-bottom: 16px;
+	transition-duration: 50ms;
+	border: 3px groove #888888;
 }
 
 .showenemyinfobutton:hover {
-	box-shadow: inset 0px 0px 5px red; /*Will change later*/
+	filter: brightness(135%);
+	color: #ccc;
 }
 
 .showenemyinfobutton:active {
-	box-shadow: inset 0px 0px 5px gold; /*Will change later*/
+    filter: brightness(90%);
+	border: 3px groove #929292;
+	color: #ccc;
 }
 
 .playertab {
@@ -439,7 +455,57 @@ body {
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
+	background-color: #000000;
 	min-width: 300px;
 	color: #fff;
 	font-size: 20px;
+	border-radius: 10px;
+	border: 1px solid #aaa;
+}
+
+.playertab > * {
+	margin-bottom: 8px;
+}
+
+.playertab > p:first-child {
+	font-family: Morpheus;
+	margin-bottom: 20px;
+}
+
+.enemyInformations {
+	padding: 0;
+	overflow: hidden;
+	width: 90%;
+	padding-top: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	transition-timing-function: ease-in-out;
+	transition-duration: 500ms;
+	font-size: 20px;
+}
+
+.enemyInformations > * {
+	margin-bottom: 10px;
+}
+
+.backgroundEnvironment {
+	position: fixed;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0.5;
+	filter: blur(0px); /*Idk if i'll change it*/
+	box-shadow: inset 0 0 300px 100px #121212;
+}
+
+.killsleft {
+	color: #fff;
+}
+
+.killcount {
+	color: #c00000;
 }
