@@ -49,6 +49,11 @@
 				<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
 				<p>Level {{ player.level }}</p>
 				<p>Damages: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p>
+				<div>
+					<!--{{ itemSlot(1, 0) }} -> itemSlot(n, id) -->
+					<!--Template for items here-->
+					<!--You can drag and drop a weapon here, if there is already an item equipped, it is automatically unequip and replace by the one who drag-->
+				</div> 
 				<p>Total clicks: {{ totalClicks }}</p>
 				<div class="playercurrencycontainer">
 					<div class="playermoneyui"><p v-html="moneyStylizer(player.money, player.diamond)"></p></div>
