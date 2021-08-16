@@ -181,74 +181,27 @@ var app = new Vue({
 		between(x, min, max) {
 			return x >= min && x <= max
 		},
-		
-		difficultyColor(enemy) { //One day I'll rework this shit
-			if (this.between(this.player.level, 1, 9)) {
-				if (this.player.level - 5 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 4 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 10, 19)) {
-				if (this.player.level - 6 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 5 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 20, 29)) {
-				if (this.player.level - 7 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 6 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 30, 39)) {
-				if (this.player.level - 8 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 7 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 40, 49)) {
-				if (this.player.level - 9 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 8 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.player.level == 50) {
-				if (this.player.level - 10 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 9 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 51, 54)) {
-				if (this.player.level - 11 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 10 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 55, 56)) {
-				if (this.player.level - 12 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 11 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.player.level == 57) {
-				if (this.player.level - 9 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 8 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.between(this.player.level, 58, 59)) {
-				if (this.player.level - 12 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 11 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
-			} else if (this.player.level == 60) {
-				if (this.player.level - 9 >= enemy.level) {
-					return 'graylevel'
-				} else if (this.player.level - 8 <= enemy.level && this.player.level - 3 >= enemy.level) {
-					return 'greenlevel' }
+
+		greyLevel(){
+			if(this.between(this.player.level, 1, 5)) return 0;
+			if(this.between(this.player.level, 6, 49)){
+				return(this.player.level - Math.floor(this.player.level / 10) - 5)
 			}
-			
-			if (this.player.level - 2 <= enemy.level && this.player.level + 2 >= enemy.level) {
-				return 'yellowlevel'
-			} else if (this.player.level + 3 <= enemy.level && this.player.level + 4 >= enemy.level) {
-				return 'orangelevel'
-			} else if (this.player.level + 5 <= enemy.level && this.player.level + 9 >= enemy.level) {
-				return 'redlevel'
-			} else if (this.player.level + 10 <= enemy.level) {
-				return 'skulllevel' 
+			if(this.player.level == 50) return 40;
+			if(this.between(this.player.level, 51, 59)){
+				return(this.player.level - Math.floor(this.player.level / 5) - 1)
 			}
+			if(this.player.level == 60) return 51;
+		},
+
+		difficultyColor(enemy) {	
+			if(enemy.level <= this.greyLevel()) return 'graylevel';	
+			if(enemy.level >= this.player.level + 10) return 'skulllevel';
+			if(enemy.level <= this.player.level - 3) return 'greenlevel';
+			if(enemy.level >= this.player.level + 5) return 'redlevel';
+			if(enemy.level >= this.player.level + 3) return 'orangelevel';
+			if(enemy.level <= this.player.level + 2) return 'yellowlevel';
+			if(enemy.level >= this.player.level - 2) return 'yellowlevel';
 		},
 		
 		rand(min, max) {
