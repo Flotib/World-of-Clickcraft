@@ -242,7 +242,7 @@ a {
 	background-color: #121212;
 }
 
-.emptyressourcebar:before {
+.emptyressourcebar::before {
 	content: attr(data-label);
     font-size: 18px;
     display: flex;
@@ -375,7 +375,7 @@ a {
 	margin: 0 !important;
 }
 
-.emptyxpbar:before {
+.emptyxpbar::before {
 	content: attr(data-label);
     font-size: 14px;
     display: flex;
