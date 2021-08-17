@@ -142,7 +142,7 @@ Twitter: [@_Flotib](https://twitter.com/_flotib)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/flotib/repo.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/flotib/World-of-Clickcraft.svg?style=for-the-badge
 [contributors-url]: https://github.com/flotib/World-of-Clickcraft/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/flotib/World-of-Clickcraft.svg?style=for-the-badge
 [forks-url]: https://github.com/flotib/World-of-Clickcraft/network/members
