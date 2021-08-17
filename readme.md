@@ -144,13 +144,11 @@ Twitter: [@_Flotib](https://twitter.com/_flotib)
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/flotib/repo.svg?style=for-the-badge
 [contributors-url]: https://github.com/flotib/World-of-Clickcraft/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/flotib/repo.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/flotib/World-of-Clickcraft.svg?style=for-the-badge
 [forks-url]: https://github.com/flotib/World-of-Clickcraft/network/members
-[stars-shield]: https://img.shields.io/github/stars/flotib/repo.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/flotib/World-of-Clickcraft.svg?style=for-the-badge
 [stars-url]: https://github.com/flotib/World-of-Clickcraft/stargazers
-[issues-shield]: https://img.shields.io/github/issues/flotib/repo.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/flotib/World-of-Clickcraft.svg?style=for-the-badge
 [issues-url]: https://github.com/flotib/World-of-Clickcraft/issues
-[license-shield]: https://img.shields.io/github/license/flotib/repo.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/flotib/World-of-Clickcraft.svg?style=for-the-badge
 [license-url]: https://github.com/flotib/World-of-Clickcraft/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/flotib
