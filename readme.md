@@ -88,7 +88,9 @@ Download the repository and open index.html in your favorite web browser or try 
 * Character inventory
 * Shop
 * Upgrades
+* Crafts
 * Stats
+* Skills
 * Tons of items
 * Saves and load
 * "Ascension"
