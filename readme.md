@@ -79,13 +79,13 @@ Download the repository and open index.html in your favorite web browser or try 
 * Fully working leveling
 * Progression
 * Currency system
+* Character inventory
 * WoW vibes
 
 
 ## Todo-list
 
 * Sounds
-* Character inventory
 * Shop
 * Upgrades
 * Crafts
