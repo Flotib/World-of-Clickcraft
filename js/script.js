@@ -401,7 +401,7 @@ var app = new Vue({
 		},
 		
 		chooseEnemy(){
-			let roll = this.rand(0, this.enemyPool[this.currentPool].length)
+			let roll = this.rand(0, this.enemyPool[this.currentPool].length - 1)
 			return(this.enemyPool[this.currentPool][roll]);
 		},
 
@@ -614,7 +614,7 @@ var app = new Vue({
 		getFirstEmptySpace(bagSlots){
 			let returnValue = false
 			bagSlots.forEach(slot => {
-				if(slot.content === null && returnValue === false){//<--- My solution to not being able to return 
+				if(slot.content === null && returnValue === false){//<--- My solution to not being able to 
 					returnValue = (bagSlots.indexOf(slot))        //      return the value immediately
 				}
 			}); return returnValue
