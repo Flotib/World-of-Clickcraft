@@ -490,7 +490,7 @@ var app = new Vue({
 		},
 
 		addItem(id, target) {
-			emptySlot = this.getFirstEmptySpace(target)
+			let emptySlot = this.getFirstEmptySpace(target)
 			if(emptySlot === false) return
 
 			let index = this.items.findIndex(item => item.id === id)
