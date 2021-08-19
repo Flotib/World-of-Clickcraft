@@ -10,6 +10,7 @@ var app = new Vue({
 		damageParticles: [],
 		errorMessages: [],
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
+		currentPool: 0,
 		showEnemyInformations: false,
 		giveItemId: 0,
 		selectedItem: {
@@ -31,7 +32,6 @@ var app = new Vue({
 			progression: 0,
 			money: 0,
 			diamond: 0,
-			potentialEnemies: [],
 			bag: {
 				open: true,
 				level: 1,
@@ -50,7 +50,7 @@ var app = new Vue({
 				maxHp: 60,
 				hp: 60,
 				level: null,
-				reqLevel: 1000,
+				poolLevel: 1000,
 				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
 				killCount: 0,
 				minMoney: null,
@@ -63,7 +63,7 @@ var app = new Vue({
 				maxHp: 60,
 				hp: 60,
 				level: null,
-				reqLevel: 0,
+				poolLevel: 0,
 				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
 				killCount: 0,
 				minMoney: null,
@@ -76,7 +76,7 @@ var app = new Vue({
 				maxHp: 110,
 				hp: 110,
 				level: null,
-				reqLevel: 0,
+				poolLevel: 0,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -89,7 +89,7 @@ var app = new Vue({
 				maxHp: 190,
 				hp: 190,
 				level: null,
-				reqLevel: 5,
+				poolLevel: 5,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -102,7 +102,7 @@ var app = new Vue({
 				maxHp: 280,
 				hp: 280,
 				level: null,
-				reqLevel: 8,
+				poolLevel: 8,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -115,7 +115,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
-				reqLevel: 10,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -128,7 +128,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
-				reqLevel: 10,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -141,7 +141,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
-				reqLevel: 10,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -154,7 +154,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
-				reqLevel: 10,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -179,6 +179,7 @@ var app = new Vue({
 				equipable: true,
 			},
 		],
+		enemyPool: [], //Putting this variable here for now
 		totalClicks: 0,
 		moneyPow: 2.6,
 		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
@@ -250,7 +251,7 @@ var app = new Vue({
 		gameInit(){
 			this.xpToNextLevelCalc()
 			this.changeSlots(this.player.bag.slots, this.player.bag.bagSpace)
-			this.updatePotentialEnemies()
+			this.initializeEnemyPool()
 			
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
@@ -354,6 +355,43 @@ var app = new Vue({
 			return x == 'Infinity' ? 'noxp' : x
 		},
 
+		//Fills the enemy pool
+		initializeEnemyPool(){
+			let enemiesArray = [];
+			let finishedPoolArray = [];
+			this.enemies.forEach(enemy => {
+				enemiesArray.push(enemy)
+			});
+
+			//Simple bubble sort so enemies don't have to be sorted by level
+			//by hand in the enemy list
+			while(true){
+				let flag = true;
+				for(let i=0; i<enemiesArray.length - 1;i++){
+					let temp;
+					if(enemiesArray[i].poolLevel > enemiesArray[i+1].poolLevel){
+						temp = enemiesArray[i];
+						enemiesArray[i] = enemiesArray[i+1];
+						enemiesArray[i+1] = temp;
+						flag = false;
+					}
+				}
+				if(flag) break
+			}
+
+			//Finally, add each enemy to the correct pool
+			let tempArray = []; currentLevel = enemiesArray[0].poolLevel;
+			enemiesArray.forEach(enemy => {
+				if(enemy.poolLevel == currentLevel && enemy.poolLevel < 1000) tempArray.push(enemy)
+				else{
+					currentLevel = enemy.poolLevel;
+					finishedPoolArray.push(tempArray); 
+					tempArray = [enemy];
+				}
+			});
+			this.enemyPool = finishedPoolArray;
+		},
+
 		//Updates the list of potential enemies for the player to encounter
 		updatePotentialEnemies(){
 			let newPotentialEnemies = [];
@@ -363,8 +401,8 @@ var app = new Vue({
 		},
 		
 		chooseEnemy(){
-			let roll = this.rand(0, this.player.potentialEnemies.length - 1)
-			return(this.player.potentialEnemies[roll]);
+			let roll = this.rand(0, this.enemyPool[this.currentPool].length)
+			return(this.enemyPool[this.currentPool][roll]);
 		},
 
 		//Generates a new enemy, this enemy can be rare
