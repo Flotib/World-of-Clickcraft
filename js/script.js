@@ -481,6 +481,7 @@ var app = new Vue({
 			this.player.level++
 			this.player.xp = this.player.xp - this.player.xpToNextLevel
 			this.xpToNextLevelCalc()
+			this.updatePotentialEnemies()
 		},
 		
 		moneyStylizer(money, diamond) {
