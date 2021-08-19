@@ -11,6 +11,7 @@ var app = new Vue({
 		errorMessages: [],
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
 		currentPool: 0,
+		disabledEnemies: [],
 		showEnemyInformations: false,
 		giveItemId: 0,
 		selectedItem: {
@@ -218,6 +219,7 @@ var app = new Vue({
 		'player.bag.bagSpace': function (slots, oldslots) {
 			this.changeSlots(this.player.bag.slots, slots)
 		},
+		
 	},
 
 	computed: {
@@ -392,17 +394,26 @@ var app = new Vue({
 			this.enemyPool = finishedPoolArray;
 		},
 
-		//Updates the list of potential enemies for the player to encounter
-		updatePotentialEnemies(){
-			let newPotentialEnemies = [];
-			this.enemies.forEach(enemy => {
-				if(enemy.reqLevel <= this.player.level) newPotentialEnemies.push(enemy);
-			}); this.player.potentialEnemies = newPotentialEnemies;
+		//Toggles generating enemy on/off
+		toggleEnemy(enemy){
+			if(this.disabledEnemies.includes(enemy)) this.disabledEnemies.splice(this.disabledEnemies.indexOf(enemy), 1);
+			else this.disabledEnemies.push(enemy)
+		},
+
+		//Functions that will probably be needed for the mob disable box
+		getCurrentEnemyPool(){
+			return(this.enemyPool[this.currentPool]);
+		},
+
+		getEnemyDisabled(enemy){
+			return(this.disabledEnemies.includes(enemy));
 		},
 		
 		chooseEnemy(){
 			let roll = this.rand(0, this.enemyPool[this.currentPool].length - 1)
-			return(this.enemyPool[this.currentPool][roll]);
+			let newEnemy = this.enemyPool[this.currentPool][roll]
+			if(this.disabledEnemies.includes(newEnemy)) return(this.chooseEnemy)
+			return newEnemy
 		},
 
 		//Generates a new enemy, this enemy can be rare
@@ -423,6 +434,7 @@ var app = new Vue({
 		},
 
 		enemyDeadEvent(enemy) {
+			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
 			enemy = this.generateEnemy()
 			enemy.hp = enemy.maxHp;
 			enemy.killCount++
@@ -519,7 +531,6 @@ var app = new Vue({
 			this.player.level++
 			this.player.xp = this.player.xp - this.player.xpToNextLevel
 			this.xpToNextLevelCalc()
-			this.updatePotentialEnemies()
 		},
 		
 		moneyStylizer(money, diamond) {
