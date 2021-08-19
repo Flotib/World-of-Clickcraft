@@ -201,7 +201,7 @@ var app = new Vue({
 		unequipButtonStyles() {
 			let color = 'gray';
 
-			if (this.player.equipment.item.length > 0 && this.emptySpace(this.player.bag.slots) > 0) {
+			if (this.player.equipment.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false) {
 				color = 'green';
 			}
 
@@ -244,7 +244,7 @@ var app = new Vue({
 			return x >= min && x <= max
 		},
 
-		greyLevel(){
+		isGrayLevel(){
 			if(this.between(this.player.level, 1, 5)) return 0;
 			if(this.between(this.player.level, 6, 49)){
 				return(this.player.level - Math.floor(this.player.level / 10) - 5)
@@ -257,7 +257,7 @@ var app = new Vue({
 		},
 
 		difficultyColor(enemy) {	
-			if(enemy.level <= this.greyLevel()) return 'graylevel';	
+			if(enemy.level <= this.isGrayLevel()) return 'graylevel';	
 			if(enemy.level >= this.player.level + 10) return 'skulllevel';
 			if(enemy.level <= this.player.level - 3) return 'greenlevel';
 			if(enemy.level >= this.player.level + 5) return 'redlevel';
@@ -490,14 +490,13 @@ var app = new Vue({
 		},
 
 		addItem(id, target) {
-			if (this.emptySpace(target) <= 0) {
-				return
-			}
+			emptySlot = this.getFirstEmptySpace(target)
+			if(emptySlot === false) return
+
 			let index = this.items.findIndex(item => item.id === id)
 			if (index < 0) {
 				return
 			}
-			let emptySlot = this.player.bag.slots.findIndex(slot => slot.content === null)
 			let oldslotId = this.player.bag.slots[emptySlot].slotId
 			target[emptySlot].slotId = oldslotId
 			let item = JSON.parse(JSON.stringify(this.items))
@@ -516,6 +515,20 @@ var app = new Vue({
 			}
 		},
 
+		//In this function I used a forEach for readability
+		//But forEach works differently in JS than the languages I'm used to
+		//Apparently you can't directly return out of a forEach
+		getFirstEmptySpace(bagSlots){
+			let returnValue = false
+			bagSlots.forEach(slot => {
+				if(slot.content === null && returnValue === false){//<--- My solution to not being able to return 
+					returnValue = (bagSlots.indexOf(slot));        //      return the value immediately
+				}
+			}); return returnValue
+		},
+
+		//Will this function be used in the future?
+		//Atm nothing depends on it
 		emptySpace(target) {
 			let emptySlots = 0
 			for (let i = 0, l = target.length; i < l; i++) {
@@ -524,13 +537,19 @@ var app = new Vue({
 			return emptySlots
 		},
 
-		deleteItem(x) {
-			if (x == this.player.equipment.slotId) {
+		//Rewrote parts of this to support deleting items from any container
+		//For potential use with chests or something
+		deleteItem(container, slotId) {
+			if (slotId == this.player.equipment.slotId) {
 				this.player.equipment.item.splice(0, 1)
-			} else if (this.player.bag.slots[x - 1].content != null) {
-				this.player.bag.slots.splice(x - 1, 1, { slotId: x, content: null })
+			} else if (container.slots[slotId - 1].content != null) {
+				this.clearSlot(container, slotId)
 			}
 			this.unselectItem()
+		},
+
+		clearSlot(container, slotId){
+			container.slots.splice(slotId - 1, 1, { slotId: slotId, content: null })
 		},
 
 		itemSelection(item, slotId, target) {
@@ -549,14 +568,14 @@ var app = new Vue({
 				this.player.equipment.item[0].equipable = false
 			} else {
 				this.player.equipment.item.splice(0, 1, item)
-				this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, content: null })
+				this.clearSlot(this.player.bag, slot)
 				this.player.equipment.item[0].equipable = false
 			}
 			this.unselectItem()
 		},
 
 		unequipItem() {
-			let emptySlot = this.player.bag.slots.findIndex(slot => slot.content === null)
+			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 			let actualItem = this.player.equipment.item[0]
 			actualItem.equipable = true
 			this.player.equipment.item.splice(0, 1)

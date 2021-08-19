@@ -72,7 +72,7 @@
 					<button v-if="selectedItem.selection" :style="equipButtonStyles" @click="selectedItem.target.type == 'player' && selectedItem.item[0].equipable ? equipItem(selectedItem.item[0], selectedItem.slotId) : ''">
 						equip item
 					</button>
-					<button v-if="selectedItem.selection" @click="deleteItem(selectedItem.slotId)">
+					<button v-if="selectedItem.selection" @click="deleteItem(player.bag, selectedItem.slotId)">
 						delete item
 					</button>
 					<button v-if="selectedItem.selection" @click="unselectItem()">
