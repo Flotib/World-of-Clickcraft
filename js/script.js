@@ -222,10 +222,10 @@ var app = new Vue({
 
 	computed: {
 		unequipButtonStyles() {
-			let color = 'gray';
+			let color = 'gray'
 
 			if (this.player.equipment.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false) {
-				color = 'green';
+				color = 'green'
 			}
 
 			return {
@@ -237,7 +237,7 @@ var app = new Vue({
 			let color = 'gray'
 
 			if (this.selectedItem.target.type == 'player' && this.selectedItem.item[0].equipable) {
-				color = 'green';
+				color = 'green'
 			}
 
 			return {
@@ -260,8 +260,8 @@ var app = new Vue({
 		},
 		
 		getMouseCoords(e){
-			this.cursorX = e.pageX;
-			this.cursorY = e.pageY;
+			this.cursorX = e.pageX
+			this.cursorY = e.pageY
 		},
 		
 		between(x, min, max) {
@@ -269,29 +269,29 @@ var app = new Vue({
 		},
 
 		isGrayLevel(){
-			if(this.between(this.player.level, 1, 5)) return 0;
+			if(this.between(this.player.level, 1, 5)) return 0
 			if(this.between(this.player.level, 6, 49)){
 				return(this.player.level - Math.floor(this.player.level / 10) - 5)
 			}
-			if(this.player.level == 50) return 40;
+			if(this.player.level == 50) return 40
 			if(this.between(this.player.level, 51, 59)){
 				return(this.player.level - Math.floor(this.player.level / 5) - 1)
 			}
-			if(this.player.level == 60) return 51;
+			if(this.player.level == 60) return 51
 		},
 
 		difficultyColor(enemy) {	
-			if(enemy.level <= this.isGrayLevel()) return 'graylevel';	
-			if(enemy.level >= this.player.level + 10) return 'skulllevel';
-			if(enemy.level <= this.player.level - 3) return 'greenlevel';
-			if(enemy.level >= this.player.level + 5) return 'redlevel';
-			if(enemy.level >= this.player.level + 3) return 'orangelevel';
-			if(enemy.level <= this.player.level + 2) return 'yellowlevel';
-			if(enemy.level >= this.player.level - 2) return 'yellowlevel';
+			if(enemy.level <= this.isGrayLevel()) return 'graylevel'	
+			if(enemy.level >= this.player.level + 10) return 'skulllevel'
+			if(enemy.level <= this.player.level - 3) return 'greenlevel'
+			if(enemy.level >= this.player.level + 5) return 'redlevel'
+			if(enemy.level >= this.player.level + 3) return 'orangelevel'
+			if(enemy.level <= this.player.level + 2) return 'yellowlevel'
+			if(enemy.level >= this.player.level - 2) return 'yellowlevel'
 		},
 		
 		rand(min, max) {
-			return Math.floor(Math.random() * (max - min + 1) + min);
+			return Math.floor(Math.random() * (max - min + 1) + min)
 		},
 
 		autoLevelAttri(enemy) {
@@ -548,14 +548,14 @@ var app = new Vue({
 		clickParticles(damage) {
 			this.damageParticles.push({'posX': this.cursorX-this.rand(4, 16), 'posY': this.cursorY-34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks}) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
-				this.damageParticles.shift();
-			}, (this.damageParticlesDuration-1)*1000); //to be sure to delete it as soon as it disappear
+				this.damageParticles.shift()
+			}, (this.damageParticlesDuration-1)*1000) //to be sure to delete it as soon as it disappear
 		},
 
 		error(message) { // todo : div in html for the error message + css animation
 			this.errorMessages.push({'msg': message})
 			setTimeout(() => {
-				this.errorMessages.shift();
+				this.errorMessages.shift()
 			}, 3000)
 		},
 		
@@ -614,8 +614,8 @@ var app = new Vue({
 		getFirstEmptySpace(bagSlots){
 			let returnValue = false
 			bagSlots.forEach(slot => {
-				if(slot.content === null && returnValue === false){//<--- My solution to not being able to 
-					returnValue = (bagSlots.indexOf(slot));        //      return the value immediately
+				if(slot.content === null && returnValue === false){//<--- My solution to not being able to return 
+					returnValue = (bagSlots.indexOf(slot))        //      return the value immediately
 				}
 			}); return returnValue
 		},
@@ -623,7 +623,7 @@ var app = new Vue({
 		emptySpace(target) {
 			let emptySlots = 0
 			for (let i = 0, l = target.length; i < l; i++) {
-				emptySlots += (target[i].content === null) ? 1 : 0;
+				emptySlots += (target[i].content === null) ? 1 : 0
 			}
 			return emptySlots
 		},
@@ -686,13 +686,13 @@ var app = new Vue({
 
 	mounted() {
 		
-		window.addEventListener('mousemove',this.getMouseCoords);
+		window.addEventListener('mousemove',this.getMouseCoords)
 		
 		this.gameInit()
 		
 		setInterval(() => {
 			if (this.step % (this.fps*this.countdown) == 0) {
-				this.step = 0;
+				this.step = 0
 				for (const enemy of this.enemies) {
 					enemy.hp = enemy.maxHp
 				}
