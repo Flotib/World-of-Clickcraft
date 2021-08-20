@@ -50,30 +50,25 @@
 				<div class="playertab">
 					<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
 					<p>Level {{ player.level }}</p>
-					<p>Damages: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p>
-					<div>
-						<!--{{ itemSlot(1, 0) }} -> itemSlot(n, id) -->
-						<!--Template for items here-->
-						<!--You can drag and drop a weapon here, if there is already an item equipped, it is automatically unequip and replace by the one who drag-->
-					</div> 
+					<p>Damages: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
 					<p>Total clicks: {{ totalClicks }}</p>
-					<div class="player-equipment" style="margin: 10px 0 10px 0">
-						<div class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.equipment.item[0])+'.png); outline: solid 2px '+(selectedItem.slotId == player.equipment.slotId ? 'yellow' : 'transparent')" v-if="player.equipment.item[0] != null" @click="itemSelection(player.equipment.item[0], player.equipment.slotId, player)">
+					<div class="player-weapon" style="margin: 10px 0 10px 0">
+						<div class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'+((selectedItem.slotId == player.weapon.slotId) && (selectedItem.container == 'playerWeapon') ? 'outline: solid 2px yellow' : '')" v-if="player.weapon.item[0] != null" @click="itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerWeapon')">
 						</div>
 					</div>
-					<button :style="unequipButtonStyles" @click="player.equipment.item.length > 0 && emptySpace(player.bag.slots) > 0 ? unequipItem() : ''">
-						unequip item
-					</button>
 					<div class="playercurrencycontainer">
 						<div class="playermoneyui"><p v-html="moneyStylizer(player.money, player.diamond)"></p></div>
 					</div>
 				</div>
 
 				<div class="select-item-interaction">
-					<button v-if="selectedItem.selection" :style="equipButtonStyles" @click="selectedItem.target.type == 'player' && selectedItem.item.equipable ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
+					<button v-if="selectedItem.container == 'playerBag'" :style="equipButtonStyles" @click="(selectedItem.container == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 						equip item
 					</button>
-					<button v-if="selectedItem.selection" @click="deleteItem(player.bag, selectedItem.slotId)">
+					<button v-if="selectedItem.container == 'playerWeapon' || selectedItem.container == 'playerTrinket'" :style="unequipButtonStyles" @click="(selectedItem.container == 'playerWeapon' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
+						unequip item
+					</button>
+					<button v-if="selectedItem.container == 'playerBag'" @click="deleteItem(player.bag, selectedItem.slotId)">
 						delete item
 					</button>
 					<button v-if="selectedItem.selection" @click="unselectItem()">
@@ -85,7 +80,7 @@
 				</div>
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
-						<div v-if="container.content != null" @click="itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, player)" class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png); outline: solid 2px '+(selectedItem.slotId == container.slotId ? 'yellow' : 'transparent')">
+						<div v-if="container.content != null" @click="itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, 'playerBag')" class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'+((selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? 'outline: solid 2px yellow' : '')">
 						</div>
 					</div>
 				</div>

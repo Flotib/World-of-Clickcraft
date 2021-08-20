@@ -639,7 +639,7 @@ a {
 	box-shadow: inset 0 0 4px 4px #5b5cb193;
 }
 
-.player-equipment {
+.player-weapon {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -652,7 +652,7 @@ a {
 	border-radius: 14%;
 }
 
-.player-equipment:hover {
+.player-weapon:hover {
 	box-shadow: inset 0 0 12px 6px #5b5cb193;
 }
 
