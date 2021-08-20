@@ -48,6 +48,19 @@ var app = new Vue({
 		},
 		enemies: [ // It will be converted to json later if I can
 			{
+				name: 'Wolf', //Placeholder wolf
+				portrait: 'wolf1',
+				maxHp: 60,
+				hp: 60,
+				level: null,
+				poolLevel: 0,
+				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
+				killCount: 0,
+				minMoney: null,
+				maxMoney: null,
+				levelenvironment: 'elwynn',
+			},
+			{
 				name: 'Wolf',
 				portrait: 'wolf1',
 				maxHp: 60,
@@ -92,7 +105,7 @@ var app = new Vue({
 				maxHp: 280,
 				hp: 280,
 				level: null,
-				poolLevel: 8,
+				poolLevel: 5,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -190,7 +203,12 @@ var app = new Vue({
 			this.step = 0
 			this.countdown = this.enemies[enemy].type != 'normal' ? 30 : 10 // May change later
 		},
-		
+
+		'currentEnemyPool': function () {
+			if(this.currentEnemyPool > this.enemyPool.length) this.currentEnemyPool = this.enemyPool.length - 1
+			if(this.currentEnemyPool < 0) this.currentEnemyPool = 0
+		},
+
 		'player.level': function () {
 			this.xpToNextLevelCalc()
 		},
@@ -408,7 +426,18 @@ var app = new Vue({
 					tempArray = [enemy];
 				}
 			});
+			if(tempArray.length > 0) finishedPoolArray.push(tempArray); 
 			this.enemyPool = finishedPoolArray;
+		},
+
+		printEnemyPools(){
+			this.enemyPool.forEach(pool => {
+				let poolOut = ""
+				pool.forEach(enemy => {
+					poolOut += enemy.name + " "
+				});
+				alert(poolOut)
+			});
 		},
 
 		//Toggles generating enemy on/off
@@ -426,8 +455,9 @@ var app = new Vue({
 			return(this.disabledEnemies.includes(enemy));
 		},
 		
-		/*chooseEnemy(){
-			let roll = this.rand(0, this.enemyPool.length - 1)
+		chooseEnemy(){
+			let roll = this.rand(0, this.enemyPool[this.currentEnemyPool].length - 1)
+			console.log(roll)
 			let newEnemy = this.enemyPool[this.currentEnemyPool][roll]
 			if(this.disabledEnemies.includes(newEnemy)) return(this.chooseEnemy)
 			return newEnemy
@@ -448,11 +478,11 @@ var app = new Vue({
 				generatedEnemy.maxHp *= 2; generatedEnemy.hp = generatedEnemy.maxHp;
 			}
 			return generatedEnemy;
-		},*/
+		},
 
 		enemyDeadEvent(enemy) {
-			/*Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
-			enemy = this.generateEnemy()*/
+			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
+			enemy = this.generateEnemy()
 			enemy.hp = enemy.maxHp;
 			enemy.killCount++
 			this.playerXp(enemy)
