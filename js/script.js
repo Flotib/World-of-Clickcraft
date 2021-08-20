@@ -421,9 +421,9 @@ var app = new Vue({
 		initializeEnemyPool(){
 			let enemiesArray = [];
 			let finishedPoolArray = [];
-			this.enemies.forEach(enemy => {
-				enemiesArray.push(enemy)
-			});
+			for(let i=1; i<this.enemies.length; i++){ //Starting from 1 to not include the placeholder wolf
+				enemiesArray.push(this.enemies[i])
+			}
 
 			//Simple bubble sort so enemies don't have to be sorted by level
 			//by hand in the enemy list
@@ -444,7 +444,7 @@ var app = new Vue({
 			//Finally, add each enemy to the correct pool
 			let tempArray = []; currentLevel = enemiesArray[0].poolLevel;
 			enemiesArray.forEach(enemy => {
-				if(enemy.poolLevel == currentLevel && enemy.poolLevel < 1000) tempArray.push(enemy)
+				if(enemy.poolLevel == currentLevel) tempArray.push(enemy)
 				else{
 					currentLevel = enemy.poolLevel;
 					finishedPoolArray.push(tempArray); 
@@ -519,7 +519,7 @@ var app = new Vue({
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
-			this.step = 0
+			this.step = 10
 		},
 
 		playerXp(enemy) {
