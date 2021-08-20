@@ -743,7 +743,6 @@ var app = new Vue({
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
-			console.log(this.selectedItem.item)
 		}, 1000/this.fps)
 	},
 })
