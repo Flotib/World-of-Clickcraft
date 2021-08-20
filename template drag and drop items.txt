@@ -1,2 +1,0 @@
-inclure le nombre d'emplacements (auto draw bag 4xn emplacements)
-https://stackoverflow.com/questions/2011142/how-to-change-the-style-of-the-title-attribute-inside-an-anchor-tag (:title dynamique pour afficher le tooltip de l'objet + position absolue avec un décalage top et left en fonction de la position de la souris)
