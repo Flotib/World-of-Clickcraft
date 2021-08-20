@@ -717,7 +717,7 @@ var app = new Vue({
 		window.addEventListener('mousemove',this.getMouseCoords)
 		
 		this.gameInit()
-
+		
 		document.addEventListener("keydown", (event) => {
 			if (this.keyPressed) return;
 			this.keyPressed = true;
@@ -731,7 +731,7 @@ var app = new Vue({
 		document.addEventListener("keyup", (event) => {
 			this.keyPressed = false;
 		}, false);
-		
+
 		setInterval(() => {
 			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0
