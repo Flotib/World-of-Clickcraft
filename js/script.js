@@ -53,10 +53,11 @@ var app = new Vue({
 				slotId: 2,
 			},
 		},
-		enemies: [ // It will be converted to json later if I can
+		enemies: [
 			{
 				name: 'Wolf', //Placeholder wolf
-				portrait: 'wolf1',
+				portrait: 'wolf',
+				portraitId: 1,
 				maxHp: 60,
 				hp: 60,
 				level: null,
@@ -69,7 +70,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Wolf',
-				portrait: 'wolf1',
+				portrait: 'wolf',
+				portraitId: 1,
 				maxHp: 60,
 				hp: 60,
 				level: null,
@@ -82,7 +84,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Kobold',
-				portrait: 'wolf1',
+				portrait: 'kobold',
+				portraitId: 1,
 				maxHp: 110,
 				hp: 110,
 				level: null,
@@ -95,7 +98,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Bandit',
-				portrait: 'wolf1',
+				portrait: 'defias',
+				portraitId: 1,
 				maxHp: 190,
 				hp: 190,
 				level: null,
@@ -108,7 +112,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Boar',
-				portrait: 'wolf1',
+				portrait: 'boar',
+				portraitId: 2,
 				maxHp: 280,
 				hp: 280,
 				level: null,
@@ -121,7 +126,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Forest Spider',
-				portrait: 'wolf1',
+				portrait: 'tarantula',
+				portraitId: 3,
 				maxHp: 200,
 				hp: 200,
 				level: null,
@@ -134,7 +140,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Murloc',
-				portrait: 'wolf1',
+				portrait: 'murloc',
+				portraitId: 1,
 				maxHp: 200,
 				hp: 200,
 				level: null,
@@ -291,7 +298,7 @@ var app = new Vue({
 		gameInit(){
 			this.xpToNextLevelCalc()
 			this.updateSlots(this.player.bag.slots, this.player.bag.bagSpace)
-			//this.initializeEnemyPool()
+			this.initializeEnemyPool()
 			
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
@@ -414,9 +421,9 @@ var app = new Vue({
 		initializeEnemyPool(){
 			let enemiesArray = [];
 			let finishedPoolArray = [];
-			this.enemies.forEach(enemy => {
-				enemiesArray.push(enemy)
-			});
+			for(let i=1; i<this.enemies.length; i++){ //Starting from 1 to not include the placeholder wolf
+				enemiesArray.push(this.enemies[i])
+			}
 
 			//Simple bubble sort so enemies don't have to be sorted by level
 			//by hand in the enemy list
@@ -437,7 +444,7 @@ var app = new Vue({
 			//Finally, add each enemy to the correct pool
 			let tempArray = []; currentLevel = enemiesArray[0].poolLevel;
 			enemiesArray.forEach(enemy => {
-				if(enemy.poolLevel == currentLevel && enemy.poolLevel < 1000) tempArray.push(enemy)
+				if(enemy.poolLevel == currentLevel) tempArray.push(enemy)
 				else{
 					currentLevel = enemy.poolLevel;
 					finishedPoolArray.push(tempArray); 
@@ -512,7 +519,7 @@ var app = new Vue({
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
-			this.step = 0
+			this.step = 10
 		},
 
 		playerXp(enemy) {
@@ -793,9 +800,9 @@ var app = new Vue({
 		setInterval(() => {
 			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0
-				for (const enemy of this.enemies) {
-					enemy.hp = enemy.maxHp
-				}
+				this.generateEnemy()
+				//for (const enemy of this.enemies) {
+				//}
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
