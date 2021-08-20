@@ -56,7 +56,8 @@ var app = new Vue({
 		enemies: [
 			{
 				name: 'Wolf', //Placeholder wolf
-				portrait: 'wolf1',
+				portrait: 'wolf',
+				portraitId: 1,
 				maxHp: 60,
 				hp: 60,
 				level: null,
