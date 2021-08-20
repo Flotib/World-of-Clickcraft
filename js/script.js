@@ -53,7 +53,7 @@ var app = new Vue({
 				slotId: 2,
 			},
 		},
-		enemies: [ // It will be converted to json later if I can
+		enemies: [
 			{
 				name: 'Wolf',
 				portrait: 'wolf1',
