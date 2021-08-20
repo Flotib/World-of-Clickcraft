@@ -205,8 +205,9 @@ var app = new Vue({
 		},
 
 		'currentEnemyPool': function () {
-			if(this.currentEnemyPool > this.enemyPool.length) this.currentEnemyPool = this.enemyPool.length - 1
+			if(this.currentEnemyPool == this.enemyPool.length) this.currentEnemyPool = this.enemyPool.length - 1
 			if(this.currentEnemyPool < 0) this.currentEnemyPool = 0
+			this.spawnEnemy(false)
 		},
 
 		'player.level': function () {
@@ -468,10 +469,10 @@ var app = new Vue({
 		//I had to approach this by creating a new entry in the enemies list
 		//enemies[0] is now a placeholder with the stats of a wolf
 		//however, it's overwritten when generating new enemies
-		generateEnemy(enemy=this.chooseEnemy()){
+		generateEnemy(enemy=this.chooseEnemy(), allowRare=true){
 			let generatedEnemy = this.enemies[0];
 			Object.assign(generatedEnemy, enemy);
-			if(this.rng(this.rareChance)){ 
+			if(this.rng(this.rareChance) && allowRare){ 
 				//Lazy formula below
 				generatedEnemy.name = "Rare " + generatedEnemy.name;
 				generatedEnemy.type = "rare"; 
@@ -480,10 +481,14 @@ var app = new Vue({
 			return generatedEnemy;
 		},
 
-		enemyDeadEvent(enemy) {
+		spawnEnemy(allowRare=true){
 			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
-			enemy = this.generateEnemy()
+			enemy = this.generateEnemy(this.chooseEnemy(), allowRare)
 			enemy.hp = enemy.maxHp;
+		},
+
+		enemyDeadEvent(enemy) {
+			this.spawnEnemy()
 			enemy.killCount++
 			this.playerXp(enemy)
 			this.player.money += this.rand(enemy.minMoney, enemy.maxMoney)
