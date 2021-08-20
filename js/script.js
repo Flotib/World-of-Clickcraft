@@ -11,13 +11,14 @@ var app = new Vue({
 		damageParticles: [],
 		errorMessages: [],
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
-		currentPool: 0,
+		currentEnemyPool: 0,
 		disabledEnemies: [],
 		showEnemyInformations: false,
 		giveItemId: 0,
+		rareChance: 50, // start at 50 so 2% chance to get a rare mob - could be upgraded later
 		selectedItem: {
 			selection: false,
-			item: [],
+			item: {},
 			slotId: null,
 			target: null,
 		},
@@ -46,19 +47,6 @@ var app = new Vue({
 			},
 		},
 		enemies: [ // It will be converted to json later if I can
-			{
-				name: 'Wolf', //PLACEHOLDER
-				portrait: 'wolf1', //DO NOT MODIFY THIS
-				maxHp: 60,
-				hp: 60,
-				level: null,
-				poolLevel: 1000,
-				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
 			{
 				name: 'Wolf',
 				portrait: 'wolf1',
@@ -169,16 +157,21 @@ var app = new Vue({
 				id: 1,
 				name: 'One',
 				equipable: true,
+				slotType: 'weapon',
+				icon: 'inv_sword_04',
 			},
 			{
 				id: 2,
 				name: 'Two',
 				equipable: false,
+				icon: null,
 			},
 			{
 				id: 4,
 				name: 'Three',
 				equipable: true,
+				slotType: 'trinket', // player will have 2 more equipables for 2 trinkets
+				icon: null,
 			},
 		],
 		enemyPool: [], //Putting this variable here for now
@@ -189,7 +182,6 @@ var app = new Vue({
 		copperimg: '<img v-if="g>0" src="assets/img/ui/money/copper.png">',
 		diamondimg: '<img v-if="g>0" src="assets/img/ui/money/diamond.png">',
 		hoverxp: false,
-		
 	},
 	
 	watch: {
@@ -239,7 +231,7 @@ var app = new Vue({
 		equipButtonStyles() {
 			let color = 'gray'
 
-			if (this.selectedItem.target.type == 'player' && this.selectedItem.item[0].equipable) {
+			if (this.selectedItem.target.type == 'player' && this.selectedItem.item.equipable) {
 				color = 'green'
 			}
 
@@ -310,6 +302,15 @@ var app = new Vue({
 		
 		rand(min, max) {
 			return Math.floor(Math.random() * (max - min + 1) + min)
+		},
+
+		rng(chance) { // 1 / chance * 100 = % - /!\ chance is not a percentage
+			let loot = false
+			if (this.rand(1, chance) == this.rand(1, chance)) {
+				loot = true
+			}
+
+			return loot
 		},
 
 		autoLevelAttri(enemy) {
@@ -418,16 +419,16 @@ var app = new Vue({
 
 		//Functions that will probably be needed for the mob disable box
 		getCurrentEnemyPool(){
-			return(this.enemyPool[this.currentPool]);
+			return(this.enemyPool[this.currentEnemyPool]);
 		},
 
 		getEnemyDisabled(enemy){
 			return(this.disabledEnemies.includes(enemy));
 		},
 		
-		chooseEnemy(){
-			let roll = this.rand(0, this.enemyPool[this.currentPool].length - 1)
-			let newEnemy = this.enemyPool[this.currentPool][roll]
+		/*chooseEnemy(){
+			let roll = this.rand(0, this.enemyPool.length - 1)
+			let newEnemy = this.enemyPool[this.currentEnemyPool][roll]
 			if(this.disabledEnemies.includes(newEnemy)) return(this.chooseEnemy)
 			return newEnemy
 		},
@@ -440,18 +441,18 @@ var app = new Vue({
 		generateEnemy(enemy=this.chooseEnemy()){
 			let generatedEnemy = this.enemies[0];
 			Object.assign(generatedEnemy, enemy);
-			if(this.rand(0, 10) == 1){ //If it rolls 1
+			if(this.rng(this.rareChance)){ 
 				//Lazy formula below
 				generatedEnemy.name = "Rare " + generatedEnemy.name;
 				generatedEnemy.type = "rare"; 
 				generatedEnemy.maxHp *= 2; generatedEnemy.hp = generatedEnemy.maxHp;
 			}
 			return generatedEnemy;
-		},
+		},*/
 
 		enemyDeadEvent(enemy) {
-			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
-			enemy = this.generateEnemy()
+			/*Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
+			enemy = this.generateEnemy()*/
 			enemy.hp = enemy.maxHp;
 			enemy.killCount++
 			this.playerXp(enemy)
@@ -667,7 +668,7 @@ var app = new Vue({
 
 		itemSelection(item, slotId, target) {
 			this.selectedItem.selection = true
-			this.selectedItem.item.splice(0, 1, item)
+			this.selectedItem.item = item
 			this.selectedItem.slotId = slotId
 			this.selectedItem.target = target
 		},
@@ -703,6 +704,15 @@ var app = new Vue({
 			this.selectedItem.target = null
 		},
 
+		itemIcon(item) {
+			icon = 'inv_misc_questionmark'
+			if (item.icon != null) {
+				icon = item.icon
+			}
+
+			return icon
+		}
+
 	},
 
 	mounted() {
@@ -730,6 +740,7 @@ var app = new Vue({
 				for (const enemy of this.enemies) {
 					enemy.hp = enemy.maxHp
 				}
+				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
 		}, 1000/this.fps)

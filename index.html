@@ -13,7 +13,7 @@
 <body>
 
 	<div id="app">
-
+		
 		<div class="backgroundEnvironment" :style="'background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);'"></div>
 		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s;'">{{ particle.output }}</div>
 		
@@ -58,8 +58,7 @@
 					</div> 
 					<p>Total clicks: {{ totalClicks }}</p>
 					<div class="player-equipment" style="margin: 10px 0 10px 0">
-						<div class="player-equipment-item" :style="'background:'+(selectedItem.slotId == player.equipment.slotId ? 'yellow' : 'violet')" v-if="player.equipment.item[0] != null" @click="itemSelection(player.equipment.item[0], player.equipment.slotId, player)">
-							{{player.equipment.item[0].name}}
+						<div class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.equipment.item[0])+'.png); outline: solid 2px '+(selectedItem.slotId == player.equipment.slotId ? 'yellow' : 'transparent')" v-if="player.equipment.item[0] != null" @click="itemSelection(player.equipment.item[0], player.equipment.slotId, player)">
 						</div>
 					</div>
 					<button :style="unequipButtonStyles" @click="player.equipment.item.length > 0 && emptySpace(player.bag.slots) > 0 ? unequipItem() : ''">
@@ -71,7 +70,7 @@
 				</div>
 
 				<div class="select-item-interaction">
-					<button v-if="selectedItem.selection" :style="equipButtonStyles" @click="selectedItem.target.type == 'player' && selectedItem.item[0].equipable ? equipItem(selectedItem.item[0], selectedItem.slotId) : ''">
+					<button v-if="selectedItem.selection" :style="equipButtonStyles" @click="selectedItem.target.type == 'player' && selectedItem.item.equipable ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 						equip item
 					</button>
 					<button v-if="selectedItem.selection" @click="deleteItem(player.bag, selectedItem.slotId)">
@@ -86,8 +85,7 @@
 				</div>
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
-						<div v-if="container.content != null" @click="itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, player)" class="bag-item" :style="'background-color:'+(selectedItem.slotId == container.slotId ? 'yellow' : '')">
-							{{container.content.name}}
+						<div v-if="container.content != null" @click="itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, player)" class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png); outline: solid 2px '+(selectedItem.slotId == container.slotId ? 'yellow' : 'transparent')">
 						</div>
 					</div>
 				</div>
