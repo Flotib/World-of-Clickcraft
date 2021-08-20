@@ -699,7 +699,7 @@ var app = new Vue({
 
 		unselectItem() {
 			this.selectedItem.selection = false
-			this.selectedItem.item.shift()
+			this.selectedItem.item = {}
 			this.selectedItem.slotId = null
 			this.selectedItem.target = null
 		},
@@ -743,6 +743,7 @@ var app = new Vue({
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
+			console.log(this.selectedItem.item)
 		}, 1000/this.fps)
 	},
 })
