@@ -6,6 +6,7 @@ var app = new Vue({
 		countdown: 10, //sec
 		cursorX: null,
 		cursorY: null,
+		keyPressed: false,
 		damageParticlesDuration: 6,
 		damageParticles: [],
 		errorMessages: [],
@@ -219,6 +220,22 @@ var app = new Vue({
 
 			return {
 				backgroundColor: color,
+			}
+		},
+
+		bagWidth() {
+			let size = 208
+
+			if (this.player.bag.bagSpace > 24) {
+				size = 216
+				if (this.player.bag.bagSpace > 52) {
+					size = 320
+				}
+			}
+
+			console.log(size)
+			return {
+				width: size+'px',
 			}
 		},
 	},
@@ -515,9 +532,6 @@ var app = new Vue({
 			}
 		},
 
-		//In this function I used a forEach for readability
-		//But forEach works differently in JS than the languages I'm used to
-		//Apparently you can't directly return out of a forEach
 		getFirstEmptySpace(bagSlots){
 			let returnValue = false
 			bagSlots.forEach(slot => {
@@ -527,8 +541,6 @@ var app = new Vue({
 			}); return returnValue
 		},
 
-		//Will this function be used in the future?
-		//Atm nothing depends on it
 		emptySpace(target) {
 			let emptySlots = 0
 			for (let i = 0, l = target.length; i < l; i++) {
@@ -537,8 +549,6 @@ var app = new Vue({
 			return emptySlots
 		},
 
-		//Rewrote parts of this to support deleting items from any container
-		//For potential use with chests or something
 		deleteItem(container, slotId) {
 			if (slotId == this.player.equipment.slotId) {
 				this.player.equipment.item.splice(0, 1)
@@ -585,8 +595,8 @@ var app = new Vue({
 		},
 
 		unselectItem() {
-			this.selectedItem.selection = false,
-				this.selectedItem.item.shift()
+			this.selectedItem.selection = false
+			this.selectedItem.item.shift()
 			this.selectedItem.slotId = null
 			this.selectedItem.target = null
 		},
@@ -599,6 +609,20 @@ var app = new Vue({
 		
 		this.gameInit()
 		
+		document.addEventListener("keydown", (event) => {
+			if (this.keyPressed) return;
+			this.keyPressed = true;
+
+			if (event.keyCode == 66) { // 'B' toggle bag
+				this.player.bag.open = !this.player.bag.open
+				console.log('b')
+			}
+		}, false);
+
+		document.addEventListener("keyup", (event) => {
+			this.keyPressed = false;
+		}, false);
+
 		setInterval(() => {
 			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0

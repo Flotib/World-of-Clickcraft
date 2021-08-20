@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="utf-8">
+	<title>Clickcraft</title>
+    <link rel="icon" href="assets/img/favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" content="user-scalable=no">
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 	<link href="css/style.css" rel="stylesheet">
@@ -78,10 +80,13 @@
 					<button v-if="selectedItem.selection" @click="unselectItem()">
 						unselect
 					</button>
+					<div class="bag-button" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'+(player.bag.open ? 'box-shadow: inset 0 0 8px 3px #e9df5c' : '')">
+						<p>{{emptySpace(player.bag.slots)}}</p>
+					</div>
 				</div>
-				<div v-if="player.bag.open" class="bag-widow">
+				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
-						<div v-if="container.content != null" @click="itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, player)" :style="'height: 100%; width: 100%; background-color: '+(selectedItem.slotId == container.slotId ? 'yellow' : 'violet')+'; border-radius: 100px; display: flex; justify-content: center; align-items: center; overflow: visible; user-select: none;'">
+						<div v-if="container.content != null" @click="itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, player)" class="bag-item" :style="'background-color:'+(selectedItem.slotId == container.slotId ? 'yellow' : '')">
 							{{container.content.name}}
 						</div>
 					</div>
@@ -103,10 +108,6 @@
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
 				<input type="number" v-model.number="currentEnemy" style="width: 30px">
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
-			</div>
-			
-			<div class="bag-button" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'+(player.bag.open ? 'box-shadow: inset 0 0 8px 3px #e9df5c' : '')">
-				{{emptySpace(player.bag.slots)}}
 			</div>
 
 			<div class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">

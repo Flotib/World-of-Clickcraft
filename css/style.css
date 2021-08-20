@@ -47,6 +47,21 @@
 	user-select: none;
 }
 
+/*
+*::-webkit-scrollbar-track {
+    background-color: #121212;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #fff;
+}*/
+
+
 html, body, button {
 	cursor: url("../assets/cursors/point.cur"), auto !important;
 	font-family: BlizQuadrata Web;
@@ -94,7 +109,7 @@ a {
 	margin: 0 10px 10px 10px;
 }
 
-.uiwidow {
+.uiwindow {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -106,7 +121,7 @@ a {
 	margin-top: 5px;
 }
 
-.uiwidow > * {
+.uiwindow > * {
 	margin: 5px 0 5px 0;
 }
 
@@ -197,14 +212,16 @@ a {
 	justify-content: center;
 	text-align: center;
 	font-size: 16px;
+	text-shadow: 1px 1px 0 #000;
+	
 }
 
 .graylevel {
-	color: #797979;
+	color: #808080;
 }
 
 .greenlevel {
-	color: #4ae054;
+	color: #40bf40;
 }
 
 .yellowlevel {
@@ -212,11 +229,11 @@ a {
 }
 
 .orangelevel {
-	color: #ee773c;
+	color: #ff8040;
 }
 
 .redlevel {
-	color: #e91817;
+	color: #ff1a1a;
 }
 
 .skulllevel {
@@ -524,14 +541,9 @@ a {
 }
 
 .bag-button {
-	position: fixed;
-	bottom: 0;
-	right: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 22px;
-	color: white;
 	user-select: none;
 	width: 50px;
 	height: 50px;
@@ -543,7 +555,12 @@ a {
 	background-repeat: no-repeat;
 	outline-offset: -1px;
 	overflow: visible;
-	border-radius: 10px;
+	border-radius: 7px;
+}
+
+.bag-button p {
+	font-size: 22px;
+	color: white;
 }
 
 .bag-button:hover {
@@ -554,15 +571,13 @@ a {
 	box-shadow: inset 0 0 0 1px #e9df5c, inset 0 0 6px 6px #5377eeb7;
 }
 
-.bag-widow {
+.bag-window {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	width: 232px;
-	max-width: 232px;
-	height: auto;
-	min-height: 62px;
-	max-height: 500px;
+	width: 208px; /* 208px min ; 225px max with scrollbar */
+	min-height: 52px;
+	max-height: 312px;
 	overflow-y: auto; /*todo: custom scrollbar*/
 	background-color: #000000;
 	border-radius: 10px;
@@ -570,19 +585,52 @@ a {
 	padding: 6px;
 }
 
+.bag-window::-webkit-scrollbar-track {
+    background-color: transparent;
+	border-left: 1px solid #aaa;
+}
+
+.bag-window::-webkit-scrollbar {
+    width: 8px;
+}
+
+.bag-window::-webkit-scrollbar-thumb {
+    border-radius: 0 10px 10px 0;
+    background-color: #eee;
+}
+
 .bag-container {
-	display: inline-block;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 50px;
 	height: 50px;
-	margin: 4px;
-	background-color: #2b2b2b;
-	border-radius: 3px;
-	outline-offset: -2px;
-	transition-duration: 70ms;
+	margin: 1px;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-image: url('../assets/img/ui/bag/empty-bag-slot.png');
+	border-radius: 14%;
 }
 
 .bag-container:hover {
-	background-color: #333333;
+	box-shadow: inset 0 0 4px 4px #5b5cb193;
+}
+
+.bag-item {
+	height: 100%;
+	width: 100%;
+	border-radius: 14%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: visible;
+	user-select: none;
+	background-color: #812121;
+}
+
+.bag-item:hover {
+	box-shadow: inset 0 0 4px 4px #5b5cb193;
 }
 
 .player-equipment {
@@ -591,19 +639,47 @@ a {
 	align-items: center;
 	width: 80px;
 	height: 80px;
-	background-color: silver;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-image: url('../assets/img/ui/equipment/empty-weapon-slot.png');
+	border-radius: 14%;
+}
+
+.player-equipment:hover {
+	box-shadow: inset 0 0 12px 6px #5b5cb193;
 }
 
 .player-equipment-item {
-	width: 80%;
-	height: 80%;
+	position: relative;
+	z-index: 2;
+	width: 100%;
+	height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	font-size: 26px;
+	border-radius: 14%;
+	
+}
+
+.player-equipment-item:hover {
+	box-shadow: inset 0 0 12px 6px #5b5cb193;
 }
 
 .select-item-interaction {
-	margin: 15px 0 0 0;
-	min-height: 21px; /*May probably change if buttons became larger*/
+	margin: 8px 0 4px 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	height: 50px;
+	min-width: 300px;
+	background-color: #000000;
+	border-radius: 10px;
+	border: 1px solid #aaa;
+	padding: 3px;
+}
+
+.select-item-interaction > * {
+	margin-left: 5px;
 }
