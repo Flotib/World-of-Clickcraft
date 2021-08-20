@@ -635,9 +635,6 @@ var app = new Vue({
 			}
 		},
 
-		//In this function I used a forEach for readability
-		//But forEach works differently in JS than the languages I'm used to
-		//Apparently you can't directly return out of a forEach
 		getFirstEmptySpace(bagSlots){
 			let returnValue = false
 			bagSlots.forEach(slot => {
@@ -654,9 +651,7 @@ var app = new Vue({
 			}
 			return emptySlots
 		},
-
-		//Rewrote parts of this to support deleting items from any container
-		//For potential use with chests or something
+		
 		deleteItem(container, slotId) {
 			if (slotId == this.player.equipment.slotId) {
 				this.player.equipment.item.splice(0, 1)
@@ -702,8 +697,8 @@ var app = new Vue({
 		},
 
 		unselectItem() {
-			this.selectedItem.selection = false,
-				this.selectedItem.item.shift()
+			this.selectedItem.selection = false
+			this.selectedItem.item.shift()
 			this.selectedItem.slotId = null
 			this.selectedItem.target = null
 		},
