@@ -11,6 +11,8 @@ var app = new Vue({
 		damageParticles: [],
 		errorMessages: [],
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
+		currentPool: 0,
+		disabledEnemies: [],
 		showEnemyInformations: false,
 		giveItemId: 0,
 		selectedItem: {
@@ -45,11 +47,25 @@ var app = new Vue({
 		},
 		enemies: [ // It will be converted to json later if I can
 			{
+				name: 'Wolf', //PLACEHOLDER
+				portrait: 'wolf1', //DO NOT MODIFY THIS
+				maxHp: 60,
+				hp: 60,
+				level: null,
+				poolLevel: 1000,
+				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
+				killCount: 0,
+				minMoney: null,
+				maxMoney: null,
+				levelenvironment: 'elwynn',
+			},
+			{
 				name: 'Wolf',
 				portrait: 'wolf1',
 				maxHp: 60,
 				hp: 60,
 				level: null,
+				poolLevel: 0,
 				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
 				killCount: 0,
 				minMoney: null,
@@ -62,6 +78,7 @@ var app = new Vue({
 				maxHp: 110,
 				hp: 110,
 				level: null,
+				poolLevel: 0,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -74,6 +91,7 @@ var app = new Vue({
 				maxHp: 190,
 				hp: 190,
 				level: null,
+				poolLevel: 5,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -86,6 +104,7 @@ var app = new Vue({
 				maxHp: 280,
 				hp: 280,
 				level: null,
+				poolLevel: 8,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -98,6 +117,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -110,6 +130,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -122,6 +143,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -134,6 +156,7 @@ var app = new Vue({
 				maxHp: 200,
 				hp: 200,
 				level: null,
+				poolLevel: 10,
 				type: 'normal',
 				killCount: 0,
 				minMoney: null,
@@ -158,6 +181,7 @@ var app = new Vue({
 				equipable: true,
 			},
 		],
+		enemyPool: [], //Putting this variable here for now
 		totalClicks: 0,
 		moneyPow: 2.6,
 		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
@@ -196,6 +220,7 @@ var app = new Vue({
 		'player.bag.bagSpace': function (slots, oldslots) {
 			this.changeSlots(this.player.bag.slots, slots)
 		},
+		
 	},
 
 	computed: {
@@ -245,6 +270,7 @@ var app = new Vue({
 		gameInit(){
 			this.xpToNextLevelCalc()
 			this.changeSlots(this.player.bag.slots, this.player.bag.bagSpace)
+			this.initializeEnemyPool()
 			
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
@@ -347,9 +373,87 @@ var app = new Vue({
 			let x = Math.ceil((this.player.xpToNextLevel-this.player.xp)/this.monsterXp(enemy))
 			return x == 'Infinity' ? 'noxp' : x
 		},
+
+		//Fills the enemy pool
+		initializeEnemyPool(){
+			let enemiesArray = [];
+			let finishedPoolArray = [];
+			this.enemies.forEach(enemy => {
+				enemiesArray.push(enemy)
+			});
+
+			//Simple bubble sort so enemies don't have to be sorted by level
+			//by hand in the enemy list
+			while(true){
+				let flag = true;
+				for(let i=0; i<enemiesArray.length - 1;i++){
+					let temp;
+					if(enemiesArray[i].poolLevel > enemiesArray[i+1].poolLevel){
+						temp = enemiesArray[i];
+						enemiesArray[i] = enemiesArray[i+1];
+						enemiesArray[i+1] = temp;
+						flag = false;
+					}
+				}
+				if(flag) break
+			}
+
+			//Finally, add each enemy to the correct pool
+			let tempArray = []; currentLevel = enemiesArray[0].poolLevel;
+			enemiesArray.forEach(enemy => {
+				if(enemy.poolLevel == currentLevel && enemy.poolLevel < 1000) tempArray.push(enemy)
+				else{
+					currentLevel = enemy.poolLevel;
+					finishedPoolArray.push(tempArray); 
+					tempArray = [enemy];
+				}
+			});
+			this.enemyPool = finishedPoolArray;
+		},
+
+		//Toggles generating enemy on/off
+		toggleEnemy(enemy){
+			if(this.disabledEnemies.includes(enemy)) this.disabledEnemies.splice(this.disabledEnemies.indexOf(enemy), 1);
+			else this.disabledEnemies.push(enemy)
+		},
+
+		//Functions that will probably be needed for the mob disable box
+		getCurrentEnemyPool(){
+			return(this.enemyPool[this.currentPool]);
+		},
+
+		getEnemyDisabled(enemy){
+			return(this.disabledEnemies.includes(enemy));
+		},
 		
+		chooseEnemy(){
+			let roll = this.rand(0, this.enemyPool[this.currentPool].length - 1)
+			let newEnemy = this.enemyPool[this.currentPool][roll]
+			if(this.disabledEnemies.includes(newEnemy)) return(this.chooseEnemy)
+			return newEnemy
+		},
+
+		//Generates a new enemy, this enemy can be rare
+		//Due to the way enemies are stored and the classless structure of this game
+		//I had to approach this by creating a new entry in the enemies list
+		//enemies[0] is now a placeholder with the stats of a wolf
+		//however, it's overwritten when generating new enemies
+		generateEnemy(enemy=this.chooseEnemy()){
+			let generatedEnemy = this.enemies[0];
+			Object.assign(generatedEnemy, enemy);
+			if(this.rand(0, 10) == 1){ //If it rolls 1
+				//Lazy formula below
+				generatedEnemy.name = "Rare " + generatedEnemy.name;
+				generatedEnemy.type = "rare"; 
+				generatedEnemy.maxHp *= 2; generatedEnemy.hp = generatedEnemy.maxHp;
+			}
+			return generatedEnemy;
+		},
+
 		enemyDeadEvent(enemy) {
-			enemy.hp = enemy.maxHp
+			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
+			enemy = this.generateEnemy()
+			enemy.hp = enemy.maxHp;
 			enemy.killCount++
 			this.playerXp(enemy)
 			this.player.money += this.rand(enemy.minMoney, enemy.maxMoney)
@@ -532,10 +636,13 @@ var app = new Vue({
 			}
 		},
 
+		//In this function I used a forEach for readability
+		//But forEach works differently in JS than the languages I'm used to
+		//Apparently you can't directly return out of a forEach
 		getFirstEmptySpace(bagSlots){
 			let returnValue = false
 			bagSlots.forEach(slot => {
-				if(slot.content === null && returnValue === false){//<--- My solution to not being able to return 
+				if(slot.content === null && returnValue === false){//<--- My solution to not being able to 
 					returnValue = (bagSlots.indexOf(slot))        //      return the value immediately
 				}
 			}); return returnValue
@@ -549,6 +656,8 @@ var app = new Vue({
 			return emptySlots
 		},
 
+		//Rewrote parts of this to support deleting items from any container
+		//For potential use with chests or something
 		deleteItem(container, slotId) {
 			if (slotId == this.player.equipment.slotId) {
 				this.player.equipment.item.splice(0, 1)
@@ -595,8 +704,8 @@ var app = new Vue({
 		},
 
 		unselectItem() {
-			this.selectedItem.selection = false
-			this.selectedItem.item.shift()
+			this.selectedItem.selection = false,
+				this.selectedItem.item.shift()
 			this.selectedItem.slotId = null
 			this.selectedItem.target = null
 		},
@@ -608,7 +717,7 @@ var app = new Vue({
 		window.addEventListener('mousemove',this.getMouseCoords)
 		
 		this.gameInit()
-		
+
 		document.addEventListener("keydown", (event) => {
 			if (this.keyPressed) return;
 			this.keyPressed = true;
@@ -622,7 +731,7 @@ var app = new Vue({
 		document.addEventListener("keyup", (event) => {
 			this.keyPressed = false;
 		}, false);
-
+		
 		setInterval(() => {
 			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0
