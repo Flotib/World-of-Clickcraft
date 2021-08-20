@@ -799,9 +799,9 @@ var app = new Vue({
 		setInterval(() => {
 			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0
-				for (const enemy of this.enemies) {
-					this.generateEnemy()
-				}
+				this.generateEnemy()
+				//for (const enemy of this.enemies) {
+				//}
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
