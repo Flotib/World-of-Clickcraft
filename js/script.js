@@ -56,7 +56,8 @@ var app = new Vue({
 		enemies: [
 			{
 				name: 'Wolf',
-				portrait: 'wolf1',
+				portrait: 'wolf',
+				portraitId: 1,
 				maxHp: 60,
 				hp: 60,
 				level: null,
@@ -69,7 +70,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Kobold',
-				portrait: 'wolf1',
+				portrait: 'kobold',
+				portraitId: 1,
 				maxHp: 110,
 				hp: 110,
 				level: null,
@@ -82,7 +84,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Bandit',
-				portrait: 'wolf1',
+				portrait: 'defias',
+				portraitId: 1,
 				maxHp: 190,
 				hp: 190,
 				level: null,
@@ -95,7 +98,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Boar',
-				portrait: 'wolf1',
+				portrait: 'boar',
+				portraitId: 2,
 				maxHp: 280,
 				hp: 280,
 				level: null,
@@ -108,7 +112,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Forest Spider',
-				portrait: 'wolf1',
+				portrait: 'tarantula',
+				portraitId: 3,
 				maxHp: 200,
 				hp: 200,
 				level: null,
@@ -121,7 +126,8 @@ var app = new Vue({
 			},
 			{
 				name: 'Murloc',
-				portrait: 'wolf1',
+				portrait: 'murloc',
+				portraitId: 1,
 				maxHp: 200,
 				hp: 200,
 				level: null,
