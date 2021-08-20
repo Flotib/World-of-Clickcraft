@@ -258,7 +258,6 @@ var app = new Vue({
 				}
 			}
 
-			console.log(size)
 			return {
 				width: size+'px',
 			}
@@ -700,7 +699,6 @@ var app = new Vue({
 			this.player.equipment.item.splice(0, 1)
 			this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, content: actualItem })
 			this.unselectItem()
-			console.log(this.player.equipment.item)
 		},
 
 		unselectItem() {
@@ -717,14 +715,13 @@ var app = new Vue({
 		window.addEventListener('mousemove',this.getMouseCoords)
 		
 		this.gameInit()
-		
+
 		document.addEventListener("keydown", (event) => {
 			if (this.keyPressed) return;
 			this.keyPressed = true;
 
 			if (event.keyCode == 66) { // 'B' toggle bag
 				this.player.bag.open = !this.player.bag.open
-				console.log('b')
 			}
 		}, false);
 
