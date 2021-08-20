@@ -800,7 +800,7 @@ var app = new Vue({
 			if (this.step % (this.fps*this.countdown) == 0) {
 				this.step = 0
 				for (const enemy of this.enemies) {
-					enemy.hp = enemy.maxHp
+					this.generateEnemy()
 				}
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
