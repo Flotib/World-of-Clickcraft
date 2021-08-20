@@ -297,7 +297,7 @@ var app = new Vue({
 		gameInit(){
 			this.xpToNextLevelCalc()
 			this.updateSlots(this.player.bag.slots, this.player.bag.bagSpace)
-			//this.initializeEnemyPool()
+			this.initializeEnemyPool()
 			
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
