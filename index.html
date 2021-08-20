@@ -88,7 +88,7 @@
 			
 			<div style="display: inline-block; position: absolute; bottom: 35px;">
 				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
-				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
+				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemyPool++">next</button>
 				<button @click="player.level++">+1 lvl</button>
 				<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
 				<button @click="enemies[currentEnemy].hp=0">instant kill</button>

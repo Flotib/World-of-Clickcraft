@@ -20,14 +20,15 @@ var app = new Vue({
 			selection: false,
 			item: {},
 			slotId: null,
-			container: null,
+			target: null,
 		},
 		player: {
 			name: 'Player',
+			type: 'player', //could be a seller or something else
 			baseMinDamage: 0,
 			baseMaxDamage: 1,
-			minDamage: null,
-			maxDamage: null,
+			weaponMinDamage: 1,
+			weaponMaxDamage: 1,
 			level: 1,
 			xpToNextLevel: null,
 			xp: 0,
@@ -40,22 +41,27 @@ var app = new Vue({
 				bagSpace: 8,
 				slots: [],
 			},
-			weapon: {
+			equipment: {
 				item: [],
 				slotId: 0,
 			},
-			trinket: {
-				item: [],
-				slotId: 1,
-			},
-			trinket2: {
-				item: [],
-				slotId: 2,
-			},
 		},
-		enemies: [
+		enemies: [ // It will be converted to json later if I can
 			{
 				name: 'Wolf', //Placeholder wolf
+				portrait: 'wolf1',
+				maxHp: 60,
+				hp: 60,
+				level: null,
+				poolLevel: 1000,
+				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
+				killCount: 0,
+				minMoney: null,
+				maxMoney: null,
+				levelenvironment: 'elwynn',
+			},
+			{
+				name: 'Wolf',
 				portrait: 'wolf1',
 				maxHp: 60,
 				hp: 60,
@@ -68,23 +74,8 @@ var app = new Vue({
 				levelenvironment: 'elwynn',
 			},
 			{
-				name: 'Wolf',
-				portrait: 'wolf',
-				portraitId: 1,
-				maxHp: 60,
-				hp: 60,
-				level: null,
-				poolLevel: 0,
-				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
 				name: 'Kobold',
-				portrait: 'kobold',
-				portraitId: 1,
+				portrait: 'wolf1',
 				maxHp: 110,
 				hp: 110,
 				level: null,
@@ -97,8 +88,7 @@ var app = new Vue({
 			},
 			{
 				name: 'Bandit',
-				portrait: 'defias',
-				portraitId: 1,
+				portrait: 'wolf1',
 				maxHp: 190,
 				hp: 190,
 				level: null,
@@ -111,8 +101,7 @@ var app = new Vue({
 			},
 			{
 				name: 'Boar',
-				portrait: 'boar',
-				portraitId: 2,
+				portrait: 'wolf1',
 				maxHp: 280,
 				hp: 280,
 				level: null,
@@ -125,8 +114,7 @@ var app = new Vue({
 			},
 			{
 				name: 'Forest Spider',
-				portrait: 'tarantula',
-				portraitId: 3,
+				portrait: 'wolf1',
 				maxHp: 200,
 				hp: 200,
 				level: null,
@@ -139,8 +127,7 @@ var app = new Vue({
 			},
 			{
 				name: 'Murloc',
-				portrait: 'murloc',
-				portraitId: 1,
+				portrait: 'wolf1',
 				maxHp: 200,
 				hp: 200,
 				level: null,
@@ -185,10 +172,6 @@ var app = new Vue({
 				equipable: true,
 				slotType: 'weapon',
 				icon: 'inv_sword_04',
-				baseMinDamage: 1,
-				minDamage: 1,
-				baseMaxDamage: 2,
-				maxDamage: 2,
 			},
 			{
 				id: 2,
@@ -207,10 +190,10 @@ var app = new Vue({
 		enemyPool: [], //Putting this variable here for now
 		totalClicks: 0,
 		moneyPow: 2.6,
-		goldimg: '<img src="assets/img/ui/money/gold.png">',
-		silverimg: '<img src="assets/img/ui/money/silver.png">',
-		copperimg: '<img src="assets/img/ui/money/copper.png">',
-		diamondimg: '<img src="assets/img/ui/money/diamond.png">',
+		goldimg: '<img v-if="g>0" src="assets/img/ui/money/gold.png">',
+		silverimg: '<img v-if="g>0" src="assets/img/ui/money/silver.png">',
+		copperimg: '<img v-if="g>0" src="assets/img/ui/money/copper.png">',
+		diamondimg: '<img v-if="g>0" src="assets/img/ui/money/diamond.png">',
 		hoverxp: false,
 	},
 	
@@ -246,7 +229,7 @@ var app = new Vue({
 		},
 
 		'player.bag.bagSpace': function (slots, oldslots) {
-			this.updateSlots(this.player.bag.slots, slots)
+			this.changeSlots(this.player.bag.slots, slots)
 		},
 		
 	},
@@ -255,7 +238,7 @@ var app = new Vue({
 		unequipButtonStyles() {
 			let color = 'gray'
 
-			if (this.player.weapon.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false && this.selectedItem.container == 'playerWeapon') {
+			if (this.player.equipment.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false) {
 				color = 'green'
 			}
 
@@ -267,7 +250,7 @@ var app = new Vue({
 		equipButtonStyles() {
 			let color = 'gray'
 
-			if (this.selectedItem.container == 'playerBag' && this.selectedItem.item.equipable) {
+			if (this.selectedItem.target.type == 'player' && this.selectedItem.item.equipable) {
 				color = 'green'
 			}
 
@@ -296,8 +279,8 @@ var app = new Vue({
 		
 		gameInit(){
 			this.xpToNextLevelCalc()
-			this.updateSlots(this.player.bag.slots, this.player.bag.bagSpace)
-			//this.initializeEnemyPool()
+			this.changeSlots(this.player.bag.slots, this.player.bag.bagSpace)
+			this.initializeEnemyPool()
 			
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
@@ -381,18 +364,12 @@ var app = new Vue({
 		},
 		
 		totalMinDamage() {
-			let minDamage = this.player.baseMinDamage
-			if (this.player.weapon.item.length > 0) {
-		
-			}
-
+			let minDamage = this.player.baseMinDamage + this.player.weaponMinDamage
 			return Math.floor(minDamage)
 		},
 		
 		totalMaxDamage() {
-			let maxDamage = this.player.baseMaxDamage
-
-
+			let maxDamage = this.player.baseMaxDamage + this.player.weaponMaxDamage
 			return Math.floor(maxDamage)
 		},
 		
@@ -450,7 +427,7 @@ var app = new Vue({
 					tempArray = [enemy];
 				}
 			});
-			if(tempArray.length > 0) finishedPoolArray.push(tempArray); 
+			if(tempArray.length > 0 && currentLevel < 1000) finishedPoolArray.push(tempArray); 
 			this.enemyPool = finishedPoolArray;
 		},
 
@@ -524,6 +501,7 @@ var app = new Vue({
 		playerXp(enemy) {
 			this.player.xp+=this.monsterXp(enemy)
 		},
+		
 		
 		monsterXp(enemy) {
 			let xp = 0
@@ -682,7 +660,7 @@ var app = new Vue({
 			target[emptySlot].content = item[index]
 		},
 
-		updateSlots(target, slots) {
+		changeSlots(target, slots) {
 			if (target.length < slots) {
 				target.push({ slotId: target.length + 1, content: null })
 			} else if (target.length > slots) {
@@ -690,7 +668,7 @@ var app = new Vue({
 			}
 
 			if (slots != target.length) {
-				this.updateSlots(target, slots)
+				this.changeSlots(target, slots)
 			}
 		},
 
@@ -712,7 +690,9 @@ var app = new Vue({
 		},
 		
 		deleteItem(container, slotId) {
-			if (container.slots[slotId - 1].content != null) {
+			if (slotId == this.player.equipment.slotId) {
+				this.player.equipment.item.splice(0, 1)
+			} else if (container.slots[slotId - 1].content != null) {
 				this.clearSlot(container, slotId)
 			}
 			this.unselectItem()
@@ -722,40 +702,34 @@ var app = new Vue({
 			container.slots.splice(slotId - 1, 1, { slotId: slotId, content: null })
 		},
 
-		itemSelection(item, slotId, container) {
+		itemSelection(item, slotId, target) {
 			this.selectedItem.selection = true
 			this.selectedItem.item = item
 			this.selectedItem.slotId = slotId
-			this.selectedItem.container = container // name of the parent which contain the item
+			this.selectedItem.target = target
 		},
 
 		equipItem(item, slot) {
-			if (item.slotType == 'weapon') {
-				if (this.player.weapon.item.length != 0) {
-					let actualItem = this.player.weapon.item[0]
-					actualItem.equipable = true
-					this.player.weapon.item.splice(0, 1, item)
-					this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, content: actualItem })
-					this.player.weapon.item.equipable = false
-				} else {
-					this.player.weapon.item.splice(0, 1, item)
-					this.clearSlot(this.player.bag, slot)
-					this.player.weapon.item.equipable = false
-				}
+			if (this.player.equipment.item.length != 0) {
+				let actualItem = this.player.equipment.item[0]
+				actualItem.equipable = true
+				this.player.equipment.item.splice(0, 1, item)
+				this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, content: actualItem })
+				this.player.equipment.item[0].equipable = false
+			} else {
+				this.player.equipment.item.splice(0, 1, item)
+				this.clearSlot(this.player.bag, slot)
+				this.player.equipment.item[0].equipable = false
 			}
 			this.unselectItem()
 		},
 
-		unequipItem(item) {
+		unequipItem() {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
-
-			if (item.container == 'playerWeapon') {
-				let actualItem = this.player.weapon.item[0]
-				actualItem.equipable = true
-				this.player.weapon.item.splice(0, 1)
-				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, content: actualItem })
-			}
-			
+			let actualItem = this.player.equipment.item[0]
+			actualItem.equipable = true
+			this.player.equipment.item.splice(0, 1)
+			this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, content: actualItem })
 			this.unselectItem()
 		},
 
@@ -763,7 +737,7 @@ var app = new Vue({
 			this.selectedItem.selection = false
 			this.selectedItem.item = {}
 			this.selectedItem.slotId = null
-			this.selectedItem.container = null
+			this.selectedItem.target = null
 		},
 
 		itemIcon(item) {
@@ -780,7 +754,7 @@ var app = new Vue({
 	mounted() {
 		
 		window.addEventListener('mousemove',this.getMouseCoords)
-
+		
 		this.gameInit()
 
 		document.addEventListener("keydown", (event) => {
