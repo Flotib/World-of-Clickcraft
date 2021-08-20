@@ -542,7 +542,7 @@ a {
 
 .bag-button {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	justify-content: center;
 	user-select: none;
 	width: 50px;
@@ -559,8 +559,11 @@ a {
 }
 
 .bag-button p {
-	font-size: 22px;
+	font-family: Arial Narrow;
+	font-size: 20px;
+	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000;
 	color: white;
+	margin-bottom: 2px;
 }
 
 .bag-button:hover {

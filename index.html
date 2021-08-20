@@ -81,7 +81,7 @@
 						unselect
 					</button>
 					<div class="bag-button" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'+(player.bag.open ? 'box-shadow: inset 0 0 8px 3px #e9df5c' : '')">
-						<p>{{emptySpace(player.bag.slots)}}</p>
+						<p>({{emptySpace(player.bag.slots)}})</p>
 					</div>
 				</div>
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
