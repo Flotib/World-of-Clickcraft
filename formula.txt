@@ -1,0 +1,30 @@
+\frac{4x^{2}}{60}+\frac{x^{3}}{5+x}\cdot\left(1+\left(\frac{x}{35}\right)\right)
+
+\frac{\left(\frac{x}{60}\cdot12000\right)}{60}\ \cdot x
+
+\frac{\left(\frac{x^{2}}{60}\cdot12000\right)}{60}
+
+\frac{\left(\frac{x^{n}}{60}\cdot10000\right)}{60^{n-1}}
+
+
+n = 2.6
+x = lvl
+
+minimum: 
+
+x**1.9 --> 15 lvl
+
+(((x**n)/36)*2000)/(36**(n-1)) --> 16-35 lvl   125*(4**(2-n))*(9**(-n))*(x**n)
+
+(((x**n)/60)*10000)/(60**(n-1)) --> 36-60 lvl
+
+max:
+
+3*(x**1.6)
+
+(((x**n)/40)*3100)/(40**(n-1))
+
+(((x**n)/70)*18000)/(70**(n-1))
+
+
+https://www.desmos.com/calculator/ypxnj0xzlg
