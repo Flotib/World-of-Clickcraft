@@ -62,7 +62,7 @@
 				</div>
 
 				<div class="select-item-interaction">
-					<button v-if="selectedItem.container == 'playerBag' && player.level >= selectedItem.item.requiredLevel" :style="equipButtonStyles" @click="(selectedItem.container == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
+					<button v-if="selectedItem.container == 'playerBag' && player.level >= selectedItem.item.requiredLevel && selectedItem.item.equipable" :style="equipButtonStyles" @click="(selectedItem.container == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 						equip item
 					</button>
 					<button v-if="selectedItem.container == 'playerEquipment' || selectedItem.container == 'playerTrinket'" :style="unequipButtonStyles" @click="(selectedItem.container == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
@@ -80,10 +80,13 @@
 				</div>
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
-						<div v-if="container.content != null" @click="(selectedItem.selection) && (selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? unselectItem() : itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'">
+						<div  v-if="container.content != null" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+							<div  @click="(selectedItem.selection) && (selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? unselectItem() : itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'">
+								<p v-if="container.content.stackSize > 1" style="color: white; font-style: 16px;">{{ container.content.stackSize }}</p>
+							</div>
 							<div v-if="player.bag.slots[container.slotId-1].content.requiredLevel > player.level" class="cant-equip-layer">
-								<div class="cant-equip-grayscale"></div>
-								<div class="cant-equip-red"></div>
+									<div class="cant-equip-grayscale"></div>
+									<div class="cant-equip-red"></div>
 							</div>
 						</div>
 					</div>
@@ -96,7 +99,8 @@
 				<button @click="player.level++">+1 lvl</button>
 				<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
 				<button @click="enemies[currentEnemy].hp=0">instant kill</button>
-				<button @click="addItem(rand(1,2), player.bag.slots)">add item {{getItemName(giveItemId)}}</button>
+				<button @click="addItem(rand(1,2), player.bag.slots, 1)">add item {{getItemName(giveItemId)}}</button>
+				<button @click="addItem(2, player.bag.slots, 3)">add x3 id2 {{getItemName(2)}}</button>
 				<input type="number" v-model.number="player.xp" style="width: 30px">
 				<input type="number" v-model.number="player.level" style="width: 30px">
 				<input type="number" v-model.number="player.money" style="width: 30px">

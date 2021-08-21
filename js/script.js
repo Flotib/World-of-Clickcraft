@@ -190,14 +190,14 @@ var app = new Vue({
 				minDamage: 1,
 				baseMaxDamage: 2,
 				maxDamage: 2,
-				requiredLevel: 5,
 			},
 			{
 				id: 2,
 				name: 'Two',
 				equipable: false,
-				icon: null,
-				requiredLevel: 5,
+				icon: 'inv_misc_pelt_wolf_ruin_04',
+				stackMaxSize: 20,
+				stackSize: 1,
 			},
 			{
 				id: 4,
@@ -205,6 +205,7 @@ var app = new Vue({
 				equipable: true,
 				slotType: 'trinket', // player will have 2 more equipables for 2 trinkets
 				icon: null,
+				requiredLevel: 5,
 			},
 		],
 		enemyPool: [], //Putting this variable here for now
@@ -216,7 +217,7 @@ var app = new Vue({
 		diamondimg: '<img src="assets/img/ui/money/diamond.png">',
 		hoverxp: false,
 	},
-	
+
 	watch: {
 		currentEnemy: function (enemy, oldenemy) {
 			this.enemies[oldenemy].hp = this.enemies[oldenemy].maxHp
@@ -225,15 +226,15 @@ var app = new Vue({
 		},
 
 		'currentEnemyPool': function () {
-			if(this.currentEnemyPool == this.enemyPool.length) this.currentEnemyPool = this.enemyPool.length - 1
-			if(this.currentEnemyPool < 0) this.currentEnemyPool = 0
+			if (this.currentEnemyPool == this.enemyPool.length) this.currentEnemyPool = this.enemyPool.length - 1
+			if (this.currentEnemyPool < 0) this.currentEnemyPool = 0
 			this.spawnEnemy(false)
 		},
 
 		'player.level': function () {
 			this.xpToNextLevelCalc()
 		},
-		
+
 		'player.xp': function () {
 			if (this.player.xp >= this.player.xpToNextLevel) {
 				this.levelup()
@@ -244,14 +245,14 @@ var app = new Vue({
 			let diamondvalue = 100000000000
 			if (this.player.money >= diamondvalue) {
 				this.player.diamond++
-				this.player.money-=diamondvalue
+				this.player.money -= diamondvalue
 			}
 		},
 
 		'player.bag.bagSpace': function (slots, oldslots) {
 			this.updateSlots(this.player.bag.slots, slots)
 		},
-		
+
 	},
 
 	computed: {
@@ -290,55 +291,55 @@ var app = new Vue({
 			}
 
 			return {
-				width: size+'px',
+				width: size + 'px',
 			}
 		},
 	},
 
 	methods: {
-		
-		gameInit(){
+
+		gameInit() {
 			this.xpToNextLevelCalc()
 			this.updateSlots(this.player.bag.slots, this.player.bag.bagSpace)
 			this.initializeEnemyPool()
-			
+
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
 				this.autoMoneyAttri(monster)
 			}
 		},
-		
-		getMouseCoords(e){
+
+		getMouseCoords(e) {
 			this.cursorX = e.pageX
 			this.cursorY = e.pageY
 		},
-		
+
 		between(x, min, max) {
 			return x >= min && x <= max
 		},
 
-		isGrayLevel(){
-			if(this.between(this.player.level, 1, 5)) return 0
-			if(this.between(this.player.level, 6, 49)){
-				return(this.player.level - Math.floor(this.player.level / 10) - 5)
+		isGrayLevel() {
+			if (this.between(this.player.level, 1, 5)) return 0
+			if (this.between(this.player.level, 6, 49)) {
+				return (this.player.level - Math.floor(this.player.level / 10) - 5)
 			}
-			if(this.player.level == 50) return 40
-			if(this.between(this.player.level, 51, 59)){
-				return(this.player.level - Math.floor(this.player.level / 5) - 1)
+			if (this.player.level == 50) return 40
+			if (this.between(this.player.level, 51, 59)) {
+				return (this.player.level - Math.floor(this.player.level / 5) - 1)
 			}
-			if(this.player.level == 60) return 51
+			if (this.player.level == 60) return 51
 		},
 
-		difficultyColor(enemy) {	
-			if(enemy.level <= this.isGrayLevel()) return 'graylevel'	
-			if(enemy.level >= this.player.level + 10) return 'skulllevel'
-			if(enemy.level <= this.player.level - 3) return 'greenlevel'
-			if(enemy.level >= this.player.level + 5) return 'redlevel'
-			if(enemy.level >= this.player.level + 3) return 'orangelevel'
-			if(enemy.level <= this.player.level + 2) return 'yellowlevel'
-			if(enemy.level >= this.player.level - 2) return 'yellowlevel'
+		difficultyColor(enemy) {
+			if (enemy.level <= this.isGrayLevel()) return 'graylevel'
+			if (enemy.level >= this.player.level + 10) return 'skulllevel'
+			if (enemy.level <= this.player.level - 3) return 'greenlevel'
+			if (enemy.level >= this.player.level + 5) return 'redlevel'
+			if (enemy.level >= this.player.level + 3) return 'orangelevel'
+			if (enemy.level <= this.player.level + 2) return 'yellowlevel'
+			if (enemy.level >= this.player.level - 2) return 'yellowlevel'
 		},
-		
+
 		rand(min, max) {
 			return Math.floor(Math.random() * (max - min + 1) + min)
 		},
@@ -354,55 +355,55 @@ var app = new Vue({
 
 		autoLevelAttri(enemy) {
 			if (enemy.level == null) {
-				enemy.level = this.enemies.indexOf(enemy)+1
+				enemy.level = this.enemies.indexOf(enemy) + 1
 			}
 		},
-		
+
 		autoMoneyAttri(enemy) { //https://www.desmos.com/calculator?lang=fr
 			if (enemy.level < 16) {
 				if (enemy.minMoney == null) {
-					enemy.minMoney = Math.round(enemy.level**1.9)
+					enemy.minMoney = Math.round(enemy.level ** 1.9)
 				}
 				if (enemy.maxMoney == null) {
-					enemy.maxMoney = Math.round(3*(enemy.level**1.6))
+					enemy.maxMoney = Math.round(3 * (enemy.level ** 1.6))
 				}
 			} else if (this.between(enemy.level, 16, 35)) {
 				if (enemy.minMoney == null) {
-					enemy.minMoney = Math.round((((enemy.level**this.moneyPow)/36)*2000)/(36**(this.moneyPow-1)))
+					enemy.minMoney = Math.round((((enemy.level ** this.moneyPow) / 36) * 2000) / (36 ** (this.moneyPow - 1)))
 				}
 				if (enemy.maxMoney == null) {
-					enemy.maxMoney = Math.round((((enemy.level**this.moneyPow)/40)*3100)/(40**(this.moneyPow-1)))
+					enemy.maxMoney = Math.round((((enemy.level ** this.moneyPow) / 40) * 3100) / (40 ** (this.moneyPow - 1)))
 				}
 			} else if (enemy.level > 35) {
 				if (enemy.minMoney == null) {
-					enemy.minMoney = Math.round((((enemy.level**this.moneyPow)/60)*10000)/(60**(this.moneyPow-1)))
+					enemy.minMoney = Math.round((((enemy.level ** this.moneyPow) / 60) * 10000) / (60 ** (this.moneyPow - 1)))
 				}
 				if (enemy.maxMoney == null) {
-					enemy.maxMoney = Math.round((((enemy.level**this.moneyPow)/70)*18000)/(70**(this.moneyPow-1)))
+					enemy.maxMoney = Math.round((((enemy.level ** this.moneyPow) / 70) * 18000) / (70 ** (this.moneyPow - 1)))
 				}
 			}
 		},
-		
+
 		totalMinDamage() {
 			let minDamage = this.player.baseMinDamage
 			if (this.player.weapon.item.length > 0) {
-		
+
 			}
 
 			return Math.floor(minDamage)
 		},
-		
+
 		totalMaxDamage() {
 			let maxDamage = this.player.baseMaxDamage
 
 
 			return Math.floor(maxDamage)
 		},
-		
+
 		damageEnemy(enemy) {
 			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
 			this.clickParticles(damage)
-			enemy.hp-=damage
+			enemy.hp -= damage
 		},
 
 		formatHpLabel(enemy) {
@@ -415,49 +416,49 @@ var app = new Vue({
 		},
 
 		killToLevelUp(enemy) {
-			let x = Math.ceil((this.player.xpToNextLevel-this.player.xp)/this.monsterXp(enemy))
+			let x = Math.ceil((this.player.xpToNextLevel - this.player.xp) / this.monsterXp(enemy))
 			return x == 'Infinity' ? 'noxp' : x
 		},
 
 		//Fills the enemy pool
-		initializeEnemyPool(){
+		initializeEnemyPool() {
 			let enemiesArray = [];
 			let finishedPoolArray = [];
-			for(let i=1; i<this.enemies.length; i++){ //Starting from 1 to not include the placeholder wolf
+			for (let i = 1; i < this.enemies.length; i++) { //Starting from 1 to not include the placeholder wolf
 				enemiesArray.push(this.enemies[i])
 			}
 
 			//Simple bubble sort so enemies don't have to be sorted by level
 			//by hand in the enemy list
-			while(true){
+			while (true) {
 				let flag = true;
-				for(let i=0; i<enemiesArray.length - 1;i++){
+				for (let i = 0; i < enemiesArray.length - 1; i++) {
 					let temp;
-					if(enemiesArray[i].poolLevel > enemiesArray[i+1].poolLevel){
+					if (enemiesArray[i].poolLevel > enemiesArray[i + 1].poolLevel) {
 						temp = enemiesArray[i];
-						enemiesArray[i] = enemiesArray[i+1];
-						enemiesArray[i+1] = temp;
+						enemiesArray[i] = enemiesArray[i + 1];
+						enemiesArray[i + 1] = temp;
 						flag = false;
 					}
 				}
-				if(flag) break
+				if (flag) break
 			}
 
 			//Finally, add each enemy to the correct pool
 			let tempArray = []; currentLevel = enemiesArray[0].poolLevel;
 			enemiesArray.forEach(enemy => {
-				if(enemy.poolLevel == currentLevel) tempArray.push(enemy)
-				else{
+				if (enemy.poolLevel == currentLevel) tempArray.push(enemy)
+				else {
 					currentLevel = enemy.poolLevel;
-					finishedPoolArray.push(tempArray); 
+					finishedPoolArray.push(tempArray);
 					tempArray = [enemy];
 				}
 			});
-			if(tempArray.length > 0) finishedPoolArray.push(tempArray); 
+			if (tempArray.length > 0) finishedPoolArray.push(tempArray);
 			this.enemyPool = finishedPoolArray;
 		},
 
-		printEnemyPools(){
+		printEnemyPools() {
 			this.enemyPool.forEach(pool => {
 				let poolOut = ""
 				pool.forEach(enemy => {
@@ -468,25 +469,24 @@ var app = new Vue({
 		},
 
 		//Toggles generating enemy on/off
-		toggleEnemy(enemy){
-			if(this.disabledEnemies.includes(enemy)) this.disabledEnemies.splice(this.disabledEnemies.indexOf(enemy), 1);
+		toggleEnemy(enemy) {
+			if (this.disabledEnemies.includes(enemy)) this.disabledEnemies.splice(this.disabledEnemies.indexOf(enemy), 1);
 			else this.disabledEnemies.push(enemy)
 		},
 
 		//Functions that will probably be needed for the mob disable box
-		getCurrentEnemyPool(){
-			return(this.enemyPool[this.currentEnemyPool]);
+		getCurrentEnemyPool() {
+			return (this.enemyPool[this.currentEnemyPool]);
 		},
 
-		getEnemyDisabled(enemy){
-			return(this.disabledEnemies.includes(enemy));
+		getEnemyDisabled(enemy) {
+			return (this.disabledEnemies.includes(enemy));
 		},
-		
-		chooseEnemy(){
+
+		chooseEnemy() {
 			let roll = this.rand(0, this.enemyPool[this.currentEnemyPool].length - 1)
-			console.log(roll)
 			let newEnemy = this.enemyPool[this.currentEnemyPool][roll]
-			if(this.disabledEnemies.includes(newEnemy)) return(this.chooseEnemy)
+			if (this.disabledEnemies.includes(newEnemy)) return (this.chooseEnemy)
 			return newEnemy
 		},
 
@@ -495,19 +495,19 @@ var app = new Vue({
 		//I had to approach this by creating a new entry in the enemies list
 		//enemies[0] is now a placeholder with the stats of a wolf
 		//however, it's overwritten when generating new enemies
-		generateEnemy(enemy=this.chooseEnemy(), allowRare=true){
+		generateEnemy(enemy = this.chooseEnemy(), allowRare = true) {
 			let generatedEnemy = this.enemies[0];
 			Object.assign(generatedEnemy, enemy);
-			if(this.rng(this.rareChance) && allowRare){ 
+			if (this.rng(this.rareChance) && allowRare) {
 				//Lazy formula below
 				generatedEnemy.name = "Rare " + generatedEnemy.name;
-				generatedEnemy.type = "rare"; 
+				generatedEnemy.type = "rare";
 				generatedEnemy.maxHp *= 2; generatedEnemy.hp = generatedEnemy.maxHp;
 			}
 			return generatedEnemy;
 		},
 
-		spawnEnemy(allowRare=true){
+		spawnEnemy(allowRare = true) {
 			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
 			enemy = this.generateEnemy(this.chooseEnemy(), allowRare)
 			enemy.hp = enemy.maxHp;
@@ -525,32 +525,32 @@ var app = new Vue({
 		},
 
 		playerXp(enemy) {
-			this.player.xp+=this.monsterXp(enemy)
+			this.player.xp += this.monsterXp(enemy)
 		},
-		
+
 		monsterXp(enemy) {
 			let xp = 0
-			if (this.difficultyColor(enemy)=='graylevel') {
+			if (this.difficultyColor(enemy) == 'graylevel') {
 				return 0
 			}
 			if (this.player.level == enemy.level) {
-				xp =  this.MXP(this.player.level)
+				xp = this.MXP(this.player.level)
 			} else if (this.player.level < enemy.level) {
 				xp = this.player.level + 4 > enemy.level ? (
 					this.MXP(this.player.level) * (1 + 0.05 * (enemy.level - this.player.level))
 				) : (
 					this.MXP(this.player.level) * 1.2)
 			} else if (this.player.level > enemy.level) {
-				xp = this.MXP(this.player.level) * (1 - (this.player.level - enemy.level)/this.ZD())
+				xp = this.MXP(this.player.level) * (1 - (this.player.level - enemy.level) / this.ZD())
 			}
-			
+
 			if (enemy.type == 'elite') {
-				xp*=2
+				xp *= 2
 			}
-			
+
 			return Math.round(xp)
 		},
-		
+
 		ZD() {
 			if (this.between(this.player.level, 1, 7)) {
 				return 5
@@ -578,15 +578,15 @@ var app = new Vue({
 				return 17
 			}
 		},
-		
+
 		questXp(quest) {
-			
+
 		},
-		
+
 		xpToNextLevelCalc() {
-			this.player.xpToNextLevel = Math.round(((8 * this.player.level) + this.Diff(this.player.level)) * this.MXP(this.player.level)/100)*100
+			this.player.xpToNextLevel = Math.round(((8 * this.player.level) + this.Diff(this.player.level)) * this.MXP(this.player.level) / 100) * 100
 		},
-		
+
 		Diff(CL) {
 			if (CL <= 28) {
 				return 0
@@ -597,57 +597,57 @@ var app = new Vue({
 			} else if (CL == 31) {
 				return 6
 			} else if (CL >= 32 && CL <= 59) {
-				return 5*(CL-30)
+				return 5 * (CL - 30)
 			}
 		},
-		
+
 		MXP(CL) {
 			return 45 + (5 * CL)
 		},
-		
+
 		levelup() {
 			this.player.level++
 			this.player.xp = this.player.xp - this.player.xpToNextLevel
 			this.xpToNextLevelCalc()
 		},
-		
+
 		moneyStylizer(money, diamond) {
 			let copper = money % 100
-			let silver = Math.floor(money/100)
+			let silver = Math.floor(money / 100)
 			if (silver >= 100) {
 				silver = silver % 100
 			}
-			let gold = Math.floor(money/10000)
-			
+			let gold = Math.floor(money / 10000)
+
 			if (diamond == 0 || diamond == null) {
 				if (gold == 0) {
 					if (silver == 0) {
-						return '<span></span><span></span><span></span><span>'+copper+this.copperimg+'</span>'
+						return '<span></span><span></span><span></span><span>' + copper + this.copperimg + '</span>'
 					} else {
-						return '<span></span><span></span><span>'+silver+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 					}
 				} else { // gold.toLocaleString() works too
-					return '<span></span><span>'+gold.toLocaleString().split(/\s/).join(' ')+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+					return '<span></span><span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 				}
 			} else {
-				return '<span>'+diamond.toLocaleString().split(/\s/).join(' ')+this.diamondimg+'</span><span>'+gold.toLocaleString().split(/\s/).join(' ')+this.goldimg+'</span><span>'+String(silver).padStart(2, '0')+this.silverimg+'</span><span>'+String(copper).padStart(2, '0')+this.copperimg+'</span>'
+				return '<span>' + diamond.toLocaleString().split(/\s/).join(' ') + this.diamondimg + '</span><span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 			}
 		},
-		
+
 		clickParticles(damage) {
-			this.damageParticles.push({'posX': this.cursorX-this.rand(4, 16), 'posY': this.cursorY-34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks}) //6sec - X:8px and Y:14px to center on the knife point
+			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
 				this.damageParticles.shift()
-			}, (this.damageParticlesDuration-1)*1000) //to be sure to delete it as soon as it disappear
+			}, (this.damageParticlesDuration - 1) * 1000) //to be sure to delete it as soon as it disappear
 		},
 
 		error(message) { // todo : div in html for the error message + css animation
-			this.errorMessages.push({'msg': message})
+			this.errorMessages.push({ 'msg': message })
 			setTimeout(() => {
 				this.errorMessages.shift()
 			}, 3000)
 		},
-		
+
 		/*buyItem(item, price) { We will see that later :)
 			if (price > this.player.money) {
 				if (this.player.diamond==0) {
@@ -671,18 +671,56 @@ var app = new Vue({
 			}
 		},
 
-		addItem(id, target) {
-			let emptySlot = this.getFirstEmptySpace(target)
-			if(emptySlot === false) return
-
+		addItem(id, target, quantity) {
+			let newQuantity = 0
+			let indexBag = -1
+			let itemClone = JSON.parse(JSON.stringify(this.items))
 			let index = this.items.findIndex(item => item.id === id)
 			if (index < 0) {
 				return
 			}
-			let oldslotId = this.player.bag.slots[emptySlot].slotId
-			target[emptySlot].slotId = oldslotId
-			let item = JSON.parse(JSON.stringify(this.items))
-			target[emptySlot].content = item[index]
+
+			if (this.items[index].stackMaxSize > 1) {
+				for (let i = 0; i < target.length; i++) {
+					if (target[i].content != null) {
+						target[i].content.id == id ? (indexBag = i) : ('')
+					}
+				}
+			}
+			if (indexBag >= 0 && this.items[index].stackMaxSize > 1 && target[indexBag].content.stackSize < target[indexBag].content.stackMaxSize) {
+				if (target[indexBag].content.stackSize + quantity <= target[indexBag].content.stackMaxSize) {
+					target[indexBag].content.stackSize += quantity
+				} else {
+					newQuantity = target[indexBag].content.stackSize + quantity - target[indexBag].content.stackMaxSize
+					target[indexBag].content.stackSize = target[indexBag].content.stackMaxSize
+					this.addItem(id, target, newQuantity)
+				}
+			} else {
+				let emptySlot = this.getFirstEmptySpace(target)
+				if (emptySlot === false) {
+					return
+				}
+
+				if (quantity > 1) {
+					if (this.items[index].stackMaxSize > 1) {
+						if (quantity > this.items[index].stackMaxSize) {
+							target[emptySlot].content = itemClone[index]
+							target[emptySlot].content.stackSize = target[emptySlot].content.stackMaxSize
+							newQuantity = quantity - this.items[index].stackMaxSize
+							this.addItem(id, target, newQuantity)
+						} else {
+							target[emptySlot].content = itemClone[index]
+							target[emptySlot].content.stackSize = quantity
+						}
+					} else {
+						target[emptySlot].content = itemClone[index]
+						newQuantity = quantity - 1
+						this.addItem(id, target, newQuantity)
+					}
+				} else {
+					target[emptySlot].content = itemClone[index]
+				}
+			}
 		},
 
 		updateSlots(target, slots) {
@@ -697,10 +735,10 @@ var app = new Vue({
 			}
 		},
 
-		getFirstEmptySpace(bagSlots){
+		getFirstEmptySpace(bagSlots) {
 			let returnValue = false
 			bagSlots.forEach(slot => {
-				if(slot.content === null && returnValue === false){//<--- My solution to not being able to 
+				if (slot.content === null && returnValue === false) {//<--- My solution to not being able to 
 					returnValue = (bagSlots.indexOf(slot))        //      return the value immediately
 				}
 			}); return returnValue
@@ -713,7 +751,7 @@ var app = new Vue({
 			}
 			return emptySlots
 		},
-		
+
 		deleteItem(container, slotId) {
 			if (container.slots[slotId - 1].content != null) {
 				this.clearSlot(container, slotId)
@@ -721,7 +759,7 @@ var app = new Vue({
 			this.unselectItem()
 		},
 
-		clearSlot(container, slotId){
+		clearSlot(container, slotId) {
 			container.slots.splice(slotId - 1, 1, { slotId: slotId, content: null })
 		},
 
@@ -758,7 +796,7 @@ var app = new Vue({
 				this.player.weapon.item.splice(0, 1)
 				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, content: actualItem })
 			}
-			
+
 			this.unselectItem()
 		},
 
@@ -781,8 +819,8 @@ var app = new Vue({
 	},
 
 	mounted() {
-		
-		window.addEventListener('mousemove',this.getMouseCoords)
+
+		window.addEventListener('mousemove', this.getMouseCoords)
 
 		this.gameInit()
 
@@ -800,7 +838,7 @@ var app = new Vue({
 		}, false);
 
 		setInterval(() => {
-			if (this.step % (this.fps*this.countdown) == 0) {
+			if (this.step % (this.fps * this.countdown) == 0) {
 				this.step = 0
 				this.generateEnemy()
 				//for (const enemy of this.enemies) {
@@ -808,6 +846,6 @@ var app = new Vue({
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
-		}, 1000/this.fps)
+		}, 1000 / this.fps)
 	},
 })
