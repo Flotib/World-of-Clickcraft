@@ -16,7 +16,7 @@
 		
 		<div class="backgroundEnvironment" :style="'background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);'"></div>
 		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s;'">{{ particle.output }}</div>
-		
+
 		<div id="content" style="margin-top: 20px">
 
 			<div class="enemytab">
@@ -52,23 +52,35 @@
 					<p>Level {{ player.level }}</p>
 					<p>Damages: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
 					<p>Total clicks: {{ totalClicks }}</p>
-					<div class="player-weapon" style="margin: 10px 0 10px 0">
-						<div :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.container == 'playerEquipment') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0] != null" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.container == 'playerEquipment') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')">
+					<div>
+						<div class="player-weapon">
+							<div class="item-tooltip-placeholder">
+								<div class="item-tooltip" v-if="hoverItem != null && hoverItem.slotId == player.weapon.slotId">
+									{{ hoverItem.item[0].name }}
+								</div>
+							</div>
+							<div @mouseover="hoverItem = player.weapon" @mouseleave="hoverItem = null" :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0] != null" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')">
+							</div>
+						</div>
+						<div class="player-trinket">
+							<div>
+
+							</div>
 						</div>
 					</div>
-					<div class="playercurrencycontainer">
+					<div class="player-currency-container">
 						<div class="playermoneyui"><p v-html="moneyStylizer(player.money, player.diamond)"></p></div>
 					</div>
 				</div>
 
 				<div class="select-item-interaction">
-					<button v-if="selectedItem.container == 'playerBag' && player.level >= selectedItem.item.requiredLevel && selectedItem.item.equipable" :style="equipButtonStyles" @click="(selectedItem.container == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
+					<button v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" :style="equipButtonStyles" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 						equip item
 					</button>
-					<button v-if="selectedItem.container == 'playerEquipment' || selectedItem.container == 'playerTrinket'" :style="unequipButtonStyles" @click="(selectedItem.container == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
+					<button v-if="selectedItem.containerName == 'playerEquipment' || selectedItem.containerName == 'playerTrinket'" :style="unequipButtonStyles" @click="(selectedItem.containerName == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
 						unequip item
 					</button>
-					<button v-if="selectedItem.container == 'playerBag'" @click="deleteItem(player.bag, selectedItem.slotId)">
+					<button v-if="selectedItem.containerName == 'playerBag'" @click="deleteItem(player.bag, selectedItem.slotId)">
 						delete item
 					</button>
 					<button v-if="selectedItem.selection" @click="unselectItem()">
@@ -80,20 +92,25 @@
 				</div>
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
-						<div  v-if="container.content != null" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-							<div  @click="(selectedItem.selection) && (selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? unselectItem() : itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'">
+						<div  v-if="container.content" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+							<div class="item-tooltip-placeholder">
+								<div class="item-tooltip" v-if="hoverItem != null && hoverItem.slotId == container.slotId">
+									{{ hoverItem.content.name }}
+								</div>
+							</div>
+							<div @mouseover="hoverItem = container" @mouseleave="hoverItem = null" @click="toggleSelectionItem(container.content, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'">
 								<p v-if="container.content.stackSize > 1" style="color: white; font-style: 16px;">{{ container.content.stackSize }}</p>
 							</div>
 							<div v-if="player.bag.slots[container.slotId-1].content.requiredLevel > player.level" class="cant-equip-layer">
-									<div class="cant-equip-grayscale"></div>
-									<div class="cant-equip-red"></div>
+								<div class="cant-equip-grayscale"></div>
+								<div class="cant-equip-red"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 			
-			<div style="display: inline-block; position: absolute; bottom: 35px;">
+			<div style="display: inline-block; position: fixed; bottom: 35px;">
 				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
 				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemyPool++">next</button>
 				<button @click="player.level++">+1 lvl</button>

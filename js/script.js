@@ -16,11 +16,12 @@ var app = new Vue({
 		showEnemyInformations: false,
 		giveItemId: 0,
 		rareChance: 50, // start at 50 so 2% chance to get a rare mob - could be upgraded later
+		hoverItem: null,
 		selectedItem: {
 			selection: false,
 			item: {},
 			slotId: null,
-			container: null,
+			containerName: null,
 		},
 		player: {
 			name: 'Player',
@@ -44,14 +45,16 @@ var app = new Vue({
 				item: [],
 				slotId: 0,
 			},
-			trinket: {
-				item: [],
-				slotId: 1,
-			},
-			trinket2: {
-				item: [],
-				slotId: 2,
-			},
+			trinket: [
+				{
+					item: [],
+					slotId: 1,
+				},
+				{
+					item: [],
+					slotId: 2,
+				}
+			],
 		},
 		enemies: [
 			{
@@ -259,7 +262,7 @@ var app = new Vue({
 		unequipButtonStyles() {
 			let color = 'gray'
 
-			if (this.player.weapon.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false && this.selectedItem.container == 'playerEquipment') {
+			if (this.player.weapon.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false && this.selectedItem.containerName == 'playerEquipment') {
 				color = 'green'
 			}
 
@@ -271,7 +274,7 @@ var app = new Vue({
 		equipButtonStyles() {
 			let color = 'gray'
 
-			if (this.selectedItem.container == 'playerBag' && this.selectedItem.item.equipable) {
+			if (this.selectedItem.containerName == 'playerBag' && this.selectedItem.item.equipable) {
 				color = 'green'
 			}
 
@@ -292,6 +295,17 @@ var app = new Vue({
 
 			return {
 				width: size + 'px',
+			}
+		},
+
+		tooltipPosition() {
+			const left = this.cursorX + 20 + 'px'
+
+			const top = this.cursorY + 'px'
+
+			return {
+				left,
+				top
 			}
 		},
 	},
@@ -763,11 +777,11 @@ var app = new Vue({
 			container.slots.splice(slotId - 1, 1, { slotId: slotId, content: null })
 		},
 
-		itemSelection(item, slotId, container) {
+		itemSelection(item, slotId, containerName) {
 			this.selectedItem.selection = true
 			this.selectedItem.item = item
 			this.selectedItem.slotId = slotId
-			this.selectedItem.container = container // name of the parent which contain the item
+			this.selectedItem.containerName = containerName // name of the parent which contain the item
 		},
 
 		equipItem(item, slot) {
@@ -790,7 +804,7 @@ var app = new Vue({
 		unequipItem(item) {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 
-			if (item.container == 'playerEquipment') {
+			if (item.containerName == 'playerEquipment') {
 				let actualItem = this.player.weapon.item[0]
 				actualItem.equipable = true
 				this.player.weapon.item.splice(0, 1)
@@ -804,7 +818,11 @@ var app = new Vue({
 			this.selectedItem.selection = false
 			this.selectedItem.item = {}
 			this.selectedItem.slotId = null
-			this.selectedItem.container = null
+			this.selectedItem.containerName = null
+		},
+
+		toggleSelectionItem(item, slotId, containerName) {
+			(this.selectedItem.selection) && (this.selectedItem.slotId == slotId) && (this.selectedItem.containerName == containerName) ? this.unselectItem() : this.itemSelection(item, slotId, containerName)
 		},
 
 		itemIcon(item) {
@@ -814,7 +832,7 @@ var app = new Vue({
 			}
 
 			return icon
-		}
+		},
 
 	},
 
