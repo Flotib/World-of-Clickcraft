@@ -256,7 +256,7 @@ var app = new Vue({
 		unequipButtonStyles() {
 			let color = 'gray'
 
-			if (this.player.weapon.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false && this.selectedItem.container == 'playerWeapon') {
+			if (this.player.weapon.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false && this.selectedItem.container == 'playerEquipment') {
 				color = 'green'
 			}
 
@@ -750,7 +750,7 @@ var app = new Vue({
 		unequipItem(item) {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 
-			if (item.container == 'playerWeapon') {
+			if (item.container == 'playerEquipment') {
 				let actualItem = this.player.weapon.item[0]
 				actualItem.equipable = true
 				this.player.weapon.item.splice(0, 1)

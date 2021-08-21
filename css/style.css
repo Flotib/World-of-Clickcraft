@@ -617,7 +617,7 @@ a {
 }
 
 .bag-container:hover {
-	box-shadow: inset 0 0 4px 4px #5b5cb193;
+	box-shadow: inset 0 0 4px 6px #5b5cb193;
 }
 
 .ui-item {
@@ -636,7 +636,30 @@ a {
 }
 
 .ui-item:hover {
-	box-shadow: inset 0 0 4px 4px #5b5cb193;
+	box-shadow: inset 0 0 4px 6px #5b5cb193;
+}
+
+.player-weapon .ui-item:hover {
+	box-shadow: inset 0 0 10px 6px #5b5cb193;
+}
+
+.selected-item {
+	box-shadow: inset 0 0 4px 2px #fff2aa;
+}
+
+.selected-item:hover {
+	box-shadow: inset 0 0 0 2px #fff2aa, inset 0 0 4px 6px #5b5cb193;
+}
+
+.player-weapon .selected-item:hover {
+	box-shadow: inset 0 0 0 2px #fff2aa, inset 0 0 10px 6px #5b5cb193;
+}
+
+.cant-equip {
+	width: 100%;
+	height: 100%;
+	background-color: #ff3939;
+	mix-blend-mode: multiply; /* try something else than multiply */
 }
 
 .player-weapon {
@@ -653,7 +676,7 @@ a {
 }
 
 .player-weapon:hover {
-	box-shadow: inset 0 0 12px 6px #5b5cb193;
+	box-shadow: inset 0 0 10px 6px #5b5cb193;
 }
 
 .select-item-interaction {
