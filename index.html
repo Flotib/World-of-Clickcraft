@@ -62,7 +62,7 @@
 				</div>
 
 				<div class="select-item-interaction">
-					<button v-if="selectedItem.container == 'playerBag'" :style="equipButtonStyles" @click="(selectedItem.container == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
+					<button v-if="selectedItem.container == 'playerBag' && player.level >= selectedItem.item.requiredLevel" :style="equipButtonStyles" @click="(selectedItem.container == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 						equip item
 					</button>
 					<button v-if="selectedItem.container == 'playerEquipment' || selectedItem.container == 'playerTrinket'" :style="unequipButtonStyles" @click="(selectedItem.container == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
@@ -81,7 +81,10 @@
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
 						<div v-if="container.content != null" @click="(selectedItem.selection) && (selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? unselectItem() : itemSelection(player.bag.slots[container.slotId-1].content, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.container == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'">
-							 <!--<div v-if="player.bag.slots[container.slotId-1].content.requiredLevel > player.level" class="cant-equip"></div>-->
+							<div v-if="player.bag.slots[container.slotId-1].content.requiredLevel > player.level" class="cant-equip-layer">
+								<div class="cant-equip-grayscale"></div>
+								<div class="cant-equip-red"></div>
+							</div>
 						</div>
 					</div>
 				</div>

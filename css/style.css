@@ -655,11 +655,25 @@ a {
 	box-shadow: inset 0 0 0 2px #fff2aa, inset 0 0 10px 6px #5b5cb193;
 }
 
-.cant-equip {
-	width: 100%;
-	height: 100%;
-	background-color: #ff3939;
-	mix-blend-mode: multiply; /* try something else than multiply */
+.cant-equip-layer {
+	width: 50px;
+	height: 50px;
+}
+
+.cant-equip-grayscale {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	background-color: #000000;
+	mix-blend-mode: color; /* color or saturation */
+}
+
+.cant-equip-red {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	background-color: #ff5858;
+	mix-blend-mode: multiply;
 }
 
 .player-weapon {

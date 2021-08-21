@@ -190,12 +190,14 @@ var app = new Vue({
 				minDamage: 1,
 				baseMaxDamage: 2,
 				maxDamage: 2,
+				requiredLevel: 5,
 			},
 			{
 				id: 2,
 				name: 'Two',
 				equipable: false,
 				icon: null,
+				requiredLevel: 5,
 			},
 			{
 				id: 4,
