@@ -192,6 +192,7 @@ var app = new Vue({
 				id: 1,
 				name: 'One',
 				equipable: true,
+				quality: 'rare',
 				slotType: 'weapon',
 				icon: 'inv_sword_04',
 				baseMinDamage: 1,
@@ -201,7 +202,8 @@ var app = new Vue({
 			},
 			{
 				id: 2,
-				name: 'Two',
+				name: 'Ruined Pelt',
+				quality: 'poor',
 				equipable: false,
 				icon: 'inv_misc_pelt_wolf_ruin_04',
 				stackMaxSize: 20,
@@ -333,10 +335,10 @@ var app = new Vue({
 			}
 		},
 
-		tooltipPosition() { //unused
-			const left = this.cursorX + 'px'
+		tooltipPosition() {
+			const left = this.cursorX + 10 + 'px'
 
-			const top = this.cursorY + 'px'
+			const top = this.cursorY - 2 + 'px'	
 
 			return {
 				left,
@@ -943,7 +945,7 @@ var app = new Vue({
 			if (this.keyPressed) return
 			this.keyPressed = true
 
-			if (event.keyCode == 66) { // 'B' toggle bag
+			if (event.keyCode === 66) { // 'B' toggle bag
 				this.player.bag.open = !this.player.bag.open
 			}
 		}, false)
