@@ -55,11 +55,11 @@
 					<div>
 						<div class="player-weapon">
 							<div class="item-tooltip-placeholder">
-								<div class="item-tooltip" v-if="hoverItem != null && hoverItem.slotId == player.weapon.slotId">
-									{{ hoverItem.item[0].name }}
+								<div class="item-tooltip" v-if="hoverItem.slotId == player.weapon.slotId && hoverItem.containerName == 'playerEquipment'">
+									<p>{{ hoverItem.item[0].name }}</p>
 								</div>
 							</div>
-							<div @mouseover="hoverItem = player.weapon" @mouseleave="hoverItem = null" :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0] != null" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')">
+							<div @mouseover="itemHoverEnter(player.weapon.item, player.weapon.slotId, 'playerEquipment')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0] != null" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')">
 							</div>
 						</div>
 						<div class="player-trinket">
@@ -86,22 +86,23 @@
 					<button v-if="selectedItem.selection" @click="unselectItem()">
 						unselect
 					</button>
-					<div class="bag-button" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'+(player.bag.open ? 'box-shadow: inset 0 0 8px 3px #e9df5c' : '')">
+					<div :class="[player.bag.open ? 'bag-button-open' : '', 'bag-button']" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'">
 						<p>({{emptySpace(player.bag.slots)}})</p>
 					</div>
 				</div>
 				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
-						<div  v-if="container.content" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+						<div  v-if="container.item" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
 							<div class="item-tooltip-placeholder">
-								<div class="item-tooltip" v-if="hoverItem != null && hoverItem.slotId == container.slotId">
-									{{ hoverItem.content.name }}
+								<div class="item-tooltip" v-if="hoverItem.slotId == container.slotId && hoverItem.containerName == 'playerBag'">
+									<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
 								</div>
 							</div>
-							<div @mouseover="hoverItem = container" @mouseleave="hoverItem = null" @click="toggleSelectionItem(container.content, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].content)+'.png);'">
-								<p v-if="container.content.stackSize > 1" style="color: white; font-style: 16px;">{{ container.content.stackSize }}</p>
+							<div v-if="showItemQualityBorder(container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 2px 1px'+getQualityColor(container.item)+';'"></div>
+							<div @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
+								<p v-if="container.item.stackSize > 1" style="color: white; font-style: 16px;">{{ container.item.stackSize }}</p>
 							</div>
-							<div v-if="player.bag.slots[container.slotId-1].content.requiredLevel > player.level" class="cant-equip-layer">
+							<div v-if="player.bag.slots[container.slotId-1].item.requiredLevel > player.level" class="cant-equip-layer">
 								<div class="cant-equip-grayscale"></div>
 								<div class="cant-equip-red"></div>
 							</div>
@@ -116,8 +117,11 @@
 				<button @click="player.level++">+1 lvl</button>
 				<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
 				<button @click="enemies[currentEnemy].hp=0">instant kill</button>
-				<button @click="addItem(rand(1,2), player.bag.slots, 1)">add item {{getItemName(giveItemId)}}</button>
+				<button @click="addItem(rand(1,2), player.bag.slots, 1)">add item 1-2</button>
 				<button @click="addItem(2, player.bag.slots, 3)">add x3 id2 {{getItemName(2)}}</button>
+				<input type="number" v-model.number="giveItemId" style="width: 30px; height: 25px; background-color: #e7d56c;">
+				<input type="number" v-model.number="giveItemQuantity" style="width: 30px; height: 25px; background-color: #6ce7d3;">
+				<button @click="addItem(giveItemId, player.bag.slots, giveItemQuantity)" style="width: 120px; text-align: left;">add {{getItemName(giveItemId)}}</button>"
 				<input type="number" v-model.number="player.xp" style="width: 30px">
 				<input type="number" v-model.number="player.level" style="width: 30px">
 				<input type="number" v-model.number="player.money" style="width: 30px">

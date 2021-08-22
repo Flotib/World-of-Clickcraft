@@ -15,8 +15,13 @@ var app = new Vue({
 		disabledEnemies: [],
 		showEnemyInformations: false,
 		giveItemId: 0,
+		giveItemQuantity: 0,
 		rareChance: 50, // start at 50 so 2% chance to get a rare mob - could be upgraded later
-		hoverItem: null,
+		hoverItem: {
+			item: [],
+			slotId: null,
+			containerName: null,
+		},
 		selectedItem: {
 			selection: false,
 			item: {},
@@ -43,7 +48,7 @@ var app = new Vue({
 			},
 			weapon: {
 				item: [],
-				slotId: 0,
+				slotId: 1,
 			},
 			trinket: [
 				{
@@ -210,6 +215,36 @@ var app = new Vue({
 				icon: null,
 				requiredLevel: 5,
 			},
+			{
+				id: 5,
+				name: 'poor',
+				quality: 'poor',
+				icon: null,
+			},
+			{
+				id: 6,
+				name: 'uncommon',
+				quality: 'uncommon',
+				icon: null,
+			},
+			{
+				id: 7,
+				name: 'rare',
+				quality: 'rare',
+				icon: null,
+			},
+			{
+				id: 8,
+				name: 'epic',
+				quality: 'epic',
+				icon: null,
+			},
+			{
+				id: 9,
+				name: 'legendary',
+				quality: 'legendary',
+				icon: null,
+			},
 		],
 		enemyPool: [], //Putting this variable here for now
 		totalClicks: 0,
@@ -298,8 +333,8 @@ var app = new Vue({
 			}
 		},
 
-		tooltipPosition() {
-			const left = this.cursorX + 20 + 'px'
+		tooltipPosition() { //unused
+			const left = this.cursorX + 'px'
 
 			const top = this.cursorY + 'px'
 
@@ -307,6 +342,15 @@ var app = new Vue({
 				left,
 				top
 			}
+		},
+
+		tooltipItemQuality() {
+			let quality = this.hoverItem.item[0].quality
+			if (quality == null) {
+				return 'quality-common'
+			}
+
+			return 'quality-' + quality
 		},
 	},
 
@@ -436,8 +480,8 @@ var app = new Vue({
 
 		//Fills the enemy pool
 		initializeEnemyPool() {
-			let enemiesArray = [];
-			let finishedPoolArray = [];
+			let enemiesArray = []
+			let finishedPoolArray = []
 			for (let i = 1; i < this.enemies.length; i++) { //Starting from 1 to not include the placeholder wolf
 				enemiesArray.push(this.enemies[i])
 			}
@@ -445,31 +489,34 @@ var app = new Vue({
 			//Simple bubble sort so enemies don't have to be sorted by level
 			//by hand in the enemy list
 			while (true) {
-				let flag = true;
+				let flag = true
 				for (let i = 0; i < enemiesArray.length - 1; i++) {
-					let temp;
+					let temp
 					if (enemiesArray[i].poolLevel > enemiesArray[i + 1].poolLevel) {
-						temp = enemiesArray[i];
-						enemiesArray[i] = enemiesArray[i + 1];
-						enemiesArray[i + 1] = temp;
-						flag = false;
+						temp = enemiesArray[i]
+						enemiesArray[i] = enemiesArray[i + 1]
+						enemiesArray[i + 1] = temp
+						flag = false
 					}
 				}
 				if (flag) break
 			}
 
 			//Finally, add each enemy to the correct pool
-			let tempArray = []; currentLevel = enemiesArray[0].poolLevel;
+			let tempArray = []
+			currentLevel = enemiesArray[0].poolLevel
 			enemiesArray.forEach(enemy => {
 				if (enemy.poolLevel == currentLevel) tempArray.push(enemy)
 				else {
-					currentLevel = enemy.poolLevel;
-					finishedPoolArray.push(tempArray);
-					tempArray = [enemy];
+					currentLevel = enemy.poolLevel
+					finishedPoolArray.push(tempArray)
+					tempArray = [enemy]
 				}
-			});
-			if (tempArray.length > 0) finishedPoolArray.push(tempArray);
-			this.enemyPool = finishedPoolArray;
+			})
+			if (tempArray.length > 0) {
+				finishedPoolArray.push(tempArray)
+			}
+			this.enemyPool = finishedPoolArray
 		},
 
 		printEnemyPools() {
@@ -477,24 +524,24 @@ var app = new Vue({
 				let poolOut = ""
 				pool.forEach(enemy => {
 					poolOut += enemy.name + " "
-				});
+				})
 				alert(poolOut)
-			});
+			})
 		},
 
 		//Toggles generating enemy on/off
 		toggleEnemy(enemy) {
-			if (this.disabledEnemies.includes(enemy)) this.disabledEnemies.splice(this.disabledEnemies.indexOf(enemy), 1);
+			if (this.disabledEnemies.includes(enemy)) this.disabledEnemies.splice(this.disabledEnemies.indexOf(enemy), 1)
 			else this.disabledEnemies.push(enemy)
 		},
 
 		//Functions that will probably be needed for the mob disable box
 		getCurrentEnemyPool() {
-			return (this.enemyPool[this.currentEnemyPool]);
+			return (this.enemyPool[this.currentEnemyPool])
 		},
 
 		getEnemyDisabled(enemy) {
-			return (this.disabledEnemies.includes(enemy));
+			return (this.disabledEnemies.includes(enemy))
 		},
 
 		chooseEnemy() {
@@ -510,21 +557,22 @@ var app = new Vue({
 		//enemies[0] is now a placeholder with the stats of a wolf
 		//however, it's overwritten when generating new enemies
 		generateEnemy(enemy = this.chooseEnemy(), allowRare = true) {
-			let generatedEnemy = this.enemies[0];
-			Object.assign(generatedEnemy, enemy);
+			let generatedEnemy = this.enemies[0]
+			Object.assign(generatedEnemy, enemy)
 			if (this.rng(this.rareChance) && allowRare) {
 				//Lazy formula below
-				generatedEnemy.name = "Rare " + generatedEnemy.name;
-				generatedEnemy.type = "rare";
-				generatedEnemy.maxHp *= 2; generatedEnemy.hp = generatedEnemy.maxHp;
+				generatedEnemy.name = "Rare " + generatedEnemy.name
+				generatedEnemy.type = "rare"
+				generatedEnemy.maxHp *= 2
+				generatedEnemy.hp = generatedEnemy.maxHp
 			}
-			return generatedEnemy;
+			return generatedEnemy
 		},
 
 		spawnEnemy(allowRare = true) {
-			Object.assign(this.enemies[0], this.enemies[1]); //Dirty hackfix
+			Object.assign(this.enemies[0], this.enemies[1]) //Dirty hackfix
 			enemy = this.generateEnemy(this.chooseEnemy(), allowRare)
-			enemy.hp = enemy.maxHp;
+			enemy.hp = enemy.maxHp
 		},
 
 		enemyDeadEvent(enemy) {
@@ -696,17 +744,21 @@ var app = new Vue({
 
 			if (this.items[index].stackMaxSize > 1) {
 				for (let i = 0; i < target.length; i++) {
-					if (target[i].content != null) {
-						target[i].content.id == id ? (indexBag = i) : ('')
+					if (target[i].item != null) {
+						if (target[i].item.id == id && target[i].item.stackSize < target[i].item.stackMaxSize) {
+							indexBag = i
+							break
+						}
 					}
 				}
 			}
-			if (indexBag >= 0 && this.items[index].stackMaxSize > 1 && target[indexBag].content.stackSize < target[indexBag].content.stackMaxSize) {
-				if (target[indexBag].content.stackSize + quantity <= target[indexBag].content.stackMaxSize) {
-					target[indexBag].content.stackSize += quantity
+			
+			if (indexBag >= 0 && this.items[index].stackMaxSize > 1 && target[indexBag].item.stackSize < target[indexBag].item.stackMaxSize) {
+				if (target[indexBag].item.stackSize + quantity <= target[indexBag].item.stackMaxSize) {
+					target[indexBag].item.stackSize += quantity
 				} else {
-					newQuantity = target[indexBag].content.stackSize + quantity - target[indexBag].content.stackMaxSize
-					target[indexBag].content.stackSize = target[indexBag].content.stackMaxSize
+					newQuantity = target[indexBag].item.stackSize + quantity - target[indexBag].item.stackMaxSize
+					target[indexBag].item.stackSize = target[indexBag].item.stackMaxSize
 					this.addItem(id, target, newQuantity)
 				}
 			} else {
@@ -718,28 +770,28 @@ var app = new Vue({
 				if (quantity > 1) {
 					if (this.items[index].stackMaxSize > 1) {
 						if (quantity > this.items[index].stackMaxSize) {
-							target[emptySlot].content = itemClone[index]
-							target[emptySlot].content.stackSize = target[emptySlot].content.stackMaxSize
+							target[emptySlot].item = itemClone[index]
+							target[emptySlot].item.stackSize = target[emptySlot].item.stackMaxSize
 							newQuantity = quantity - this.items[index].stackMaxSize
 							this.addItem(id, target, newQuantity)
 						} else {
-							target[emptySlot].content = itemClone[index]
-							target[emptySlot].content.stackSize = quantity
+							target[emptySlot].item = itemClone[index]
+							target[emptySlot].item.stackSize = quantity
 						}
 					} else {
-						target[emptySlot].content = itemClone[index]
+						target[emptySlot].item = itemClone[index]
 						newQuantity = quantity - 1
 						this.addItem(id, target, newQuantity)
 					}
 				} else {
-					target[emptySlot].content = itemClone[index]
+					target[emptySlot].item = itemClone[index]
 				}
 			}
 		},
 
 		updateSlots(target, slots) {
 			if (target.length < slots) {
-				target.push({ slotId: target.length + 1, content: null })
+				target.push({ slotId: target.length + 1, item: null })
 			} else if (target.length > slots) {
 				target.pop()
 			}
@@ -752,29 +804,30 @@ var app = new Vue({
 		getFirstEmptySpace(bagSlots) {
 			let returnValue = false
 			bagSlots.forEach(slot => {
-				if (slot.content === null && returnValue === false) {//<--- My solution to not being able to 
+				if (slot.item === null && returnValue === false) {//<--- My solution to not being able to 
 					returnValue = (bagSlots.indexOf(slot))        //      return the value immediately
 				}
-			}); return returnValue
+			})
+			return returnValue
 		},
 
 		emptySpace(target) {
 			let emptySlots = 0
 			for (let i = 0, l = target.length; i < l; i++) {
-				emptySlots += (target[i].content === null) ? 1 : 0
+				emptySlots += (target[i].item === null) ? 1 : 0
 			}
 			return emptySlots
 		},
 
 		deleteItem(container, slotId) {
-			if (container.slots[slotId - 1].content != null) {
+			if (container.slots[slotId - 1].item != null) {
 				this.clearSlot(container, slotId)
 			}
 			this.unselectItem()
 		},
 
 		clearSlot(container, slotId) {
-			container.slots.splice(slotId - 1, 1, { slotId: slotId, content: null })
+			container.slots.splice(slotId - 1, 1, { slotId: slotId, item: null })
 		},
 
 		itemSelection(item, slotId, containerName) {
@@ -790,7 +843,7 @@ var app = new Vue({
 					let actualItem = this.player.weapon.item[0]
 					actualItem.equipable = true
 					this.player.weapon.item.splice(0, 1, item)
-					this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, content: actualItem })
+					this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
 					this.player.weapon.item.equipable = false
 				} else {
 					this.player.weapon.item.splice(0, 1, item)
@@ -808,7 +861,7 @@ var app = new Vue({
 				let actualItem = this.player.weapon.item[0]
 				actualItem.equipable = true
 				this.player.weapon.item.splice(0, 1)
-				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, content: actualItem })
+				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
 			}
 
 			this.unselectItem()
@@ -825,6 +878,18 @@ var app = new Vue({
 			(this.selectedItem.selection) && (this.selectedItem.slotId == slotId) && (this.selectedItem.containerName == containerName) ? this.unselectItem() : this.itemSelection(item, slotId, containerName)
 		},
 
+		itemHoverEnter(item, slotId, containerName) {
+			this.hoverItem.item.splice(0, 1, item)
+			this.hoverItem.slotId = slotId
+			this.hoverItem.containerName = containerName
+		},
+
+		itemHoverLeave() {
+			this.hoverItem.item.splice(0, 1)
+			this.hoverItem.slotId = null
+			this.hoverItem.containerName = null
+		},
+
 		itemIcon(item) {
 			icon = 'inv_misc_questionmark'
 			if (item.icon != null) {
@@ -832,6 +897,38 @@ var app = new Vue({
 			}
 
 			return icon
+		},
+
+		getQualityColor(item) {
+			if (item.quality == 'poor') {
+				return '#9d9d9d'
+			} else if (item.quality == 'common') {
+				return '#fff'
+			} else if (item.quality == 'uncommon') {
+				return '#1eff00'
+			} else if (item.quality == 'rare') {
+				return '#0070dd'
+			} else if (item.quality == 'epic') {
+				return '#a335ee'
+			} else if (item.quality == 'legendary') {
+				return '#ff8000'
+			} else if (item.quality == 'artifact') {
+				return '#e6cc80'
+			} else if (item.quality == 'heirloom') {
+				return '#00ccff'
+			}
+		},
+
+		showItemQualityBorder(slotId, containerName) {
+			if (this.selectedItem.slotId == slotId) {
+				if (this.selectedItem.containerName == containerName) {
+					return false
+				} else {
+					return true
+				}
+			} else {
+				return true
+			}
 		},
 
 	},
@@ -843,17 +940,17 @@ var app = new Vue({
 		this.gameInit()
 
 		document.addEventListener("keydown", (event) => {
-			if (this.keyPressed) return;
-			this.keyPressed = true;
+			if (this.keyPressed) return
+			this.keyPressed = true
 
 			if (event.keyCode == 66) { // 'B' toggle bag
 				this.player.bag.open = !this.player.bag.open
 			}
-		}, false);
+		}, false)
 
 		document.addEventListener("keyup", (event) => {
-			this.keyPressed = false;
-		}, false);
+			this.keyPressed = false
+		}, false)
 
 		setInterval(() => {
 			if (this.step % (this.fps * this.countdown) == 0) {

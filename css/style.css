@@ -560,10 +560,14 @@ a {
 
 .bag-button p {
 	font-family: Arial Narrow;
-	font-size: 20px;
-	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000;
+	font-size: 18px;
+	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000;
 	color: white;
 	margin-bottom: 2px;
+}
+
+.bag-button-open {
+	box-shadow: inset 0 0 6px 5px #f1e74d !important;
 }
 
 .bag-button:hover {
@@ -571,7 +575,7 @@ a {
 }
 
 .bag-button:active {
-	box-shadow: inset 0 0 0 1px #e9df5c, inset 0 0 6px 6px #5377eeb7;
+	box-shadow: inset 0 0 0 2px #ffe74a, inset 0 0 5px 5px #84a6f7;
 }
 
 .bag-window {
@@ -620,6 +624,10 @@ a {
 	box-shadow: inset 0 0 4px 6px #5b5cb193;
 }
 
+.bag-container:active {
+	box-shadow: inset 0 0 0 2px #ffe74a, inset 0 0 5px 5px #84a6f7;
+}
+
 .ui-item {
 	height: 100%;
 	width: 100%;
@@ -636,18 +644,26 @@ a {
 
 .ui-item p {
 	font-family: Arial Narrow;
-	font-size: 20px;
-	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000;
+	font-size: 18px;
+	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000; /*text-shadow go brrrr (to create a border, dont worry)*/
 	color: white;
-	margin: 0 6px 2px 0;
+	margin: 0 9px 1px 0;
 }
 
 .ui-item:hover {
 	box-shadow: inset 0 0 4px 6px #5b5cb193;
 }
 
+.ui-item:active {
+	box-shadow: inset 0 0 0 2px #ffe74a, inset 0 0 5px 5px #84a6f7;
+}
+
 .player-weapon .ui-item:hover {
 	box-shadow: inset 0 0 10px 6px #5b5cb193;
+}
+
+.player-weapon .ui-item:active {
+	box-shadow: inset 0 0 0 2px #ffe74a, inset 0 0 9px 9px #84a6f7;
 }
 
 .selected-item {
@@ -686,6 +702,14 @@ a {
 	mix-blend-mode: multiply;
 }
 
+.item-quality-border {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	pointer-events: none;
+	border-radius: 14%;
+}
+
 .player-weapon {
 	display: flex;
 	justify-content: center;
@@ -702,6 +726,10 @@ a {
 
 .player-weapon:hover {
 	box-shadow: inset 0 0 10px 6px #5b5cb193;
+}
+
+.player-weapon:active {
+	box-shadow: inset 0 0 0 2px #ffe74a, inset 0 0 8px 8px #84a6f7;
 }
 
 .select-item-interaction {
@@ -724,6 +752,7 @@ a {
 .item-tooltip-placeholder {
 	position: absolute;
 	pointer-events: none;
+	user-select: none;
 	width: 50px;
 	height: 50px;
 }
@@ -753,4 +782,36 @@ a {
 .player-weapon .item-tooltip-placeholder .item-tooltip {
 	left: 83px;
 	bottom: 85px;
+}
+
+.quality-poor {
+	color: #9d9d9d
+}
+
+.quality-common {
+	color: #fff
+}
+
+.quality-uncommon {
+	color: #1eff00
+}
+
+.quality-rare {
+	color: #0070dd
+}
+
+.quality-epic {
+	color: #a335ee
+}
+
+.quality-legendary {
+	color: #ff8000
+}
+
+.quality-artifact {
+	color: #e6cc80
+}
+
+.quality-heirloom {
+	color: #00ccff
 }
