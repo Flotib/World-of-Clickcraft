@@ -48,7 +48,7 @@ var app = new Vue({
 			},
 			weapon: {
 				item: [],
-				slotId: 1,
+				slotId: 0,
 			},
 			trinket: [
 				{
