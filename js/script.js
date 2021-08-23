@@ -353,7 +353,6 @@ var app = new Vue({
 			if (quality == null) {
 				return 'quality-common'
 			}
-			console.log(quality)
 			return 'quality-' + quality
 		},
 	},
@@ -461,7 +460,6 @@ var app = new Vue({
 						requiredLevel = item.requiredLevel
 					}
 					item.sellPrice = Math.round((item.minDamage + item.maxDamage)*10*1.05**(requiredLevel)*quality)
-					if (item.id == 1) {console.log(requiredLevel)}
 				} else {
 					item.sellPrice = 1 // /!\ Need to be change when trinkets will be available
 				}
@@ -998,11 +996,28 @@ var app = new Vue({
             }
         }, 
 
-		showItemQualityBorder(slotId, containerName) {
+		showItemQualityBorder(item, slotId, containerName) { // Will probably rework this lol
+			let requiredLevel = 0
+			let a = false
+			let b = false
+			
 			if (this.selectedItem.slotId === slotId) {
-				return this.selectedItem.containerName !== containerName
+				a = this.selectedItem.containerName !== containerName
 			} else {
+				a = true
+			}
+
+			if (item != null){
+				if (item.requiredLevel != null) {
+					requiredLevel = item.requiredLevel
+				}
+				b = this.player.level >= requiredLevel
+			}
+
+			if (a + b == 2) {
 				return true
+			} else {
+				return false
 			}
 		},
 

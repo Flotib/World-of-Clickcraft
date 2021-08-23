@@ -63,7 +63,7 @@
 					<p>Total clicks: {{ totalClicks }}</p>
 					<div>
 						<div class="player-weapon">
-							<div v-if="showItemQualityBorder(player.weapon.slotId, 'playerEquipment') && player.weapon.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.weapon.item[0])+';'"></div>
+							<div v-if="showItemQualityBorder(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') && player.weapon.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.weapon.item[0])+';'"></div>
 							
 							<div @mouseover="itemHoverEnter(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0]" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')">
 							</div>
@@ -100,7 +100,7 @@
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
 						<div v-if="container.item" class="item-placeholder">
 							
-							<div v-if="showItemQualityBorder(container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 1px 2px'+getQualityColor(container.item)+';'"></div>
+							<div v-if="showItemQualityBorder(container.item, container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 1px 2px'+getQualityColor(container.item)+';'"></div>
 
 							<div @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
 								<p v-if="container.item.stackSize > 1" style="color: white; font-style: 16px;">{{ container.item.stackSize }}</p>
