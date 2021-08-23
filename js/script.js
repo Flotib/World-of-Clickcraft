@@ -902,32 +902,31 @@ var app = new Vue({
 		},
 
 		getQualityColor(item) {
-			if (item.quality == 'poor') {
-				return '#9d9d9d'
-			} else if (item.quality == 'common') {
-				return '#fff'
-			} else if (item.quality == 'uncommon') {
-				return '#1eff00'
-			} else if (item.quality == 'rare') {
-				return '#0070dd'
-			} else if (item.quality == 'epic') {
-				return '#a335ee'
-			} else if (item.quality == 'legendary') {
-				return '#ff8000'
-			} else if (item.quality == 'artifact') {
-				return '#e6cc80'
-			} else if (item.quality == 'heirloom') {
-				return '#00ccff'
-			}
-		},
+            switch (item.quality) { // Thx Dorian!
+                case 'poor' :
+                    return '#9d9d9d';
+                case 'common' :
+                    return '#fff';
+                case 'uncommon':
+                    return '#1eff00';
+                case 'rare' :
+                    return '#0070dd';
+                case 'epic' :
+                    return '#a335ee';
+                case 'legendary' :
+                    return '#ff8000';
+                case 'artifact' :
+                    return '#e6cc80';
+                case 'heirloom' :
+                    return '#00ccff';
+                default:
+                    return "error";
+            }
+        }, 
 
 		showItemQualityBorder(slotId, containerName) {
-			if (this.selectedItem.slotId == slotId) {
-				if (this.selectedItem.containerName == containerName) {
-					return false
-				} else {
-					return true
-				}
+			if (this.selectedItem.slotId === slotId) {
+				return this.selectedItem.containerName !== containerName
 			} else {
 				return true
 			}
