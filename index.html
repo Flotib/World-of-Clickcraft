@@ -21,6 +21,7 @@
 			<div class="item-tooltip" v-if="hoverItem.slotId">
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
 				<p style="color: #0f0; font-size: 16px;">This is a test</p>
+				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money" v-html="moneyStylizerTooltip(hoverItem.item[0].sellPrice, 0)"></p>
 			</div>					
 		</div>
 		
@@ -99,7 +100,7 @@
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
 						<div v-if="container.item" class="item-placeholder">
 							
-							<div v-if="showItemQualityBorder(container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 2px 1px'+getQualityColor(container.item)+';'"></div>
+							<div v-if="showItemQualityBorder(container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 1px 2px'+getQualityColor(container.item)+';'"></div>
 
 							<div @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
 								<p v-if="container.item.stackSize > 1" style="color: white; font-style: 16px;">{{ container.item.stackSize }}</p>

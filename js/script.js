@@ -30,10 +30,8 @@ var app = new Vue({
 		},
 		player: {
 			name: 'Player',
-			baseMinDamage: 0,
-			baseMaxDamage: 1,
-			minDamage: null,
-			maxDamage: null,
+			minDamage: 0,
+			maxDamage: 1,
 			level: 1,
 			xpToNextLevel: null,
 			xp: 0,
@@ -193,7 +191,11 @@ var app = new Vue({
 				name: 'One',
 				equipable: true,
 				quality: 'rare',
-				slotType: 'weapon',
+				slotType: {
+					type: 'weapon',
+					name: 'Sword',
+					subtype: 'One-Hand',
+				},
 				icon: 'inv_sword_04',
 				baseMinDamage: 1,
 				minDamage: 1,
@@ -351,7 +353,7 @@ var app = new Vue({
 			if (quality == null) {
 				return 'quality-common'
 			}
-
+			console.log(quality)
 			return 'quality-' + quality
 		},
 	},
@@ -366,6 +368,11 @@ var app = new Vue({
 			for (const monster of this.enemies) {
 				this.autoLevelAttri(monster)
 				this.autoMoneyAttri(monster)
+			}
+
+			for (const item of this.items) {
+				item.upgradeLevel = 0
+				this.autoSellPriceAttri(item)
 			}
 		},
 
@@ -444,8 +451,48 @@ var app = new Vue({
 			}
 		},
 
+		autoSellPriceAttri(item) { // initialize me when upgrading an item
+			let quality = this.itemPriceMultiplier(item)
+			let sellPrice = 0
+			let requiredLevel = 1
+			if (item.sellPrice == null && item.equipable) {
+				if (item.slotType.type == "weapon") {
+					if (item.requiredLevel != null) { // == null to include undefined
+						requiredLevel = item.requiredLevel
+					}
+					item.sellPrice = Math.round((item.minDamage + item.maxDamage)*10*1.05**(requiredLevel)*quality)
+					if (item.id == 1) {console.log(requiredLevel)}
+				} else {
+					item.sellPrice = 1 // /!\ Need to be change when trinkets will be available
+				}
+			}
+		},
+
+		itemPriceMultiplier(item) {
+			switch (item.quality) {
+                case 'poor' :
+                    return 0.95
+                case 'common' :
+                    return 1
+                case 'uncommon':
+                    return 1.05
+                case 'rare' :
+                    return 1.1
+                case 'epic' :
+                    return 1.2
+                case 'legendary' :
+                    return 1.4
+                case 'artifact' :
+                    return 1.45
+                case 'heirloom' :
+                    return 0
+                default:
+                    return 1
+            }
+		},
+
 		totalMinDamage() {
-			let minDamage = this.player.baseMinDamage
+			let minDamage = this.player.MinDamage
 			if (this.player.weapon.item.length > 0) {
 
 			}
@@ -454,7 +501,7 @@ var app = new Vue({
 		},
 
 		totalMaxDamage() {
-			let maxDamage = this.player.baseMaxDamage
+			let maxDamage = this.player.MaxDamage
 
 
 			return Math.floor(maxDamage)
@@ -698,6 +745,33 @@ var app = new Vue({
 			}
 		},
 
+		moneyStylizerTooltip(money) {
+			let copper = money % 100
+			let silver = Math.floor(money / 100)
+			if (silver >= 100) {
+				silver = silver % 100
+			}
+			let gold = Math.floor(money / 10000)
+
+			if (gold == 0) {
+				if (silver == 0) {
+					return '<span>' + copper + this.copperimg + '</span>'
+				} else {
+					if (copper == 0) {
+						return '<span>' + silver + this.silverimg + '</span>'
+					} else {
+						return '<span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+					}
+				}
+			} else { // gold.toLocaleString() works too
+				if (silver == 0 && copper == 0) {
+					return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
+				} else {
+					return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+				}
+			}
+		},
+
 		clickParticles(damage) {
 			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
@@ -904,23 +978,23 @@ var app = new Vue({
 		getQualityColor(item) {
             switch (item.quality) { // Thx Dorian!
                 case 'poor' :
-                    return '#9d9d9d';
+                    return '#9d9d9d'
                 case 'common' :
-                    return '#fff';
+                    return '#fff'
                 case 'uncommon':
-                    return '#1eff00';
+                    return '#1eff00'
                 case 'rare' :
-                    return '#0070dd';
+                    return '#0070dd'
                 case 'epic' :
-                    return '#a335ee';
+                    return '#a335ee'
                 case 'legendary' :
-                    return '#ff8000';
+                    return '#ff8000'
                 case 'artifact' :
-                    return '#e6cc80';
+                    return '#e6cc80'
                 case 'heirloom' :
-                    return '#00ccff';
+                    return '#00ccff'
                 default:
-                    return "error";
+                    return '#fff'
             }
         }, 
 
@@ -930,6 +1004,14 @@ var app = new Vue({
 			} else {
 				return true
 			}
+		},
+
+		upgradeItemStatsCalculation(item) {
+			 // requirement (enought money / materials)
+		},
+
+		upgradeItemStatsCalculation(item) {
+
 		},
 
 	},

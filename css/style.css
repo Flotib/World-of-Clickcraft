@@ -93,6 +93,11 @@ body {
 
 img {
     pointer-events: none;
+	user-select: none;
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: none;
+	-o-user-drag: none;
 }
 
 input,
@@ -328,10 +333,6 @@ a {
 
 .playermoneyui p img {
 	margin-left: 2px;
-	-webkit-user-drag: none;
-	-khtml-user-drag: none;
-	-moz-user-drag: none;
-	-o-user-drag: none;
 }
 
 .player-currency-container {
@@ -382,10 +383,6 @@ a {
 
 .enemymoneyui p img {
 	margin-left: 2px;
-	-webkit-user-drag: none;
-	-khtml-user-drag: none;
-	-moz-user-drag: none;
-	-o-user-drag: none;
 }
 
 .xpamount {
@@ -822,10 +819,30 @@ a {
 	font-size: 20px;
 	line-height: 20px;
 	margin-top: 3px;
+	color: #fff;
 }
 
 .item-tooltip p:first-of-type {
 	margin: 0;
+}
+
+.item-tooltip-money {
+	color: #fff;
+	font-size: 18px !important;
+	font-family: Arial Narrow;
+}
+
+.item-tooltip-money span {
+	display: inline-flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-direction: row;
+	width: auto;
+}
+
+.item-tooltip-money img {
+	margin-left: 2px;
+	margin-right: 6px;
 }
 
 .player-weapon .item-tooltip-placeholder .item-tooltip {
@@ -834,33 +851,33 @@ a {
 }
 
 .quality-poor {
-	color: #9d9d9d
+	color: #9d9d9d !important;
 }
 
 .quality-common {
-	color: #fff
+	color: #fff !important;
 }
 
 .quality-uncommon {
-	color: #1eff00
+	color: #1eff00 !important;
 }
 
 .quality-rare {
-	color: #0070dd
+	color: #0070dd !important;
 }
 
 .quality-epic {
-	color: #a335ee
+	color: #a335ee !important;
 }
 
 .quality-legendary {
-	color: #ff8000
+	color: #ff8000 !important;
 }
 
 .quality-artifact {
-	color: #e6cc80
+	color: #e6cc80 !important;
 }
 
 .quality-heirloom {
-	color: #00ccff
+	color: #00ccff !important;
 }
