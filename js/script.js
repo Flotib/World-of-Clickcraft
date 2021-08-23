@@ -492,7 +492,7 @@ var app = new Vue({
 		},
 
 		totalMinDamage() {
-			let minDamage = this.player.MinDamage
+			let minDamage = this.player.minDamage
 			if (this.player.weapon.item.length > 0) {
 
 			}
@@ -501,7 +501,7 @@ var app = new Vue({
 		},
 
 		totalMaxDamage() {
-			let maxDamage = this.player.MaxDamage
+			let maxDamage = this.player.maxDamage
 
 
 			return Math.floor(maxDamage)
