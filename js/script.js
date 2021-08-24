@@ -406,13 +406,13 @@ var app = new Vue({
 					if (silver.eq(0)) {
 						return '<span></span><span></span><span></span><span>' + copper + this.copperimg + '</span>'
 					} else {
-						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 					}
 				} else {
-					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			} else {
-				return '<span>' + diamond + this.diamondimg + '</span><span>' + String(gold).padStart(7, 0) + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+				return '<span>' + diamond + this.diamondimg + '</span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 			}
 		},
 
@@ -453,14 +453,14 @@ var app = new Vue({
 						if (copper.eq(0)) {
 							return '<span>' + silver + this.silverimg + '</span>'
 						} else {
-							return '<span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+							return '<span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 						}
 					}
 				} else { // gold.toLocaleString() works too
 					if (silver.eq(0) && copper.eq(0)) {
-						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
+						return '<span>' + gold + this.goldimg + '</span>'
 					} else {
-						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+						return '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 					}
 				}
 			} else {
@@ -469,13 +469,13 @@ var app = new Vue({
 						if (gold.eq(0)) {
 							return '<span>' + diamond + this.diamondimg + '</span>'
 						} else {
-							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
+							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span>'
 						}
 					} else {
-						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span>'
+						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span>'
 					}
 				} else {
-					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			}
 		},
@@ -874,13 +874,13 @@ var app = new Vue({
 					if (silver.eq(0)) {
 						return '<span></span><span></span><span></span><span>' + copper + this.copperimg + '</span>'
 					} else {
-						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 					}
 				} else {
-					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			} else {
-				return '<span>' + diamond + this.diamondimg + '</span><span>' + String(gold).padStart(7, 0) + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+				return '<span>' + diamond + this.diamondimg + '</span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 			}
 		},
 
@@ -1132,6 +1132,7 @@ var app = new Vue({
 
 		upgradeItemStatsCalculation(item) {
 			item.upgradeLevel++
+			item.upgradeLevel == 20 ? item.quality++ : ''
 			item.maxDamage = Math.round(item.baseMaxDamage * 1.104 ** (item.upgradeLevel + 1))
 			item.minDamage = Math.round(item.maxDamage * (item.baseMinDamage / item.baseMaxDamage))
 			item.sellPrice = null

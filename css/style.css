@@ -811,7 +811,7 @@ a {
 	position: absolute;
 	z-index: 1000;
 	width: auto;
-	max-width: 280px;
+	max-width: 280px; /* 280px default, if sellprice is too high can be a problem*/
 	height: auto;
 	pointer-events: none;
 	user-select: none;
@@ -820,25 +820,30 @@ a {
 	bottom: 0;
 	border: 2px groove #bbb;
 	background-color: #000218c6;
-	padding: 10px;
+	padding: 8px;
 }
 
 .item-tooltip p {
-	font-size: 16px;
-	line-height: 18px;
+	font-size: 18px;
+	line-height: 20px;
 	color: #fff;
+	font-weight: 100;
 }
 
 .item-tooltip p:first-of-type {
-	font-size: 20px;
-	line-height: 18px;
+	font-size: 22px;
+	line-height: 20px;
 	margin-bottom: 4px;
 }
 
 .item-tooltip-money {
 	color: #fff;
-	font-size: 18px !important;
-	font-family: Arial Narrow;
+	margin-top: 3px;
+	width: auto;
+}
+
+.item-tooltip-money span:first-of-type {
+	margin-left: 10px;
 }
 
 .item-tooltip-money span {
@@ -847,6 +852,8 @@ a {
 	align-items: center;
 	flex-direction: row;
 	width: auto;
+	font-size: 18px !important;
+	font-family: Arial Narrow;
 }
 
 .item-tooltip-money img {
