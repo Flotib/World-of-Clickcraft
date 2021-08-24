@@ -734,7 +734,7 @@ var app = new Vue({
 				silver = silver % 100
 			}
 			let gold = Math.floor(money / 10000)
-			if (gold >= 10000000) { // need to rework this too
+			if (gold >= 10000000) {
 				gold = gold % 10000000
 			}
 			let diamond = new BigNumber(Math.floor(money / 100000000000))
@@ -750,7 +750,7 @@ var app = new Vue({
 					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 				}
 			} else {
-				return '<span>' + diamond + this.diamondimg + '</span><span>' + String(silver).padStart(8, 0) + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+				return '<span>' + diamond + this.diamondimg + '</span><span>' + String(gold).padStart(7, 0) + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 			}
 		},
 

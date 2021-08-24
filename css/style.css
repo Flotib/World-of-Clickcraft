@@ -320,20 +320,17 @@ a {
 	justify-content: flex-end;
 	align-items: center;
 	flex-direction: row;
-	width: 40px;
+	width: auto;
 	height: 20px;
 }
 
-.playermoneyui p span:first-child{
-	width: 80px;
-}
-
-.playermoneyui p span:nth-child(2){
-	width: 86px;
+.playermoneyui p span:last-child img:last-of-type {
+	margin-right: 0 !important;
 }
 
 .playermoneyui p img {
 	margin-left: 2px;
+	margin-right: 6px;
 }
 
 .player-currency-container {
