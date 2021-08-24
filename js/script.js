@@ -58,201 +58,7 @@ var app = new Vue({
 				}
 			],
 		},
-		enemies: [
-			/*{
-				name: 'Wolf', //Placeholder wolf
-				portrait: 'wolf',
-				portraitId: 1,
-				maxHp: 60,
-				hp: 60,
-				level: null,
-				poolLevel: 0,
-				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},*/
-			{
-				name: 'Wolf',
-				portrait: 'wolf',
-				portraitId: 1,
-				maxHp: 60,
-				hp: 60,
-				level: null,
-				poolLevel: 0,
-				type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Kobold',
-				portrait: 'kobold',
-				portraitId: 1,
-				maxHp: 110,
-				hp: 110,
-				level: null,
-				poolLevel: 0,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Bandit',
-				portrait: 'defias',
-				portraitId: 1,
-				maxHp: 190,
-				hp: 190,
-				level: null,
-				poolLevel: 5,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Boar',
-				portrait: 'boar',
-				portraitId: 2,
-				maxHp: 280,
-				hp: 280,
-				level: null,
-				poolLevel: 5,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Forest Spider',
-				portrait: 'tarantula',
-				portraitId: 3,
-				maxHp: 200,
-				hp: 200,
-				level: null,
-				poolLevel: 10,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Murloc',
-				portrait: 'murloc',
-				portraitId: 1,
-				maxHp: 200,
-				hp: 200,
-				level: null,
-				poolLevel: 10,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Bear',
-				portrait: 'bear',
-				portraitId: 1,
-				maxHp: 200,
-				hp: 200,
-				level: null,
-				poolLevel: 10,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-			{
-				name: 'Rivepaw Gnoll',
-				portrait: 'gnoll',
-				portraitId: 1,
-				maxHp: 200,
-				hp: 200,
-				level: null,
-				poolLevel: 10,
-				type: 'normal',
-				killCount: 0,
-				minMoney: null,
-				maxMoney: null,
-				levelenvironment: 'elwynn',
-			},
-		],
-		items: [ //  quality table --> 0:poor  1:common  2:uncommon  3:rare  4:epic  5:legendary  6:artifact  7:heirloom
-			{
-				id: 1,
-				name: 'One',
-				equipable: true,
-				quality: 3,
-				slotType: {
-					type: 'weapon',
-					name: 'Sword',
-					subtype: 'One-Hand',
-				},
-				icon: 'inv_sword_04',
-				baseMinDamage: 1,
-				baseMaxDamage: 2,
-			},
-			{
-				id: 2,
-				name: 'Ruined Pelt',
-				quality: 0,
-				equipable: false,
-				icon: 'inv_misc_pelt_wolf_ruin_04',
-				stackMaxSize: 20,
-				stackSize: 1,
-				sellPrice: new BigNumber(5),
-			},
-			{
-				id: 4,
-				name: 'Three',
-				equipable: true,
-				slotType: {
-					type: 'trinket',
-					name: 'Trinket',
-				},
-				icon: null,
-				requiredLevel: 5,
-			},
-			{
-				id: 5,
-				name: 'poor',
-				quality: 0,
-				icon: null,
-			},
-			{
-				id: 6,
-				name: 'uncommon',
-				quality: 2,
-				icon: null,
-			},
-			{
-				id: 7,
-				name: 'rare',
-				quality: 3,
-				icon: null,
-			},
-			{
-				id: 8,
-				name: 'epic',
-				quality: 4,
-				icon: null,
-			},
-			{
-				id: 9,
-				name: 'legendary',
-				quality: 5,
-				icon: null,
-			},
-		],
+		...window.content,
 		enemyPool: [], //Putting this variable here for now
 		totalClicks: 0,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
@@ -488,6 +294,15 @@ var app = new Vue({
 			}
 
 			return false
+		},
+
+		requiresLevelText() {
+			let textcolor
+			this.hoverItem.item[0].requiredLevel > this.player.level ? textcolor = '#ff2020' : textcolor = '#fff'
+
+			return {
+				color: textcolor
+			}
 		},
 	},
 
@@ -1005,7 +820,9 @@ var app = new Vue({
 		itemSelection(item, slotId, containerName) {
 			this.selectedItem.selection = true
 			this.selectedItem.item = item
-			this.selectedItem.item.sellPrice = BigNumber(item.sellPrice)
+			if (item.sellPrice !== undefined) {
+				this.selectedItem.item.sellPrice = BigNumber(item.sellPrice)
+			}
 			this.selectedItem.slotId = slotId
 			this.selectedItem.containerName = containerName // name of the parent which contain the item, set by hand
 		},

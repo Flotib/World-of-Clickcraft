@@ -20,11 +20,12 @@
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
 			<div class="item-tooltip" v-if="hoverItem.slotId != null">
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
-				<p v-if="hoverItem.item[0].upgradeLevel !== undefined">{{ hoverItem.item[0].upgradeLevel }}</p>
-				<p v-if="hoverItem.item[0].slotType != null">a</p>
+				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
+				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ hoverItem.item[0].slotType.name }}</p></div>
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
 				<p v-if="hoverItemIsAWeapon">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
-				<p style="color: #0f0">This is a test</p>
+				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
+				<p style="color: #0f0"></p>
 				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
 			</div>					
 		</div>
@@ -154,5 +155,7 @@
 	
 	<script src="js/images-preload.js"></script>
 	<script src='js/bignumber.min.js'></script>
+	<script src='js/enemies.js'></script>
+	<script src='js/items.js'></script>
 	<script src="js/script.js"></script>
 </body>

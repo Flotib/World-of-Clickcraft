@@ -830,6 +830,14 @@ a {
 	font-weight: 100;
 }
 
+.item-tooltip div p {
+	font-size: 18px !important;
+	line-height: 20px !important;
+	color: #fff !important;
+	font-weight: 100 !important;
+	margin: 0 !important;
+}
+
 .item-tooltip p:first-of-type {
 	font-size: 22px;
 	line-height: 20px;
