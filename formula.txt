@@ -28,3 +28,5 @@ max:
 
 
 https://www.desmos.com/calculator/ypxnj0xzlg
+
+New formula : https://www.desmos.com/calculator/c2xtvjw4zd

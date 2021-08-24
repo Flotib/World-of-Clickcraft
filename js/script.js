@@ -36,7 +36,7 @@ var app = new Vue({
 			xpToNextLevel: null,
 			xp: 0,
 			progression: 0,
-			money: BigNumber(0),
+			money: new BigNumber(0),
 			bag: {
 				open: true,
 				level: 1,
@@ -211,7 +211,7 @@ var app = new Vue({
 				icon: 'inv_misc_pelt_wolf_ruin_04',
 				stackMaxSize: 20,
 				stackSize: 1,
-				sellPrice: BigNumber(5),
+				sellPrice: new BigNumber(5),
 			},
 			{
 				id: 4,
@@ -257,7 +257,6 @@ var app = new Vue({
 		],
 		enemyPool: [], //Putting this variable here for now
 		totalClicks: 0,
-		moneyPow: 2.6,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
 		silverimg: '<img src="assets/img/ui/money/silver.png">',
 		copperimg: '<img src="assets/img/ui/money/copper.png">',
@@ -411,6 +410,11 @@ var app = new Vue({
 			return Math.floor(Math.random() * (max - min + 1) + min)
 		},
 
+		randBigNumber(min, max) {
+			let rand = (BigNumber.random(10).multipliedBy(max.minus(min).plus(1)).plus(min)).integerValue(BigNumber.ROUND_FLOOR)
+			return rand
+		},
+
 		rng(chance) { // 1 / chance * 100 = % - /!\ chance is not a percentage
 			let loot = false
 			if (this.rand(1, chance) == this.rand(1, chance)) {
@@ -426,41 +430,22 @@ var app = new Vue({
 			}
 		},
 
-		autoMoneyAttri(enemy) { //https://www.desmos.com/calculator?lang=fr
-			if (enemy.level < 16) {
-				if (enemy.minMoney == null) {
-					enemy.minMoney = Math.round(enemy.level ** 1.9)
-				}
-				if (enemy.maxMoney == null) {
-					enemy.maxMoney = Math.round(3 * (enemy.level ** 1.6))
-				}
-			} else if (this.between(enemy.level, 16, 35)) {
-				if (enemy.minMoney == null) {
-					enemy.minMoney = Math.round((((enemy.level ** this.moneyPow) / 36) * 2000) / (36 ** (this.moneyPow - 1)))
-				}
-				if (enemy.maxMoney == null) {
-					enemy.maxMoney = Math.round((((enemy.level ** this.moneyPow) / 40) * 3100) / (40 ** (this.moneyPow - 1)))
-				}
-			} else if (enemy.level > 35) {
-				if (enemy.minMoney == null) {
-					enemy.minMoney = Math.round((((enemy.level ** this.moneyPow) / 60) * 10000) / (60 ** (this.moneyPow - 1)))
-				}
-				if (enemy.maxMoney == null) {
-					enemy.maxMoney = Math.round((((enemy.level ** this.moneyPow) / 70) * 18000) / (70 ** (this.moneyPow - 1)))
-				}
-			}
+		autoMoneyAttri(enemy) { //https://www.desmos.com/calculator?lang=fr and https://www.dcode.fr/recherche-equation-fonction
+			enemy.minMoney = BigNumber(0.131559).multipliedBy(enemy.level ** 2).plus(BigNumber(0.432517).multipliedBy(enemy.level)).plus(0.436728).integerValue()
+			enemy.maxMoney = BigNumber(0.142619).multipliedBy(enemy.level ** 2).plus(BigNumber(1.41888).multipliedBy(enemy.level)).plus(1.43849).integerValue()
 		},
 
 		autoSellPriceAttri(item) { // initialize me when upgrading an item
 			let quality = this.itemPriceMultiplier(item)
-			let sellPrice = 0
+			let sellPrice = BigNumber
 			let requiredLevel = 1
 			if (item.sellPrice == null && item.equipable) {
 				if (item.slotType.type == "weapon") {
 					if (item.requiredLevel != null) { // == null to include undefined
 						requiredLevel = item.requiredLevel
 					}
-					item.sellPrice = new BigNumber(Math.round((item.minDamage + item.maxDamage) * 10 * 1.05 ** (requiredLevel) * quality))
+					//item.sellPrice = new BigNumber(item.minDamage + item.maxDamage) * 10 * 1.05 ** (requiredLevel) * quality)
+					item.sellPrice = BigNumber((BigNumber(item.minDamage).plus(item.maxDamage)).multipliedBy(10).multipliedBy(BigNumber(1.05).pow(requiredLevel)).multipliedBy(quality)).integerValue()
 				} else {
 					item.sellPrice = 1 // /!\ Need to be change when trinkets will be available
 				}
@@ -630,12 +615,11 @@ var app = new Vue({
 		enemyDeadEvent(enemy) {
 			enemy.killCount++
 			this.playerXp(enemy)
-			let money = new BigNumber(this.rand(enemy.minMoney, enemy.maxMoney))
-			this.player.money = this.player.money.plus(money)
+			this.player.money = this.player.money.plus(this.randBigNumber(enemy.minMoney, enemy.maxMoney))
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
-			this.step = 10
+			this.step = 0
 			enemy.hp = enemy.maxHp
 			//this.spawnEnemy()
 		},
@@ -727,26 +711,35 @@ var app = new Vue({
 			this.xpToNextLevelCalc()
 		},
 
-		moneyStylizer(money) { // BigNumber reworking
-			let copper = money % 100
-			let silver = Math.floor(money / 100)
-			if (silver >= 100) {
-				silver = silver % 100
-			}
-			let gold = Math.floor(money / 10000)
-			if (gold >= 10000000) {
-				gold = gold % 10000000
-			}
-			let diamond = new BigNumber(Math.floor(money / 100000000000))
+		moneyStylizer(money) {
+			let copper = BigNumber(0)
+			let silver = BigNumber(0)
+			let gold = BigNumber(0)
+			let diamond = BigNumber(0)
 
+			if (money != null) {
+				copper = money.modulo(100)
+
+				silver = (money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(10000)) {
+					silver = silver.modulo(100)
+				}
+
+				gold = (money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(BigNumber(100000000000))) {
+					gold = gold.modulo(10000000)
+				}
+
+				diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+			}
 			if (diamond.eq(0)) {
-				if (gold == 0) {
-					if (silver == 0) {
+				if (gold.eq(0)) {
+					if (silver.eq(0)) {
 						return '<span></span><span></span><span></span><span>' + copper + this.copperimg + '</span>'
 					} else {
 						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 					}
-				} else { // gold.toLocaleString() works too
+				} else {
 					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 				}
 			} else {
@@ -755,46 +748,56 @@ var app = new Vue({
 		},
 
 		moneyStylizerTooltip(item) { // need to do the operations with BigNumber
-			let money = 0
+			let money = BigNumber(0)
 			if (item.stackSize > 1) {
-				money = item.sellPrice * item.stackSize
+				money = BigNumber(item.sellPrice).multipliedBy(item.stackSize)
 			} else {
-				money = item.sellPrice
+				money = BigNumber(item.sellPrice)
 			}
 
-			let copper = money % 100
-			let silver = Math.floor(money / 100)
-			if (silver >= 100) {
-				silver = silver % 100
+			let copper = BigNumber(0)
+			let silver = BigNumber(0)
+			let gold = BigNumber(0)
+			let diamond = BigNumber(0)
+
+			if (money != null) {
+				copper = money.modulo(100)
+
+				silver = (money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(10000)) {
+					silver = silver.modulo(100)
+				}
+
+				gold = (money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(BigNumber(100000000000))) {
+					gold = gold.modulo(10000000)
+				}
+
+				diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
 			}
-			let gold = Math.floor(money / 10000)
-			if (gold >= 10000000) {
-				gold = gold % 10000000
-			}
-			let diamond = new BigNumber(Math.floor(money / 100000000000))
 
 			if (diamond.eq(0)) {
-				if (gold == 0) {
-					if (silver == 0) {
+				if (gold.eq(0)) {
+					if (silver.eq(0)) {
 						return '<span>' + copper + this.copperimg + '</span>'
 					} else {
-						if (copper == 0) {
+						if (copper.eq(0)) {
 							return '<span>' + silver + this.silverimg + '</span>'
 						} else {
 							return '<span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 						}
 					}
 				} else { // gold.toLocaleString() works too
-					if (silver == 0 && copper == 0) {
+					if (silver.eq(0) && copper.eq(0)) {
 						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
 					} else {
 						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
 					}
 				}
 			} else {
-				if (copper == 0) {
-					if (silver == 0) {
-						if (gold == 0) {
+				if (copper.eq(0)) {
+					if (silver.eq(0)) {
+						if (gold.eq(0)) {
 							return '<span>' + diamond + this.diamondimg + '</span>'
 						} else {
 							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
@@ -1059,7 +1062,7 @@ var app = new Vue({
 			}
 		},
 
-		upgradeItemStatsCalculation(item) {
+		upgradeItem(item) {
 			// requirement (enought money / materials)
 		},
 

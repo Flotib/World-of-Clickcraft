@@ -128,7 +128,10 @@
 				<button @click="addItem(giveItemId, player.bag.slots, giveItemQuantity)" style="width: 120px; text-align: left;">add {{getItemName(giveItemId)}}</button>"
 				<input type="number" v-model.number="player.xp" style="width: 30px">
 				<input type="number" v-model.number="player.level" style="width: 30px">
-				<input type="number" v-model.number="player.money" style="width: 30px; background-color: red;"> <!--Broken because of BigNumber-->
+				<button @click="player.money = player.money.plus(49)">49 c</button>
+				<button @click="player.money = player.money.plus(4900)">49 s</button>
+				<button @click="player.money = player.money.plus(49000000)">4900 g</button>
+				<button @click="player.money = player.money.plus(49000000000000)">490 d</button>
 				<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
 				<input type="number" v-model.number="enemies[currentEnemy].minMoney" style="width: 30px">
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
