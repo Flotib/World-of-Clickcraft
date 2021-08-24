@@ -10,6 +10,7 @@ var app = new Vue({
 		damageParticlesDuration: 6,
 		damageParticles: [],
 		errorMessages: [],
+		maxLevel: 60,
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
 		currentEnemyPool: 0,
 		disabledEnemies: [],
@@ -102,30 +103,6 @@ var app = new Vue({
 	},
 
 	computed: {
-		unequipButtonStyles() {
-			let color = 'gray'
-
-			if (this.player.weapon.item.length > 0 && this.getFirstEmptySpace(this.player.bag.slots) !== false && this.selectedItem.containerName == 'playerEquipment') {
-				color = 'green'
-			}
-
-			return {
-				backgroundColor: color,
-			}
-		},
-
-		equipButtonStyles() {
-			let color = 'gray'
-
-			if (this.selectedItem.containerName == 'playerBag' && this.selectedItem.item.equipable) {
-				color = 'green'
-			}
-
-			return {
-				backgroundColor: color,
-			}
-		},
-
 		bagWidth() {
 			let size = 208
 
@@ -153,37 +130,20 @@ var app = new Vue({
 		},
 
 		tooltipItemQuality() {
-			let quality
 			let itemquality = this.hoverItem.item[0].quality
 
-			switch (itemquality) {
-				case 0:
-					quality = 'poor'
-					break
-				case 1:
-					quality = 'common'
-					break
-				case 2:
-					quality = 'uncommon'
-					break
-				case 3:
-					quality = 'rare'
-					break
-				case 4:
-					quality = 'epic'
-					break
-				case 5:
-					quality = 'legendary'
-					break
-				case 7:
-					quality = 'artifact'
-					break
-				case 6:
-					quality = 'heirloom'
-					break
+			const qualityMapping = {
+				0:'poor',
+				1: 'common',
+				2: 'uncommon',
+				3: 'rare',
+				4: 'epic',
+				5: 'legendary',
+				6: 'artifact',
+				7: 'heirloom',
 			}
 
-			return 'quality-' + quality
+			return 'quality-' + qualityMapping[itemquality]
 		},
 
 		moneyStylizerPlayer() {
@@ -418,9 +378,9 @@ var app = new Vue({
 					return 1.2
 				case 5:
 					return 1.4
-				case 7:
-					return 1.45
 				case 6:
+					return 1.45
+				case 7:
 					return 0 // heirloom for now so 0
 				default:
 					return 1
@@ -461,6 +421,9 @@ var app = new Vue({
 		},
 
 		killToLevelUp(enemy) {
+			if (this.player.level >= this.maxLevel) {
+				return 'noxp'
+			}
 			let x = Math.ceil((this.player.xpToNextLevel - this.player.xp) / this.monsterXp(enemy))
 			return x == 'Infinity' ? 'noxp' : x
 		},
@@ -566,7 +529,9 @@ var app = new Vue({
 
 		enemyDeadEvent(enemy) {
 			enemy.killCount++
-			this.playerXp(enemy)
+			if (this.player.level < this.maxLevel) {
+				this.playerXp(enemy)
+			}
 			this.player.money = this.player.money.plus(this.randBigNumber(enemy.minMoney, enemy.maxMoney))
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
@@ -581,6 +546,10 @@ var app = new Vue({
 		},
 
 		monsterXp(enemy) {
+			if (this.player.level >= this.maxLevel) {
+				return 0
+			}
+
 			let xp = 0
 			if (this.difficultyColor(enemy) == 'graylevel') {
 				return 0

@@ -476,7 +476,8 @@ a {
 	border-radius: 10px;
 	padding-bottom: 16px;
 	transition-duration: 50ms;
-	border: 3px groove #888888;
+	border: 4px #888888;
+	border-style: ridge groove groove ridge;
 }
 
 .showenemyinfobutton:hover {
@@ -781,9 +782,9 @@ a {
 	margin: 8px 0 4px 0;
 	display: flex;
 	align-items: center;
-	justify-content: flex-end;
+	justify-content: space-between;
 	height: 50px;
-	min-width: 300px;
+	min-width: 315px;
 	background-color: #000000;
 	border-radius: 10px;
 	border: 1px solid #aaa;
@@ -792,6 +793,53 @@ a {
 
 .select-item-interaction > * {
 	margin-left: 5px;
+}
+
+.select-item-interaction div > * {
+	margin-right: 5px;
+}
+
+.select-item-interaction-button {
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-start;
+	flex-direction: row-reverse;
+}
+
+.select-item-interaction button {
+	width: auto;
+	height: 35px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 15px;
+	color: #ece256;
+	background: linear-gradient(0deg, #49050d 0%, #6d060d 28%, #810404 50%, #6d060d 72%, #49050d 100%);
+	border-radius: 10px;
+	transition-duration: 50ms;
+	border: 2px #888888;
+	border-style: ridge groove groove ridge;
+	padding: 3px;
+}
+
+.select-item-interaction button:hover {
+	filter: brightness(135%);
+	color: #ccc;
+}
+
+.select-item-interaction button:active {
+    filter: brightness(90%);
+	border: 2px #929292;
+	border-style: groove ridge ridge groove;
+	color: #ccc;
+}
+
+.button-color-blue {
+	background: linear-gradient(0deg, #052049 0%, #062a6d 28%, #043e81 50%, #062a6d 72%, #052049 100%) !important
+}
+
+.button-color-green {
+	background: linear-gradient(0deg, #054914 0%, #066d1c 28%, #048123 50%, #066d1c 72%, #054914 100%) !important
 }
 
 .item-tooltip-placeholder {
@@ -828,6 +876,11 @@ a {
 	line-height: 20px;
 	color: #fff;
 	font-weight: 100;
+}
+
+.item-tooltip div {
+	display: flex;
+	justify-content: space-between;
 }
 
 .item-tooltip div p {

@@ -85,18 +85,20 @@
 				</div>
 
 				<div class="select-item-interaction">
-					<button v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" :style="equipButtonStyles" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
-						equip item
-					</button>
-					<button v-if="selectedItem.containerName == 'playerEquipment' || selectedItem.containerName == 'playerTrinket'" :style="unequipButtonStyles" @click="(selectedItem.containerName == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
-						unequip item
-					</button>
-					<button v-if="selectedItem.containerName == 'playerBag'" @click="deleteItem(player.bag, selectedItem.slotId)">
-						delete item
-					</button>
-					<button v-if="selectedItem.selection" @click="unselectItem()">
-						unselect
-					</button>
+					<div class="select-item-interaction-button">
+						<button class="button-color-blue" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
+							Equip Item
+						</button>
+						<button class="button-color-blue" v-if="selectedItem.containerName == 'playerEquipment' || selectedItem.containerName == 'playerTrinket'" @click="(selectedItem.containerName == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
+							Unequip Item
+						</button>
+						<button v-if="selectedItem.containerName == 'playerBag'" @click="deleteItem(player.bag, selectedItem.slotId)">
+							Delete Item
+						</button>
+						<button v-if="selectedItem.selection" @click="unselectItem()">
+							Unselect
+						</button>
+					</div>
 					<div :class="[player.bag.open ? 'bag-button-open' : '', 'bag-button']" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'">
 						<p>({{emptySpace(player.bag.slots)}})</p>
 					</div>
@@ -142,8 +144,8 @@
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
 				<input type="number" v-model.number="currentEnemy" style="width: 30px">
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
-				<button v-if="selectedItem.item.slotType != null && (selectedItem.item.quality != 'poor' || selectedItem.item.quality != 'common')" @click="upgradeItem(selectedItem.item)">upgrade</button>
-				
+				<button v-if="selectedItem.item.slotType != null && (selectedItem.item.quality != 'poor' || selectedItem.item.quality != 'common')" style="width: auto;" @click="upgradeItem(selectedItem.item)">upgrade: <span v-html="moneyStylizer(upgradeItemPrice(selectedItem.item))"></span></button>
+
 			</div>
 
 			<div class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
