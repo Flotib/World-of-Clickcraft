@@ -89,6 +89,7 @@ button, input[type="submit"], input[type="reset"] { /*Remove the shitty default 
 body {
 	background-color: #121212;
 	overflow-x: hidden;
+	padding-bottom: 80px;
 }
 
 img {
@@ -351,8 +352,9 @@ a {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-direction: row;
-	flex-wrap: unwrap;
+	flex-direction: column;
+	flex-wrap: wrap;
+	width: auto;
 }
 
 .enemymoneyui p {
@@ -362,13 +364,22 @@ a {
 	color: #fff;
 	font-size: 17px;
 	font-family: Arial Narrow;
+	margin-bottom: 8px;
 }
 
+.enemymoneyui p:last-child {
+	margin: 0 !important;
+}
+/*
 .enemymoneyui p:nth-of-type(2) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 40px;
+	width: 20px;
+}
+*/
+.enemymoneyui p span:last-child img:last-of-type {
+	margin-right: 0 !important;
 }
 
 .enemymoneyui p span {
@@ -378,11 +389,11 @@ a {
 	flex-direction: row;
 	width: auto;
 	height: 20px;
-	margin-left: 6px;
 }
 
 .enemymoneyui p img {
 	margin-left: 2px;
+	margin-right: 6px;
 }
 
 .xpamount {

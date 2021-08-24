@@ -18,10 +18,10 @@
 		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s;'">{{ particle.output }}</div>
 		
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
-			<div class="item-tooltip" v-if="hoverItem.slotId">
+			<div class="item-tooltip" v-if="hoverItem.slotId != null">
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
 				<p style="color: #0f0; font-size: 16px;">This is a test</p>
-				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money" v-html="moneyStylizerTooltip(hoverItem.item[0].sellPrice, 0)"></p>
+				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money" v-html="moneyStylizerTooltip(hoverItem.item[0])"></p>
 			</div>					
 		</div>
 		
@@ -47,8 +47,8 @@
 					<div class="timebar" :style="'width:'+(100-(step/fps)/countdown*100)+'%'"></div>
 				</div>
 				<button @click="showEnemyInformations=!showEnemyInformations" class="showenemyinfobutton">{{ showEnemyInformations ? '-' : '+' }}</button>
-				<div :style="'height:'+(showEnemyInformations ? '140' : '0')+'px;'" class="enemyInformations">
-					<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p>-</p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
+				<div :style="'height:'+(showEnemyInformations ? '160' : '0')+'px;'" class="enemyInformations">
+					<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
 					<p class="xpamount">{{ monsterXp(enemies[currentEnemy]) }} xp</p>
 					<div v-if="killToLevelUp(enemies[currentEnemy])!='noxp'"><p class="killsleft">{{ killToLevelUp(enemies[currentEnemy]) }} kill{{ killToLevelUp(enemies[currentEnemy])>1 ? 's' : ''}} left</p></div>
 					<p class="killcount">Killed {{ enemies[currentEnemy].killCount }} time{{enemies[currentEnemy].killCount>1 ? 's' : ''}}</p>
@@ -75,7 +75,7 @@
 						</div>
 					</div>
 					<div class="player-currency-container">
-						<div class="playermoneyui"><p v-html="moneyStylizer(player.money, player.diamond)"></p></div>
+						<div class="playermoneyui"><p v-html="moneyStylizer(player.money)"></p></div>
 					</div>
 				</div>
 
@@ -117,7 +117,7 @@
 			
 			<div style="display: inline-block; position: fixed; bottom: 35px;">
 				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
-				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemyPool++">next</button>
+				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
 				<button @click="player.level++">+1 lvl</button>
 				<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
 				<button @click="enemies[currentEnemy].hp=0">instant kill</button>
@@ -128,7 +128,7 @@
 				<button @click="addItem(giveItemId, player.bag.slots, giveItemQuantity)" style="width: 120px; text-align: left;">add {{getItemName(giveItemId)}}</button>"
 				<input type="number" v-model.number="player.xp" style="width: 30px">
 				<input type="number" v-model.number="player.level" style="width: 30px">
-				<input type="number" v-model.number="player.money" style="width: 30px">
+				<input type="number" v-model.number="player.money" style="width: 30px; background-color: red;"> <!--Broken because of BigNumber-->
 				<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
 				<input type="number" v-model.number="enemies[currentEnemy].minMoney" style="width: 30px">
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
@@ -144,5 +144,6 @@
 	</div>
 	
 	<script src="js/images-preload.js"></script>
+	<script src='js/bignumber.min.js'></script>
 	<script src="js/script.js"></script>
 </body>
