@@ -186,12 +186,12 @@ var app = new Vue({
 				levelenvironment: 'elwynn',
 			},
 		],
-		items: [
+		items: [ //  quality table --> 0:poor  1:common  2:uncommon  3:rare  4:epic  5:legendary  6:artifact  7:heirloom
 			{
 				id: 1,
 				name: 'One',
 				equipable: true,
-				quality: 'rare',
+				quality: 3,
 				slotType: {
 					type: 'weapon',
 					name: 'Sword',
@@ -199,14 +199,12 @@ var app = new Vue({
 				},
 				icon: 'inv_sword_04',
 				baseMinDamage: 1,
-				minDamage: 1,
 				baseMaxDamage: 2,
-				maxDamage: 2,
 			},
 			{
 				id: 2,
 				name: 'Ruined Pelt',
-				quality: 'poor',
+				quality: 0,
 				equipable: false,
 				icon: 'inv_misc_pelt_wolf_ruin_04',
 				stackMaxSize: 20,
@@ -227,31 +225,31 @@ var app = new Vue({
 			{
 				id: 5,
 				name: 'poor',
-				quality: 'poor',
+				quality: 0,
 				icon: null,
 			},
 			{
 				id: 6,
 				name: 'uncommon',
-				quality: 'uncommon',
+				quality: 2,
 				icon: null,
 			},
 			{
 				id: 7,
 				name: 'rare',
-				quality: 'rare',
+				quality: 3,
 				icon: null,
 			},
 			{
 				id: 8,
 				name: 'epic',
-				quality: 'epic',
+				quality: 4,
 				icon: null,
 			},
 			{
 				id: 9,
 				name: 'legendary',
-				quality: 'legendary',
+				quality: 5,
 				icon: null,
 			},
 		],
@@ -349,11 +347,147 @@ var app = new Vue({
 		},
 
 		tooltipItemQuality() {
-			let quality = this.hoverItem.item[0].quality
-			if (quality == null) {
-				return 'quality-common'
+			let quality
+			let itemquality = this.hoverItem.item[0].quality
+
+			switch (itemquality) {
+				case 0:
+					quality = 'poor'
+					break
+				case 1:
+					quality = 'common'
+					break
+				case 2:
+					quality = 'uncommon'
+					break
+				case 3:
+					quality = 'rare'
+					break
+				case 4:
+					quality = 'epic'
+					break
+				case 5:
+					quality = 'legendary'
+					break
+				case 7:
+					quality = 'artifact'
+					break
+				case 6:
+					quality = 'heirloom'
+					break
 			}
+
 			return 'quality-' + quality
+		},
+
+		moneyStylizerPlayer() {
+			let copper = BigNumber(0)
+			let silver = BigNumber(0)
+			let gold = BigNumber(0)
+			let diamond = BigNumber(0)
+
+			if (this.player.money != null) {
+				copper = this.player.money.modulo(100)
+
+				silver = (this.player.money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
+				if (this.player.money.gte(10000)) {
+					silver = silver.modulo(100)
+				}
+
+				gold = (this.player.money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
+				if (this.player.money.gte(BigNumber(100000000000))) {
+					gold = gold.modulo(10000000)
+				}
+
+				diamond = (this.player.money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+			}
+			if (diamond.eq(0)) {
+				if (gold.eq(0)) {
+					if (silver.eq(0)) {
+						return '<span></span><span></span><span></span><span>' + copper + this.copperimg + '</span>'
+					} else {
+						return '<span></span><span></span><span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+					}
+				} else {
+					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+				}
+			} else {
+				return '<span>' + diamond + this.diamondimg + '</span><span>' + String(gold).padStart(7, 0) + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+			}
+		},
+
+		moneyStylizerTooltip() { // need to do the operations with BigNumber
+			let money = BigNumber(0)
+			if (this.hoverItem.item[0].stackSize > 1) {
+				money = BigNumber(this.hoverItem.item[0].sellPrice).multipliedBy(this.hoverItem.item[0].stackSize)
+			} else {
+				money = BigNumber(this.hoverItem.item[0].sellPrice)
+			}
+
+			let copper = BigNumber(0)
+			let silver = BigNumber(0)
+			let gold = BigNumber(0)
+			let diamond = BigNumber(0)
+
+			if (money != null) {
+				copper = money.modulo(100)
+
+				silver = (money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(10000)) {
+					silver = silver.modulo(100)
+				}
+
+				gold = (money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(BigNumber(100000000000))) {
+					gold = gold.modulo(10000000)
+				}
+
+				diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+			}
+
+			if (diamond.eq(0)) {
+				if (gold.eq(0)) {
+					if (silver.eq(0)) {
+						return '<span>' + copper + this.copperimg + '</span>'
+					} else {
+						if (copper.eq(0)) {
+							return '<span>' + silver + this.silverimg + '</span>'
+						} else {
+							return '<span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+						}
+					}
+				} else { // gold.toLocaleString() works too
+					if (silver.eq(0) && copper.eq(0)) {
+						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
+					} else {
+						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+					}
+				}
+			} else {
+				if (copper.eq(0)) {
+					if (silver.eq(0)) {
+						if (gold.eq(0)) {
+							return '<span>' + diamond + this.diamondimg + '</span>'
+						} else {
+							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
+						}
+					} else {
+						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span>'
+					}
+				} else {
+					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
+				}
+			}
+		},
+
+		hoverItemIsAWeapon() {
+			if (this.hoverItem.item[0].slotType != null) {
+				if (this.hoverItem.item[0].slotType.type == 'weapon') {
+					return true
+				}
+			}
+
+			return false
 		},
 	},
 
@@ -370,7 +504,11 @@ var app = new Vue({
 			}
 
 			for (const item of this.items) {
-				item.upgradeLevel = 0
+				if (item.equipable) {
+					item.upgradeLevel = 0
+				}
+				item.minDamage = item.baseMinDamage
+				item.maxDamage = item.baseMaxDamage
 				this.autoSellPriceAttri(item)
 			}
 		},
@@ -437,7 +575,6 @@ var app = new Vue({
 
 		autoSellPriceAttri(item) { // initialize me when upgrading an item
 			let quality = this.itemPriceMultiplier(item)
-			let sellPrice = BigNumber
 			let requiredLevel = 1
 			if (item.sellPrice == null && item.equipable) {
 				if (item.slotType.type == "weapon") {
@@ -445,31 +582,31 @@ var app = new Vue({
 						requiredLevel = item.requiredLevel
 					}
 					//item.sellPrice = new BigNumber(item.minDamage + item.maxDamage) * 10 * 1.05 ** (requiredLevel) * quality)
-					item.sellPrice = BigNumber((BigNumber(item.minDamage).plus(item.maxDamage)).multipliedBy(10).multipliedBy(BigNumber(1.05).pow(requiredLevel)).multipliedBy(quality)).integerValue()
+					item.sellPrice = ((BigNumber(item.minDamage).plus(item.maxDamage)).multipliedBy(10).multipliedBy(BigNumber(1.05).pow(requiredLevel)).multipliedBy(quality)).integerValue()
 				} else {
-					item.sellPrice = 1 // /!\ Need to be change when trinkets will be available
+					item.sellPrice = BigNumber(1) // /!\ Need to be change when trinkets will be available
 				}
 			}
 		},
 
 		itemPriceMultiplier(item) {
 			switch (item.quality) {
-				case 'poor':
+				case 0:
 					return 0.95
-				case 'common':
+				case 1:
 					return 1
-				case 'uncommon':
+				case 2:
 					return 1.05
-				case 'rare':
+				case 3:
 					return 1.1
-				case 'epic':
+				case 4:
 					return 1.2
-				case 'legendary':
+				case 5:
 					return 1.4
-				case 'artifact':
+				case 7:
 					return 1.45
-				case 'heirloom':
-					return 0
+				case 6:
+					return 0 // heirloom for now so 0
 				default:
 					return 1
 			}
@@ -747,70 +884,6 @@ var app = new Vue({
 			}
 		},
 
-		moneyStylizerTooltip(item) { // need to do the operations with BigNumber
-			let money = BigNumber(0)
-			if (item.stackSize > 1) {
-				money = BigNumber(item.sellPrice).multipliedBy(item.stackSize)
-			} else {
-				money = BigNumber(item.sellPrice)
-			}
-
-			let copper = BigNumber(0)
-			let silver = BigNumber(0)
-			let gold = BigNumber(0)
-			let diamond = BigNumber(0)
-
-			if (money != null) {
-				copper = money.modulo(100)
-
-				silver = (money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
-				if (money.gte(10000)) {
-					silver = silver.modulo(100)
-				}
-
-				gold = (money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
-				if (money.gte(BigNumber(100000000000))) {
-					gold = gold.modulo(10000000)
-				}
-
-				diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
-			}
-
-			if (diamond.eq(0)) {
-				if (gold.eq(0)) {
-					if (silver.eq(0)) {
-						return '<span>' + copper + this.copperimg + '</span>'
-					} else {
-						if (copper.eq(0)) {
-							return '<span>' + silver + this.silverimg + '</span>'
-						} else {
-							return '<span>' + silver + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
-						}
-					}
-				} else { // gold.toLocaleString() works too
-					if (silver.eq(0) && copper.eq(0)) {
-						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
-					} else {
-						return '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
-					}
-				}
-			} else {
-				if (copper.eq(0)) {
-					if (silver.eq(0)) {
-						if (gold.eq(0)) {
-							return '<span>' + diamond + this.diamondimg + '</span>'
-						} else {
-							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span>'
-						}
-					} else {
-						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span>'
-					}
-				} else {
-					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold.toLocaleString().split(/\s/).join(' ') + this.goldimg + '</span><span>' + String(silver).padStart(2, '0') + this.silverimg + '</span><span>' + String(copper).padStart(2, '0') + this.copperimg + '</span>'
-				}
-			}
-		},
-
 		clickParticles(damage) {
 			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
@@ -824,22 +897,6 @@ var app = new Vue({
 				this.errorMessages.shift()
 			}, 3000)
 		},
-
-		/*buyItem(item, price) { We will see that later :)
-			if (price > this.player.money) {
-				if (this.player.diamond==0) {
-					this.error('Not enough money.')
-					return
-				} else {
-					this.player.diamond
-					this.player.money
-				}
-			} else {
-				this.player.money-=price
-			}
-
-			// add item to player
-		},*/
 
 		getItemName(id) {
 			let index = this.items.findIndex(item => item.id === id)
@@ -948,8 +1005,9 @@ var app = new Vue({
 		itemSelection(item, slotId, containerName) {
 			this.selectedItem.selection = true
 			this.selectedItem.item = item
+			this.selectedItem.item.sellPrice = BigNumber(item.sellPrice)
 			this.selectedItem.slotId = slotId
-			this.selectedItem.containerName = containerName // name of the parent which contain the item
+			this.selectedItem.containerName = containerName // name of the parent which contain the item, set by hand
 		},
 
 		equipItem(item, slot) {
@@ -1016,21 +1074,21 @@ var app = new Vue({
 
 		getQualityColor(item) {
 			switch (item.quality) { // Thx Dorian!
-				case 'poor':
+				case 0:
 					return '#9d9d9d'
-				case 'common':
+				case 1:
 					return '#fff'
-				case 'uncommon':
+				case 2:
 					return '#1eff00'
-				case 'rare':
+				case 3:
 					return '#0070dd'
-				case 'epic':
+				case 4:
 					return '#a335ee'
-				case 'legendary':
+				case 5:
 					return '#ff8000'
-				case 'artifact':
+				case 6:
 					return '#e6cc80'
-				case 'heirloom':
+				case 7:
 					return '#00ccff'
 				default:
 					return '#fff'
@@ -1063,11 +1121,26 @@ var app = new Vue({
 		},
 
 		upgradeItem(item) {
-			// requirement (enought money / materials)
+			let price = BigNumber(this.upgradeItemPrice(item))
+			if (price.lte(this.player.money)) {
+				this.player.money = this.player.money.minus(price)
+				this.upgradeItemStatsCalculation(item)
+			} else {
+				return
+			}
 		},
 
 		upgradeItemStatsCalculation(item) {
+			item.upgradeLevel++
+			item.maxDamage = Math.round(item.baseMaxDamage * 1.104 ** (item.upgradeLevel + 1))
+			item.minDamage = Math.round(item.maxDamage * (item.baseMinDamage / item.baseMaxDamage))
+			item.sellPrice = null
+			this.autoSellPriceAttri(item)
+		},
 
+		upgradeItemPrice(item) {
+			let price = (BigNumber(item.sellPrice).multipliedBy(BigNumber(1.65).pow(BigNumber(item.upgradeLevel).plus(1)))).integerValue()
+			return price
 		},
 
 	},

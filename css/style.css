@@ -824,14 +824,15 @@ a {
 }
 
 .item-tooltip p {
-	font-size: 20px;
-	line-height: 20px;
-	margin-top: 3px;
+	font-size: 16px;
+	line-height: 18px;
 	color: #fff;
 }
 
 .item-tooltip p:first-of-type {
-	margin: 0;
+	font-size: 20px;
+	line-height: 18px;
+	margin-bottom: 4px;
 }
 
 .item-tooltip-money {

@@ -20,8 +20,10 @@
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
 			<div class="item-tooltip" v-if="hoverItem.slotId != null">
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
-				<p style="color: #0f0; font-size: 16px;">This is a test</p>
-				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money" v-html="moneyStylizerTooltip(hoverItem.item[0])"></p>
+				<p v-if="hoverItem.item[0].upgradeLevel !== undefined">{{ hoverItem.item[0].upgradeLevel }}</p>
+				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
+				<p style="color: #0f0">This is a test</p>
+				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money" v-html="moneyStylizerTooltip"></p>
 			</div>					
 		</div>
 		
@@ -59,7 +61,7 @@
 				<div class="playertab">
 					<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
 					<p>Level {{ player.level }}</p>
-					<p>Damages: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
+					<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
 					<p>Total clicks: {{ totalClicks }}</p>
 					<div>
 						<div class="player-weapon">
@@ -75,7 +77,7 @@
 						</div>
 					</div>
 					<div class="player-currency-container">
-						<div class="playermoneyui"><p v-html="moneyStylizer(player.money)"></p></div>
+						<div class="playermoneyui"><p v-html="moneyStylizerPlayer"></p></div>
 					</div>
 				</div>
 
@@ -137,6 +139,8 @@
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
 				<input type="number" v-model.number="currentEnemy" style="width: 30px">
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
+				<button v-if="selectedItem.item.slotType != null && (selectedItem.item.quality != 'poor' || selectedItem.item.quality != 'common')" @click="upgradeItem(selectedItem.item)">upgrade</button>
+				
 			</div>
 
 			<div class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
