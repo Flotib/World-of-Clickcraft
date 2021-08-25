@@ -124,7 +124,7 @@ var app = new Vue({
 			let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
 
 			return {
-				height: vh - 100 + 'px'
+				minHeight: vh - 100 + 'px'
 			}
 		},
 
