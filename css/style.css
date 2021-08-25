@@ -119,8 +119,8 @@ a {
 	flex-wrap: wrap;
 	align-items: flex-start;
 	justify-content: center; /*May change later*/
+	padding-top: 20px;
 	width: 100%;
-	height: 100%;
 }
 
 #content > div {
@@ -513,6 +513,7 @@ a {
 	font-size: 20px;
 	border-radius: 10px;
 	border: 1px solid #aaa;
+	padding-top: 15px;
 }
 
 .player-tab > * {
@@ -526,8 +527,8 @@ a {
 
 .player-tab .settings-button {
 	position: absolute;
-	width: 18px;
-	height: 18px;
+	width: 20px;
+	height: 20px;
 	top: 5px;
 	right: 10px;
 }
@@ -538,7 +539,7 @@ a {
 }
 
 .player-tab .settings-button:hover img {
-	filter: brightness(120%) drop-shadow(0 0 2px #ffffffe0);
+	filter: brightness(120%) drop-shadow(0 0 2px #ffffff7a);
 }
 
 .enemyInformations {
@@ -615,8 +616,16 @@ a {
 	box-shadow: inset 0 0 6px 5px #f1e74d !important;
 }
 
+.bag-button-open:hover {
+	box-shadow: inset 0 0 4px 4px #faf066, inset 0 0 6px 5px #f1e74d !important;
+}
+
+.bag-button-open:active {
+	box-shadow: inset 0 0 4px 6px #fffbc9, inset 0 0 6px 5px #f1e74d !important;
+}
+
 .bag-button:hover {
-	box-shadow: inset 0 0 4px 4px #5b5cb193;
+	box-shadow: inset 0 0 6px 4px #5b5cb193;
 }
 
 .bag-button:active {
@@ -1007,7 +1016,7 @@ a {
 	position: relative;
 	background-color: #000000;
 	width: 280px;
-	height: 300px;
+	height: 400px;
 	color: #fff;
 	font-size: 20px;
 	border-radius: 10px;
@@ -1026,7 +1035,7 @@ a {
 	width: 100%;
 	height: 100%;
 	position: absolute !important;
-	background-color: #0000006b;
+	background-color: #00000093;
 	border-radius: 10px;
 }
 
@@ -1049,25 +1058,73 @@ a {
 	grid-column-start: 1;
 }
 
+.upgrade-item-overlay {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	background-image: url(../assets/img/ui/upgrade/reliciconframe.png);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	user-select: none;
+	pointer-events: none;
+}
+
 .upgrade-item-slot-name {
 	height: 20px;
-	margin-bottom: 15px;
+	margin: 4px 0 25px 0;
+	line-height: 20px;
+	font-size: 24px;
+}
+
+.upgrade-item-stats-change {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	height: 110px;
+	width: 100%;
+}
+
+.upgrade-item-stats-change > div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-evenly;
+	margin-bottom: 10px;
+	width: 100%;
+}
+
+.upgrade-item-stats-change > div:last-child {
+	margin: 0 !important;
 }
 
 .upgrade-item-button {
-	width: auto;
+	width: 80%;
 	height: 35px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 15px;
+	font-size: 16px;
 	color: #ece256;
 	background: linear-gradient(0deg, #49050d 0%, #6d060d 28%, #810404 50%, #6d060d 72%, #49050d 100%);
 	border-radius: 10px;
 	transition-duration: 50ms;
 	border: 2px #888888;
 	border-style: ridge groove groove ridge;
-	padding: 3px;
+	padding: 4px;
+}
+
+.upgrade-item-button:hover {
+	filter: brightness(135%);
+	color: #ccc;
+}
+
+.upgrade-item-button:active {
+    filter: brightness(90%);
+	border: 2px #929292;
+	border-style: groove ridge ridge groove;
+	color: #ccc;
 }
 
 .settings-window-overlay {
@@ -1137,6 +1194,7 @@ a {
 	color: #fff;
 	font-size: 14px;
 	transition-duration: 100ms;
+	margin-left: -1px;
 }
 
 .settings-frame-tab-bar > div:hover {

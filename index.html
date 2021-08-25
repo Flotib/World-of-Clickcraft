@@ -38,7 +38,9 @@
 					<p>Configuration</p>
 				</div>
 				<div v-if="settingsWindow.selectedTab == 1" class="settings-stats">
-					<p>Statistics</p>
+					<p style="font-size: 26px; margin-bottom: 10px;">Statistics</p>
+					<p>Total clicks: {{ player.gameStats.totalClicks }}</p>
+					<p>Total damages: {{ player.gameStats.totalDamages }}</p>
 				</div>
 				<div class="settings-frame-tab-bar">
 					<div @click="settingsWindow.selectedTab = 0" :class="settingsWindow.selectedTab == 0 ? 'settings-frame-tab-activated' : ''">
@@ -51,14 +53,14 @@
 			</div>
 		</div>
 
-		<div id="content" style="margin-top: 20px">
+		<div id="content" :style="contentHeight">
 
 			<div class="enemy-related-window">
 
 			</div>
 
 			<div class="enemytab">
-				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy]) + (player.gameStats.totalClicks++)">
+				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy])">
 					<div class="portrait">
 						<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'/'+enemies[currentEnemy].portrait+'_'+enemies[currentEnemy].portraitId+'.jpg);'"></div>
 						<div class="portrait-border"></div>
@@ -93,7 +95,6 @@
 					<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
 					<p>Level {{ player.level }}</p>
 					<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
-					<p>Total clicks: {{ player.gameStats.totalClicks }}</p>
 					<div>
 						<div class="player-weapon">
 							<div v-if="showItemQualityBorder(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') && player.weapon.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.weapon.item[0])+';'"></div>
@@ -154,15 +155,33 @@
 				<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
 					<div class="upgrade-item-frame-dark-bg-layer"></div>
 					<div class="upgrade-item-slot">
-						<div v-if="upgradeItemFrame.item != null" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(upgradeItemFrame.item)+';'"></div>
-						
+						<div v-if="upgradeItemFrame.itemPreview[0] != null" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(upgradeItemFrame.itemPreview[0])+', 0 0 14px 2px'+getQualityColor(upgradeItemFrame.itemPreview[0])"></div>
+						<div class="upgrade-item-overlay"></div>
 						<div @click="takeOffItemFromUpgrade() + itemHoverLeave()" @mouseover="itemHoverEnter(upgradeItemFrame.itemPreview[0], 0, 'upgradeFrame')" @mouseleave="itemHoverLeave()" class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(upgradeItemFrame.itemPreview[0])+'.png);'" v-if="upgradeItemFrame.itemPreview[0] != null">
 						</div>
 					</div>
 					<div class="upgrade-item-slot-name">
-						<p v-if="upgradeItemFrame.item != null" :class="upgradeItemQuality">{{ upgradeItemFrame.item.name }}</p>
+						<p v-if="upgradeItemFrame.itemPreview[0] != null" :class="upgradeItemQuality">{{ upgradeItemFrame.itemPreview[0].name }}</p>
+					</div>
+					<div class="upgrade-item-stats-change">
+						<div v-if="upgradeItemIsItemOk">
+							<p>{{ upgradeItemFrame.item.minDamage }}</p>
+							<p>-</p>
+							<p :style="isItAnUpgrade(upgradeItemFrame.item.minDamage, upgradeItemFrame.itemPreview[0].minDamage)">{{ upgradeItemFrame.itemPreview[0].minDamage }}</p>
+						</div>
+						<div v-if="upgradeItemIsItemOk">
+							<p>{{ upgradeItemFrame.item.maxDamage }}</p>
+							<p>-</p>
+							<p :style="isItAnUpgrade(upgradeItemFrame.item.maxDamage, upgradeItemFrame.itemPreview[0].maxDamage)">{{ upgradeItemFrame.itemPreview[0].maxDamage }}</p>
+						</div>
+						<div v-if="upgradeItemIsItemOk && upgradeItemQualityUpgrade">
+							<p :style="'color:'+getQualityColor(upgradeItemFrame.item)">{{ qualityText(upgradeItemFrame.item) }}</p>
+							<p>-</p>
+							<p :style="'color:'+getQualityColor(upgradeItemFrame.itemPreview[0])">{{ qualityText(upgradeItemFrame.itemPreview[0]) }}</p>
+						</div>
 					</div>
 					<button :style="buttonMoveToUpgrade" class="upgrade-item-button" @click="selectedItemUpgradeConditions ? moveSelectedToUpgrade() : ''">Import Selected Weapon</button>
+					<button @click="upgradeItemButton">test</button>
 				</div>
 			</div>
 			

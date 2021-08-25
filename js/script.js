@@ -60,6 +60,10 @@ var app = new Vue({
 			],
 			gameStats: {
 				totalClicks: 0,
+				totalDamages: 0,
+				totalXP: 0,
+				totalKills: 0,
+				totalMoney: 0,
 				startedDate: null,
 			}
 		},
@@ -115,16 +119,23 @@ var app = new Vue({
 	},
 
 	computed: {
-		unequipButtonStyles() {
-			let graylevel = 'grayscale(100%)'
+		contentHeight() {
 
-			if (this.emptySpace(this.player.bag.slots) > 0) {
-				graylevel = 'grayscale(0%)'
-			}
+			let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
 
 			return {
-				filter: graylevel
+				height: vh - 100 + 'px'
 			}
+		},
+
+		unequipButtonStyles() {
+			let graylevel = 'filter: grayscale(100%) !important;'
+
+			if (this.emptySpace(this.player.bag.slots) > 0) {
+				graylevel = ''
+			}
+
+			return graylevel
 		},
 
 		selectedItemUpgradeConditions() {
@@ -137,15 +148,13 @@ var app = new Vue({
 		},
 
 		buttonMoveToUpgrade() {
-			let graylevel = 'grayscale(100%)'
+			let graylevel = 'filter: grayscale(100%) !important;'
 
 			if (this.selectedItemUpgradeConditions) {
-				graylevel = 'grayscale(0%)'
+				graylevel = ''
 			}
 
-			return {
-				filter: graylevel
-			}
+			return graylevel
 		},
 
 		bagWidth() {
@@ -208,7 +217,7 @@ var app = new Vue({
 		},
 
 		upgradeItemQuality() {
-			let itemquality = this.upgradeItemFrame.item.quality
+			let itemquality = this.upgradeItemFrame.itemPreview[0].quality
 
 			const qualityMapping = {
 				0: 'poor',
@@ -340,6 +349,16 @@ var app = new Vue({
 
 			return {
 				color: textcolor
+			}
+		},
+
+		upgradeItemIsItemOk() {
+			return this.upgradeItemFrame.itemPreview[0] != null && this.upgradeItemFrame.item != null
+		},
+
+		upgradeItemQualityUpgrade() {
+			if (this.upgradeItemIsItemOk === true) {
+				return this.upgradeItemFrame.item.quality < this.upgradeItemFrame.itemPreview[0].quality
 			}
 		},
 	},
@@ -488,6 +507,8 @@ var app = new Vue({
 
 		damageEnemy(enemy) {
 			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
+			this.player.gameStats.totalClicks++
+			this.player.gameStats.totalDamages += damage
 			this.clickParticles(damage)
 			enemy.hp -= damage
 		},
@@ -1013,6 +1034,10 @@ var app = new Vue({
 
 		moveSelectedToUpgrade() {
 			this.upgradeItemFrame.item = this.selectedItem.item
+			this.createUpgradeItemPreview()
+		},
+
+		createUpgradeItemPreview() {
 			let itemClone = JSON.parse(JSON.stringify(this.upgradeItemFrame.item))
 			this.upgradeItemFrame.itemPreview.splice(0, 1, itemClone)
 			this.upgradeItemStatsCalculation(this.upgradeItemFrame.itemPreview[0])
@@ -1021,7 +1046,36 @@ var app = new Vue({
 		takeOffItemFromUpgrade() {
 			this.upgradeItemFrame.item = null
 			this.upgradeItemFrame.itemPreview.splice(0, 1)
-		}
+		},
+
+		upgradeItemButton() {
+			this.upgradeItem(this.upgradeItemFrame.item)
+			this.createUpgradeItemPreview()
+		},
+
+		isItAnUpgrade(oldstat, newstat) {
+			let textcolor = '#fff'
+			oldstat < newstat ? (textcolor = '#ff0') : ('')
+
+			return {
+				color: textcolor
+			}
+		},
+
+		qualityText(item) {
+			let qualityMapping = {
+				0: 'Poor',
+				1: 'Common',
+				2: 'Uncommon',
+				3: 'Rare',
+				4: 'Epic',
+				5: 'Legendary',
+				6: 'Artifact',
+				7: 'Heirloom',
+			}
+
+			return qualityMapping[item.quality]
+		},
 
 	},
 
