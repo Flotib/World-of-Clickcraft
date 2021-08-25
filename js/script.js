@@ -972,7 +972,7 @@ var app = new Vue({
 				this.player.bag.open = !this.player.bag.open
 			}
 			if (event.keyCode === 85) { // 'U' toggle upgrade window
-				this.upgradeItemWindow.open = !this.upgradeItemWindow.open
+				this.upgradeItemFrame.open = !this.upgradeItemFrame.open
 			}
 		}, false)
 

@@ -149,6 +149,12 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="player-related-window">
+				<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
+					<div class="upgrade-item-frame-dark-bg-layer"></div>
+				</div>
+			</div>
 			
 			<div style="display: inline-block; position: fixed; bottom: 35px;">
 				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
