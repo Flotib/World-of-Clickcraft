@@ -165,6 +165,11 @@
 					</div>
 					<div class="upgrade-item-stats-change">
 						<div v-if="upgradeItemIsItemOk">
+							<p style="color: #ffd100">Lvl {{ upgradeItemFrame.item.upgradeLevel == null ? '0' : upgradeItemFrame.item.upgradeLevel }}</p>
+							<p>-</p>
+							<p style="color: #ffd100">Lvl {{ upgradeItemFrame.itemPreview[0].upgradeLevel }}</p>
+						</div>
+						<div v-if="upgradeItemIsItemOk">
 							<p>{{ upgradeItemFrame.item.minDamage }}</p>
 							<p>-</p>
 							<p :style="isItAnUpgrade(upgradeItemFrame.item.minDamage, upgradeItemFrame.itemPreview[0].minDamage)">{{ upgradeItemFrame.itemPreview[0].minDamage }}</p>
