@@ -78,5 +78,6 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         baseMinDamage: 167,
         baseMaxDamage: 209,
         requiredLevel: 60,
+        quote: 'A taste of Power.',
     },
 ]

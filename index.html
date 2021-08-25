@@ -25,15 +25,40 @@
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
 				<p v-if="hoverItemIsAWeapon">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
-				<p style="color: #0f0"></p>
+				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
+				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
 				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
 			</div>					
 		</div>
 		
+		<div v-if="settingsWindow.open" class="settings-window-overlay">
+			<div class="settings-clickable-background" @click="settingsWindow.open = !settingsWindow.open"></div>
+			<div class="settings-frame">
+				<div v-if="settingsWindow.selectedTab == 0" class="settings-config">
+					<p>Configuration</p>
+				</div>
+				<div v-if="settingsWindow.selectedTab == 1" class="settings-stats">
+					<p>Statistics</p>
+				</div>
+				<div class="settings-frame-tab-bar">
+					<div @click="settingsWindow.selectedTab = 0" :class="settingsWindow.selectedTab == 0 ? 'settings-frame-tab-activated' : ''">
+						<p>Configuration</p>
+					</div>
+					<div @click="settingsWindow.selectedTab = 1" :class="settingsWindow.selectedTab == 1 ? 'settings-frame-tab-activated' : ''">
+						<p>Statistics</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="content" style="margin-top: 20px">
 
+			<div class="enemy-related-window">
+
+			</div>
+
 			<div class="enemytab">
-				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy]) + (totalClicks++)">
+				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy]) + (player.gameStats.totalClicks++)">
 					<div class="portrait">
 						<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'/'+enemies[currentEnemy].portrait+'_'+enemies[currentEnemy].portraitId+'.jpg);'"></div>
 						<div class="portrait-border"></div>
@@ -61,11 +86,14 @@
 			</div>
 			
 			<div class="player-column">
-				<div class="playertab">
+				<div class="player-tab">
+					<div @click="settingsWindow.open = !settingsWindow.open" class="settings-button">
+						<img src="assets/img/ui/ui-optionsbutton.png">
+					</div>
 					<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
 					<p>Level {{ player.level }}</p>
 					<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
-					<p>Total clicks: {{ totalClicks }}</p>
+					<p>Total clicks: {{ player.gameStats.totalClicks }}</p>
 					<div>
 						<div class="player-weapon">
 							<div v-if="showItemQualityBorder(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') && player.weapon.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.weapon.item[0])+';'"></div>
@@ -80,7 +108,7 @@
 						</div>
 					</div>
 					<div class="player-currency-container">
-						<div class="playermoneyui"><p v-html="moneyStylizerPlayer"></p></div>
+						<div class="player-money-ui"><p v-html="moneyStylizerPlayer"></p></div>
 					</div>
 				</div>
 
@@ -89,7 +117,7 @@
 						<button class="button-color-blue" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 							Equip Item
 						</button>
-						<button class="button-color-blue" v-if="selectedItem.containerName == 'playerEquipment' || selectedItem.containerName == 'playerTrinket'" @click="(selectedItem.containerName == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
+						<button class="button-color-blue" :style="unequipButtonStyles" v-if="selectedItem.containerName == 'playerEquipment' || selectedItem.containerName == 'playerTrinket'" @click="(selectedItem.containerName == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem) : ''">
 							Unequip Item
 						</button>
 						<button v-if="selectedItem.containerName == 'playerBag'" @click="deleteItem(player.bag, selectedItem.slotId)">
@@ -103,7 +131,7 @@
 						<p>({{emptySpace(player.bag.slots)}})</p>
 					</div>
 				</div>
-				<div v-if="player.bag.open" class="bag-window" :style="bagWidth">
+				<div v-if="player.bag.open" class="bag-frame" :style="bagWidth">
 					<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container">
 						<div v-if="container.item" class="item-placeholder">
 							

@@ -1,6 +1,6 @@
 var app = new Vue({
 	el: '#app',
-	data: {
+	data: { // https://blog.logrocket.com/localstorage-javascript-complete-guide/ <-- I keep this for later
 		step: 0,
 		fps: 50,
 		countdown: 10, //sec
@@ -10,14 +10,14 @@ var app = new Vue({
 		damageParticlesDuration: 6,
 		damageParticles: [],
 		errorMessages: [],
+		settingsWindow: {
+			open: false,
+			selectedTab: 0,
+		},
 		maxLevel: 60,
-		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
-		currentEnemyPool: 0,
-		disabledEnemies: [],
-		showEnemyInformations: false,
 		giveItemId: 0,
 		giveItemQuantity: 1,
-		rareChance: 50, // start at 50 so 2% chance to get a rare mob - could be upgraded later
+		rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later
 		hoverItem: {
 			item: [],
 			slotId: null,
@@ -58,10 +58,21 @@ var app = new Vue({
 					slotId: 2,
 				}
 			],
+			gameStats: {
+				totalClicks: 0,
+				startedDate: null,
+			}
+		},
+		upgradeItemFrame: {
+			open: true,
+			item: {},
 		},
 		...window.content,
 		enemyPool: [], //Putting this variable here for now
-		totalClicks: 0,
+		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
+		currentEnemyPool: 0,
+		disabledEnemies: [],
+		showEnemyInformations: false,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
 		silverimg: '<img src="assets/img/ui/money/silver.png">',
 		copperimg: '<img src="assets/img/ui/money/copper.png">',
@@ -96,13 +107,25 @@ var app = new Vue({
 			}
 		},
 
-		'player.bag.bagSpace': function (slots, oldslots) {
+		'player.bag.bagSpace': function (slots) {
 			this.updateSlots(this.player.bag.slots, slots)
 		},
 
 	},
 
 	computed: {
+		unequipButtonStyles() {
+			let graylevel = 'grayscale(100%)'
+
+			if (this.emptySpace(this.player.bag.slots) > 0) {
+				graylevel = 'grayscale(0%)'
+			}
+
+			return {
+				filter: graylevel
+			}
+		},
+
 		bagWidth() {
 			let size = 208
 
@@ -269,6 +292,9 @@ var app = new Vue({
 	methods: {
 
 		gameInit() {
+			if (this.player.gameStats.startedDate == null) {
+				this.player.gameStats.startedDate = new Date (Date.parse(new Date()))
+			}
 			this.xpToNextLevelCalc()
 			this.updateSlots(this.player.bag.slots, this.player.bag.bagSpace)
 			//this.initializeEnemyPool()
@@ -669,7 +695,7 @@ var app = new Vue({
 		},
 
 		clickParticles(damage) {
-			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
+			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.player.gameStats.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
 				this.damageParticles.shift()
 			}, (this.damageParticlesDuration - 1) * 1000) //to be sure to delete it as soon as it disappear
@@ -944,6 +970,9 @@ var app = new Vue({
 
 			if (event.keyCode === 66) { // 'B' toggle bag
 				this.player.bag.open = !this.player.bag.open
+			}
+			if (event.keyCode === 85) { // 'U' toggle upgrade window
+				this.upgradeItemWindow.open = !this.upgradeItemWindow.open
 			}
 		}, false)
 
