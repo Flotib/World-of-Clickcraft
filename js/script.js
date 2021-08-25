@@ -65,7 +65,8 @@ var app = new Vue({
 		},
 		upgradeItemFrame: {
 			open: true,
-			item: {},
+			item: null,
+			itemPreview: [],
 		},
 		...window.content,
 		enemyPool: [], //Putting this variable here for now
@@ -126,6 +127,27 @@ var app = new Vue({
 			}
 		},
 
+		selectedItemUpgradeConditions() {
+			if (this.upgradeItemFrame.item == null && this.selectedItem.selection && this.selectedItem.item.slotType != null) {
+				if (this.selectedItem.item.slotType.type == 'weapon' && this.selectedItem.item.quality > 1) {
+					return true
+				}
+			}
+			return false
+		},
+
+		buttonMoveToUpgrade() {	
+			let graylevel = 'grayscale(100%)'
+
+			if (this.selectedItemUpgradeConditions) {
+				graylevel = 'grayscale(0%)'
+			}
+
+			return {
+				filter: graylevel
+			}
+		},
+
 		bagWidth() {
 			let size = 208
 
@@ -154,6 +176,23 @@ var app = new Vue({
 
 		tooltipItemQuality() {
 			let itemquality = this.hoverItem.item[0].quality
+
+			const qualityMapping = {
+				0:'poor',
+				1: 'common',
+				2: 'uncommon',
+				3: 'rare',
+				4: 'epic',
+				5: 'legendary',
+				6: 'artifact',
+				7: 'heirloom',
+			}
+
+			return 'quality-' + qualityMapping[itemquality]
+		},
+
+		upgradeItemQuality() {
+			let itemquality = this.upgradeItemFrame.item.quality
 
 			const qualityMapping = {
 				0:'poor',
@@ -955,6 +994,18 @@ var app = new Vue({
 			let price = (BigNumber(item.sellPrice).multipliedBy(BigNumber(1.65).pow(BigNumber(item.upgradeLevel).plus(1)))).integerValue()
 			return price
 		},
+
+		moveSelectedToUpgrade() {
+			this.upgradeItemFrame.item = this.selectedItem.item
+			let itemClone = JSON.parse(JSON.stringify(this.upgradeItemFrame.item))
+			this.upgradeItemFrame.itemPreview.splice(0, 1, itemClone)
+			this.upgradeItemStatsCalculation(this.upgradeItemFrame.itemPreview[0])
+		},
+
+		takeOffItemFromUpgrade() {
+			this.upgradeItemFrame.item = null
+			this.upgradeItemFrame.itemPreview.splice(0, 1)
+		}
 
 	},
 

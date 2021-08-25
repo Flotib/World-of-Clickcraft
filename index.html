@@ -153,6 +153,16 @@
 			<div class="player-related-window">
 				<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
 					<div class="upgrade-item-frame-dark-bg-layer"></div>
+					<div class="upgrade-item-slot">
+						<div v-if="upgradeItemFrame.item != null" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(upgradeItemFrame.item)+';'"></div>
+						
+						<div @click="takeOffItemFromUpgrade() + itemHoverLeave()" @mouseover="itemHoverEnter(upgradeItemFrame.itemPreview[0], 0, 'upgradeFrame')" @mouseleave="itemHoverLeave()" class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(upgradeItemFrame.itemPreview[0])+'.png);'" v-if="upgradeItemFrame.itemPreview[0] != null">
+						</div>
+					</div>
+					<div class="upgrade-item-slot-name">
+						<p v-if="upgradeItemFrame.item != null" :class="upgradeItemQuality">{{ upgradeItemFrame.item.name }}</p>
+					</div>
+					<button :style="buttonMoveToUpgrade" class="upgrade-item-button" @click="selectedItemUpgradeConditions ? moveSelectedToUpgrade() : ''">Import Selected Weapon</button>
 				</div>
 			</div>
 			
@@ -178,7 +188,7 @@
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
 				<input type="number" v-model.number="currentEnemy" style="width: 30px">
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
-				<button v-if="selectedItem.item.slotType != null && (selectedItem.item.quality != 'poor' || selectedItem.item.quality != 'common')" style="width: auto;" @click="upgradeItem(selectedItem.item)">upgrade: <span v-html="moneyStylizer(upgradeItemPrice(selectedItem.item))"></span></button>
+				<button v-if="selectedItem.item.slotType != null && selectedItem.item.quality > 1" style="width: auto;" @click="upgradeItem(selectedItem.item)">upgrade: <span v-html="moneyStylizer(upgradeItemPrice(selectedItem.item))"></span></button>
 
 			</div>
 
