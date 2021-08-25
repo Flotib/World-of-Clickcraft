@@ -136,7 +136,7 @@ var app = new Vue({
 			return false
 		},
 
-		buttonMoveToUpgrade() {	
+		buttonMoveToUpgrade() {
 			let graylevel = 'grayscale(100%)'
 
 			if (this.selectedItemUpgradeConditions) {
@@ -164,9 +164,25 @@ var app = new Vue({
 		},
 
 		tooltipPosition() {
-			const left = this.cursorX + 10 + 'px'
+			let e = 0
+			let rect = 0
+			let correctionY = 0
+			let correctionX = 0
+			this.cursorY
+			this.cursorX
 
-			const top = this.cursorY - 2 + 'px'
+			const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+
+			if (document.querySelector('.item-tooltip') && this.hoverItem.slotId !== null) {
+				e = document.querySelector('.item-tooltip')
+				rect = e.getBoundingClientRect()
+				correctionY = Math.max(e.offsetHeight + 5, this.cursorY)
+				correctionX = Math.min(this.cursorX, vw - e.offsetWidth - 30)
+			}
+
+			const left = correctionX + 10 + 'px'
+
+			const top = correctionY - 2 + 'px'
 
 			return {
 				left,
@@ -178,7 +194,7 @@ var app = new Vue({
 			let itemquality = this.hoverItem.item[0].quality
 
 			const qualityMapping = {
-				0:'poor',
+				0: 'poor',
 				1: 'common',
 				2: 'uncommon',
 				3: 'rare',
@@ -195,7 +211,7 @@ var app = new Vue({
 			let itemquality = this.upgradeItemFrame.item.quality
 
 			const qualityMapping = {
-				0:'poor',
+				0: 'poor',
 				1: 'common',
 				2: 'uncommon',
 				3: 'rare',
@@ -332,7 +348,7 @@ var app = new Vue({
 
 		gameInit() {
 			if (this.player.gameStats.startedDate == null) {
-				this.player.gameStats.startedDate = new Date (Date.parse(new Date()))
+				this.player.gameStats.startedDate = new Date(Date.parse(new Date()))
 			}
 			this.xpToNextLevelCalc()
 			this.updateSlots(this.player.bag.slots, this.player.bag.bagSpace)

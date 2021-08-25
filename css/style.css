@@ -896,6 +896,8 @@ a {
 	border: 2px groove #bbb;
 	background-color: #000218c6;
 	padding: 8px;
+	pointer-events: none;
+	user-select: none;
 }
 
 .item-tooltip p {
