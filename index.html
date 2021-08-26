@@ -60,7 +60,7 @@
 
 			</div>
 
-			<div class="enemytab">
+			<div class="enemy-tab">
 				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy])">
 					<div class="portrait">
 						<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'/'+enemies[currentEnemy].portrait+'_'+enemies[currentEnemy].portraitId+'.jpg);'"></div>
@@ -129,7 +129,7 @@
 							Unselect
 						</button>
 					</div>
-					<div :class="[player.bag.open ? 'bag-button-open' : '', 'bag-button']" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'">
+					<div :class="[player.bag.open ? 'ui-icon-open' : '', 'bag-button']" @click="player.bag.open = !player.bag.open" :style="'background-image: url(assets/img/ui/icons/bags/bag_'+player.bag.level+'.png);'">
 						<p>({{emptySpace(player.bag.slots)}})</p>
 					</div>
 				</div>
@@ -153,6 +153,10 @@
 			</div>
 
 			<div class="player-related-window">
+				<div class="window-buttons-container">
+					<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @click="upgradeItemFrame.open ? closeItemUpgradeFrame() : upgradeItemFrame.open = true"></div>
+				</div>
+
 				<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
 					<div class="upgrade-item-frame-dark-bg-layer"></div>
 					<div class="upgrade-item-slot">
@@ -167,27 +171,27 @@
 					<div class="upgrade-item-stats-change">
 						<div v-if="upgradeItemIsItemOk">
 							<p style="color: #ffd100">Lvl {{ upgradeItemFrame.item.upgradeLevel == null ? '0' : upgradeItemFrame.item.upgradeLevel }}</p>
-							<p>-</p>
+							<img src="assets/img/ui/upgrade/reforgegreenarrow.png">
 							<p style="color: #ffd100">Lvl {{ upgradeItemFrame.itemPreview[0].upgradeLevel }}</p>
 						</div>
 						<div v-if="upgradeItemIsItemOk">
 							<p>{{ upgradeItemFrame.item.minDamage }}</p>
-							<p>-</p>
+							<img src="assets/img/ui/upgrade/reforgegreenarrow.png">
 							<p :style="isItAnUpgrade(upgradeItemFrame.item.minDamage, upgradeItemFrame.itemPreview[0].minDamage)">{{ upgradeItemFrame.itemPreview[0].minDamage }}</p>
 						</div>
 						<div v-if="upgradeItemIsItemOk">
 							<p>{{ upgradeItemFrame.item.maxDamage }}</p>
-							<p>-</p>
+							<img src="assets/img/ui/upgrade/reforgegreenarrow.png">
 							<p :style="isItAnUpgrade(upgradeItemFrame.item.maxDamage, upgradeItemFrame.itemPreview[0].maxDamage)">{{ upgradeItemFrame.itemPreview[0].maxDamage }}</p>
 						</div>
 						<div v-if="upgradeItemIsItemOk && upgradeItemQualityUpgrade">
 							<p :style="'color:'+getQualityColor(upgradeItemFrame.item)">{{ qualityText(upgradeItemFrame.item) }}</p>
-							<p>-</p>
+							<img src="assets/img/ui/upgrade/reforgegreenarrow.png">
 							<p :style="'color:'+getQualityColor(upgradeItemFrame.itemPreview[0])">{{ qualityText(upgradeItemFrame.itemPreview[0]) }}</p>
 						</div>
 					</div>
-					<button :style="buttonMoveToUpgrade" class="upgrade-item-button" @click="selectedItemUpgradeConditions == 'yes' ? moveSelectedToUpgrade() : takeOffItemFromUpgrade() + itemHoverLeave()">{{ moveItemToUpgradeText }}</button>
-					<button @click="itemUpgradeConditions ? upgradeItemButton() : ''" class="upgrade-item-button" :style="buttonUpgradeItem">test</button>
+					<button @click="itemUpgradeConditions ? upgradeItemButton() : ''" :class="[itemUpgradeConditions ? '' : 'upgrade-item-button-gray', 'upgrade-item-button']"><p v-if="upgradeItemFrame.item == null">Upgrade price</p><span class="upgrade-item-price"><p v-if="upgradeItemFrame.item" :style="itemUpgradeConditions ? '' : 'color: #ff0000'" v-html="moneyStylizer(upgradeItemPrice(upgradeItemFrame.item))"></p></span></button>
+					<button :style="buttonMoveToUpgrade" class="upgrade-item-button" @click="selectedItemUpgradeConditions == 'yes' ? moveSelectedToUpgrade() : takeOffItemFromUpgrade() + itemHoverLeave()">{{ moveItemToUpgradeText }}</button>					
 				</div>
 			</div>
 			
@@ -208,6 +212,7 @@
 				<button @click="player.money = player.money.plus(4900)">49 s</button>
 				<button @click="player.money = player.money.plus(49000000)">4900 g</button>
 				<button @click="player.money = player.money.plus(49000000000000)">490 d</button>
+				<button @click="player.money = player.money.plus(49000000000000000000000000000000000000000000)">4.9e32 d</button>
 				<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
 				<input type="number" v-model.number="enemies[currentEnemy].minMoney" style="width: 30px">
 				<input type="number" v-model.number="enemies[currentEnemy].maxMoney" style="width: 30px">
@@ -217,7 +222,7 @@
 
 			</div>
 
-			<div class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
+			<div v-if="maxLevel > player.level" class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
 				<div class="xpbar" :style="'width:'+(player.xp/player.xpToNextLevel)*100+'%'"></div>
 			</div>
 

@@ -68,7 +68,7 @@ var app = new Vue({
 			}
 		},
 		upgradeItemFrame: {
-			open: true,
+			open: false,
 			inheritedSlotId: null,
 			inheritedContainerName: null,
 			item: null,
@@ -167,16 +167,6 @@ var app = new Vue({
 			let graylevel = 'filter: grayscale(100%) !important;'
 
 			if (this.selectedItemUpgradeConditions == "yes" || this.selectedItemUpgradeConditions == "middlyyes") {
-				graylevel = ''
-			}
-
-			return graylevel
-		},
-
-		buttonUpgradeItem() {
-			let graylevel = 'filter: grayscale(100%) !important;'
-
-			if (this.itemUpgradeConditions) {
 				graylevel = ''
 			}
 
@@ -1097,10 +1087,15 @@ var app = new Vue({
 		closeItemUpgradeFrame() {
 			if (this.upgradeItemFrame.open) {
 				this.takeOffItemFromUpgrade()
-				this.upgradeItemFrame.open = false
+				this.closePlayerRelatedWindow()
 			} else {
+				this.closePlayerRelatedWindow()
 				this.upgradeItemFrame.open = true
 			}
+		},
+
+		closePlayerRelatedWindow() { // put all windows here
+			this.upgradeItemFrame.open = false
 		},
 
 		isItAnUpgrade(oldstat, newstat) {
