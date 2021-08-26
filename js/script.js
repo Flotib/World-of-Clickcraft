@@ -69,6 +69,8 @@ var app = new Vue({
 		},
 		upgradeItemFrame: {
 			open: true,
+			inheritedSlotId: null,
+			inheritedContainerName: null,
 			item: null,
 			itemPreview: [],
 		},
@@ -139,18 +141,42 @@ var app = new Vue({
 		},
 
 		selectedItemUpgradeConditions() {
-			if (this.upgradeItemFrame.item == null && this.selectedItem.selection && this.selectedItem.item.slotType != null) {
+			if (this.selectedItem.selection && this.selectedItem.item.slotType != null) {
 				if (this.selectedItem.item.slotType.type == 'weapon' && this.selectedItem.item.quality > 1) {
+					if ((this.selectedItem.slotId == this.upgradeItemFrame.inheritedSlotId && this.selectedItem.containerName != this.upgradeItemFrame.inheritedContainerName) || this.selectedItem.slotId != this.upgradeItemFrame.inheritedSlotId) {
+						return "yes"
+					} else {
+						return "middlyyes"
+					}
+				}
+			}
+			return "no"
+		},
+
+		itemUpgradeConditions() {
+			if (this.upgradeItemFrame.item != null) {
+				if (this.upgradeItemPrice(this.upgradeItemFrame.item).lte(this.player.money)) {
 					return true
 				}
 			}
+
 			return false
 		},
 
 		buttonMoveToUpgrade() {
 			let graylevel = 'filter: grayscale(100%) !important;'
 
-			if (this.selectedItemUpgradeConditions) {
+			if (this.selectedItemUpgradeConditions == "yes" || this.selectedItemUpgradeConditions == "middlyyes") {
+				graylevel = ''
+			}
+
+			return graylevel
+		},
+
+		buttonUpgradeItem() {
+			let graylevel = 'filter: grayscale(100%) !important;'
+
+			if (this.itemUpgradeConditions) {
 				graylevel = ''
 			}
 
@@ -361,6 +387,17 @@ var app = new Vue({
 				return this.upgradeItemFrame.item.quality < this.upgradeItemFrame.itemPreview[0].quality
 			}
 		},
+
+		moveItemToUpgradeText() {
+			const answerMapping = {
+				'yes': "Import Selected Weapon",
+				'middlyyes': "Cancel",
+				'no': "Select a compatible weapon",
+			}
+			
+			return answerMapping[this.selectedItemUpgradeConditions]
+		},
+
 	},
 
 	methods: {
@@ -1033,6 +1070,8 @@ var app = new Vue({
 		},
 
 		moveSelectedToUpgrade() {
+			this.upgradeItemFrame.inheritedSlotId = this.selectedItem.slotId
+			this.upgradeItemFrame.inheritedContainerName = this.selectedItem.containerName
 			this.upgradeItemFrame.item = this.selectedItem.item
 			this.createUpgradeItemPreview()
 		},
@@ -1044,6 +1083,8 @@ var app = new Vue({
 		},
 
 		takeOffItemFromUpgrade() {
+			this.upgradeItemFrame.inheritedSlotId = null
+			this.upgradeItemFrame.inheritedContainerName = null
 			this.upgradeItemFrame.item = null
 			this.upgradeItemFrame.itemPreview.splice(0, 1)
 		},
@@ -1051,6 +1092,15 @@ var app = new Vue({
 		upgradeItemButton() {
 			this.upgradeItem(this.upgradeItemFrame.item)
 			this.createUpgradeItemPreview()
+		},
+
+		closeItemUpgradeFrame() {
+			if (this.upgradeItemFrame.open) {
+				this.takeOffItemFromUpgrade()
+				this.upgradeItemFrame.open = false
+			} else {
+				this.upgradeItemFrame.open = true
+			}
 		},
 
 		isItAnUpgrade(oldstat, newstat) {
@@ -1093,7 +1143,7 @@ var app = new Vue({
 				this.player.bag.open = !this.player.bag.open
 			}
 			if (event.keyCode === 85) { // 'U' toggle upgrade window
-				this.upgradeItemFrame.open = !this.upgradeItemFrame.open
+				this.closeItemUpgradeFrame()
 			}
 		}, false)
 

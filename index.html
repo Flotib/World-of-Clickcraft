@@ -27,6 +27,7 @@
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
 				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
+				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
 				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
 			</div>					
 		</div>
@@ -185,8 +186,8 @@
 							<p :style="'color:'+getQualityColor(upgradeItemFrame.itemPreview[0])">{{ qualityText(upgradeItemFrame.itemPreview[0]) }}</p>
 						</div>
 					</div>
-					<button :style="buttonMoveToUpgrade" class="upgrade-item-button" @click="selectedItemUpgradeConditions ? moveSelectedToUpgrade() : ''">Import Selected Weapon</button>
-					<button @click="upgradeItemButton">test</button>
+					<button :style="buttonMoveToUpgrade" class="upgrade-item-button" @click="selectedItemUpgradeConditions == 'yes' ? moveSelectedToUpgrade() : takeOffItemFromUpgrade() + itemHoverLeave()">{{ moveItemToUpgradeText }}</button>
+					<button @click="itemUpgradeConditions ? upgradeItemButton() : ''" class="upgrade-item-button" :style="buttonUpgradeItem">test</button>
 				</div>
 			</div>
 			
