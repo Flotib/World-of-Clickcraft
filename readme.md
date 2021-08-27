@@ -133,7 +133,7 @@ Twitter: [@_Flotib](https://twitter.com/_flotib)
 
 <!-- CONTRIBUTORS -->
 ## Contributors
-* [10xJSChad](https://github.com/10xJSChad) who found a better progression way and wrote helpful code (still not activated)
+* [10xJSChad](https://github.com/10xJSChad) - found a better progression way and wrote helpful code *(still not activated)*
 
 
 
