@@ -80,16 +80,15 @@ Download the repository and open index.html in your favorite web browser or try 
 * Progression
 * Currency system
 * Character inventory
+* Weapon upgrades
+* Game stats (more incoming)
 * WoW vibes
-
 
 ## Todo-list
 
 * Sounds
 * Shop
-* Upgrades
 * Crafts
-* Stats
 * Skills
 * Tons of items
 * Saves and load
@@ -98,7 +97,7 @@ Download the repository and open index.html in your favorite web browser or try 
 * Dungeons and raids
 * Minigames
 * Hidden lore and references
-* And many other things
+And many more...
 
 
 
