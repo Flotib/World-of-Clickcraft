@@ -91,7 +91,7 @@ var app = new Vue({
 		currentEnemy: function (enemy, oldenemy) {
 			this.enemies[oldenemy].hp = this.enemies[oldenemy].maxHp
 			this.step = 0
-			this.countdown = this.enemies[enemy].type != 'normal' ? 30 : 10 // May change later
+			this.countdown = (this.enemies[enemy].type == 'normal' || this.enemies[enemy].type == 'rare') ? 10 : 30 // May change later
 		},
 
 		/*
@@ -670,6 +670,13 @@ var app = new Vue({
 			//this.spawnEnemy()
 		},
 
+		missEnemy(){ // will change with the pool
+			this.step = 0
+			for (const enemy of this.enemies) {
+				enemy.hp = enemy.maxHp
+			}
+		},
+
 		playerXp(enemy) {
 			this.player.xp += this.monsterXp(enemy)
 		},
@@ -1148,10 +1155,8 @@ var app = new Vue({
 
 		setInterval(() => {
 			if (this.step % (this.fps * this.countdown) == 0) {
-				this.step = 0
+				this.missEnemy()
 				//this.generateEnemy()
-				//for (const enemy of this.enemies) {
-				//}
 				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
 			}
 			this.step++
