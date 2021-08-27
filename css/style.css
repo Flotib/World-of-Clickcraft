@@ -827,12 +827,12 @@ a {
 	padding: 3px;
 }
 
-.select-item-interaction > * {
-	margin-left: 5px;
+.select-item-interaction button {
+	margin-right: 5px;
 }
 
-.select-item-interaction div > * {
-	margin-right: 5px;
+.select-item-interaction button:last-of-type {
+	margin-left: 5px;
 }
 
 .select-item-interaction-button {
@@ -1278,6 +1278,23 @@ a {
 	width: 50px;
 	height: 50px;
 	margin: 1px;
+	border-radius: 14%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-end;
+	overflow: visible;
+	user-select: none;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.window-buttons-container > div p {
+	font-family: Arial Narrow;
+	font-size: 18px;
+	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000; /*text-shadow go brrrr (to create a border, dont worry)*/
+	color: white;
+	margin: 0 9px 1px 0;
 }
 
 .ui-hover-window-button:hover {
@@ -1290,8 +1307,8 @@ a {
 
 .upgrade-window-button {
 	background-image: url(../assets/img/ui/icons/trade_blacksmithing.png);
-	background-position: center;
-	background-size: cover;
-	background-repeat: no-repeat;
-	border-radius: 14%;
+}
+
+.text-shadow-2px {
+	text-shadow: 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000;
 }

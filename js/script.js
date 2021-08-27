@@ -14,6 +14,10 @@ var app = new Vue({
 			open: false,
 			selectedTab: 0,
 		},
+		keybinds : {
+			bag: 66,
+			upgradeItem: 85,
+		},
 		maxLevel: 60,
 		giveItemId: 0,
 		giveItemQuantity: 1,
@@ -1141,10 +1145,10 @@ var app = new Vue({
 			if (this.keyPressed) return
 			this.keyPressed = true
 
-			if (event.keyCode === 66) { // 'B' toggle bag
+			if (event.keyCode === this.keybinds.bag) { // 'B' toggle bag
 				this.player.bag.open = !this.player.bag.open
 			}
-			if (event.keyCode === 85) { // 'U' toggle upgrade window
+			if (event.keyCode === this.keybinds.upgradeItem) { // 'U' toggle upgrade window
 				this.closeItemUpgradeFrame()
 			}
 		}, false)

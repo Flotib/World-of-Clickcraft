@@ -110,7 +110,7 @@
 						</div>
 					</div>
 					<div class="player-currency-container">
-						<div class="player-money-ui"><p v-html="moneyStylizerPlayer"></p></div>
+						<div class="player-money-ui text-shadow-2px"><p v-html="moneyStylizerPlayer"></p></div>
 					</div>
 				</div>
 
@@ -154,7 +154,7 @@
 
 			<div class="player-related-window">
 				<div class="window-buttons-container">
-					<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @click="upgradeItemFrame.open ? closeItemUpgradeFrame() : upgradeItemFrame.open = true"></div>
+					<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @click="upgradeItemFrame.open ? closeItemUpgradeFrame() : upgradeItemFrame.open = true"><p>{{ String.fromCharCode(this.keybinds.upgradeItem) }}</p></div>
 				</div>
 
 				<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
