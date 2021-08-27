@@ -44,6 +44,7 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="#contributors">Contributors</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
@@ -97,7 +98,8 @@ Download the repository and open index.html in your favorite web browser or try 
 * Dungeons and raids
 * Minigames
 * Hidden lore and references
-And many more...
+
+*And many more...*
 
 
 
@@ -129,15 +131,17 @@ Twitter: [@_Flotib](https://twitter.com/_flotib)
 
 
 
+<!-- CONTRIBUTORS -->
+## Contributors
+* [10xJSChad](https://github.com/10xJSChad) who found a better progression way and wrote helpful code (still not activated)
+
+
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
 * [Caceresenzo](https://github.com/Caceresenzo) who is always here to help me
-* []()
-* []()
-
-
+* [Thegostisdead](https://github.com/thegostisdead) for being awesome (and a good Zarya in OW) 
 
 
 
