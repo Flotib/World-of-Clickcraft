@@ -1281,7 +1281,7 @@ a {
 	border-radius: 14%;
 	display: flex;
 	justify-content: flex-end;
-	align-items: flex-end;
+	align-items: flex-start;
 	overflow: visible;
 	user-select: none;
 	background-position: center;
@@ -1291,10 +1291,10 @@ a {
 
 .window-buttons-container > div p {
 	font-family: Arial Narrow;
-	font-size: 18px;
+	font-size: 12px;
 	text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000, 0 0 2px #000; /*text-shadow go brrrr (to create a border, dont worry)*/
 	color: white;
-	margin: 0 9px 1px 0;
+	margin: 2px 8px 0 0;
 }
 
 .ui-hover-window-button:hover {
@@ -1310,7 +1310,7 @@ a {
 }
 
 .merchant-mode-button {
-	background-image: url(../assets/img/ui/icons/inv_misc_bag_10.png);
+	background-image: url(../assets/img/ui/icons/inv_misc_rune_01.png); /* ../assets/img/ui/icons/inv_misc_bag_10.png */
 }
 
 .text-shadow-2px {
@@ -1353,4 +1353,8 @@ a {
 	width: 393px;
 	height: 510px;
 	background-color: #aa0;
+}
+
+.merchant-mode-button-activated {
+	background-image: url(../assets/img/ui/icons/ability_warrior_challange.png);	
 }
