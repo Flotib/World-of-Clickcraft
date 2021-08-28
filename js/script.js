@@ -17,6 +17,7 @@ var app = new Vue({
 		keybinds : {
 			bag: 66,
 			upgradeItem: 85,
+			merchant: 77,
 		},
 		maxLevel: 60,
 		giveItemId: 0,
@@ -64,10 +65,12 @@ var app = new Vue({
 			],
 			gameStats: {
 				totalClicks: 0,
-				totalDamages: 0,
-				totalXP: 0,
+				totalDamages: BigNumber(0),
+				totalXP: BigNumber(0),
 				totalKills: 0,
-				totalMoney: 0,
+				totalMisses: 0,
+				totalMoney: BigNumber(0),
+				totalSpentMoney: BigNumber(0),
 				startedDate: null,
 			}
 		},
@@ -78,6 +81,12 @@ var app = new Vue({
 			item: null,
 			itemPreview: [],
 		},
+		merchantFrame: {
+			open: false,
+			cooldown: 900, //seconds
+			actualCooldown: 0,
+		},
+		progressionMode: true,
 		...window.content,
 		enemyPool: [], //Putting this variable here for now
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
@@ -120,6 +129,20 @@ var app = new Vue({
 
 		'player.bag.bagSpace': function (slots) {
 			this.updateSlots(this.player.bag.slots, slots)
+		},
+
+		'merchantFrame.open': function (value) {
+			if (value === true) {
+				this.progressionMode = false
+			} else {
+				this.progressionMode = true
+			}
+		},
+
+		'progressionMode' : function (value) {
+			this.step = 0
+			if (value === false) {
+			}
 		},
 
 	},
@@ -539,7 +562,7 @@ var app = new Vue({
 		damageEnemy(enemy) {
 			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
 			this.player.gameStats.totalClicks++
-			this.player.gameStats.totalDamages += damage
+			this.player.gameStats.totalDamages = this.player.gameStats.totalDamages.plus(damage)
 			this.clickParticles(damage)
 			enemy.hp -= damage
 		},
@@ -662,10 +685,13 @@ var app = new Vue({
 
 		enemyDeadEvent(enemy) {
 			enemy.killCount++
+			this.player.gameStats.totalKills++
 			if (this.player.level < this.maxLevel) {
 				this.playerXp(enemy)
 			}
-			this.player.money = this.player.money.plus(this.randBigNumber(enemy.minMoney, enemy.maxMoney))
+			money = this.randBigNumber(enemy.minMoney, enemy.maxMoney)
+			this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.plus(money)
+			this.player.money = this.player.money.plus(money)
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
@@ -676,13 +702,16 @@ var app = new Vue({
 
 		missEnemy(){ // will change with the pool
 			this.step = 0
+			this.player.gameStats.totalMisses++
 			for (const enemy of this.enemies) {
 				enemy.hp = enemy.maxHp
 			}
 		},
 
 		playerXp(enemy) {
-			this.player.xp += this.monsterXp(enemy)
+			let xp = this.monsterXp(enemy)
+			this.player.xp += xp
+			this.player.gameStats.totalXP = this.player.gameStats.totalXP.plus(xp)
 		},
 
 		monsterXp(enemy) {
@@ -1095,9 +1124,8 @@ var app = new Vue({
 			this.createUpgradeItemPreview()
 		},
 
-		closeItemUpgradeFrame() {
+		toggleItemUpgradeFrame() {
 			if (this.upgradeItemFrame.open) {
-				this.takeOffItemFromUpgrade()
 				this.closePlayerRelatedWindow()
 			} else {
 				this.closePlayerRelatedWindow()
@@ -1106,6 +1134,7 @@ var app = new Vue({
 		},
 
 		closePlayerRelatedWindow() { // put all windows here
+			this.takeOffItemFromUpgrade()
 			this.upgradeItemFrame.open = false
 		},
 
@@ -1133,6 +1162,30 @@ var app = new Vue({
 			return qualityMapping[item.quality]
 		},
 
+		toggleMerchantFrame() {
+			if (this.merchantFrame.open) {
+				this.merchantFrame.open = false
+				this.merchantCooldown()
+			} else {
+				this.merchantFrame.open = true
+			}
+		},
+
+		merchantCooldown() {
+			this.merchantFrame.actualCooldown = this.merchantFrame.cooldown
+		},
+
+		sellItem(container, slotId) {
+
+		},
+
+		deleteItem(container, slotId) {
+			if (container.slots[slotId - 1].item != null) {
+				this.clearSlot(container, slotId)
+			}
+			this.unselectItem()
+		},
+
 	},
 
 	mounted() {
@@ -1149,7 +1202,10 @@ var app = new Vue({
 				this.player.bag.open = !this.player.bag.open
 			}
 			if (event.keyCode === this.keybinds.upgradeItem) { // 'U' toggle upgrade window
-				this.closeItemUpgradeFrame()
+				this.toggleItemUpgradeFrame()
+			}
+			if (event.keyCode === this.keybinds.merchant) { // 'M'
+				this.toggleMerchantFrame()
 			}
 		}, false)
 
@@ -1158,10 +1214,12 @@ var app = new Vue({
 		}, false)
 
 		setInterval(() => {
-			if (this.step % (this.fps * this.countdown) == 0) {
-				this.missEnemy()
-				//this.generateEnemy()
-				//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
+			if (this.progressionMode) {
+				if (this.step % (this.fps * this.countdown) == 0) {
+					this.missEnemy()
+					//this.generateEnemy()
+					//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
+				}
 			}
 			this.step++
 		}, 1000 / this.fps)

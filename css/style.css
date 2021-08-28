@@ -625,7 +625,7 @@ a {
 }
 
 .bag-button:hover {
-	box-shadow: inset 0 0 6px 4px #5b5cb193;
+	box-shadow: inset 0 0 6px 4px #57a5ff57;
 }
 
 .bag-button:active {
@@ -675,7 +675,7 @@ a {
 }
 
 .bag-container:hover {
-	box-shadow: inset 0 0 4px 6px #5b5cb193;
+	box-shadow: inset 0 0 4px 6px #57a5ff57;
 }
 
 .bag-container:active {
@@ -717,7 +717,7 @@ a {
 }
 
 .ui-item:hover {
-	box-shadow: inset 0 0 4px 6px #5b5cb193;
+	box-shadow: inset 0 0 4px 6px #57a5ff57;
 }
 
 .ui-item:active {
@@ -725,7 +725,7 @@ a {
 }
 
 .player-weapon .ui-item:hover {
-	box-shadow: inset 0 0 10px 6px #5b5cb193;
+	box-shadow: inset 0 0 10px 6px #57a5ff57;
 }
 
 .player-weapon .ui-item:active {
@@ -776,7 +776,7 @@ a {
 .cant-equip-red {
 	width: 100%;
 	height: 100%;
-	background-color: #ff5858;
+	background-color: #ff0000; /*ff5858*/
 	mix-blend-mode: multiply;
 }
 
@@ -807,7 +807,7 @@ a {
 }
 
 .player-weapon:hover {
-	box-shadow: inset 0 0 10px 6px #5b5cb193;
+	box-shadow: inset 0 0 10px 6px #57a5ff57;
 }
 
 .player-weapon:active {
@@ -1309,6 +1309,48 @@ a {
 	background-image: url(../assets/img/ui/icons/trade_blacksmithing.png);
 }
 
+.merchant-mode-button {
+	background-image: url(../assets/img/ui/icons/inv_misc_bag_10.png);
+}
+
 .text-shadow-2px {
 	text-shadow: 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000;
+}
+
+.stats-money {
+	display: flex;
+	align-items: center;
+	color: #fff;
+	font-size: 17px;
+	font-family: Arial Narrow;
+	width: auto;
+	max-width: 450px;
+}
+
+.stats-money span {
+	display: inline-flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-direction: row;
+	width: auto;
+	height: 20px;
+}
+
+.stats-money span:last-child img:last-of-type {
+	margin-right: 0 !important;
+}
+
+.stats-money img {
+	margin-left: 2px;
+	margin-right: 6px;
+}
+
+.pouchCursor {
+	cursor: url("../assets/cursors/buy.cur"), auto !important
+}
+
+.merchant-frame {
+	width: 393px;
+	height: 510px;
+	background-color: #aa0;
 }

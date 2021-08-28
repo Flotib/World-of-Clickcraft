@@ -14,7 +14,7 @@ window.content.enemies = [
         levelenvironment: 'elwynn',
     },*/
     {
-        name: 'Wolf',
+        name: 'Young Wolf',
         portrait: 'wolf',
         portraitId: 1,
         maxHp: 60,

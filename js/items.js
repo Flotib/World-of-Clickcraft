@@ -33,6 +33,7 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         },
         icon: null,
         requiredLevel: 5,
+        noSell: true,
     },
     {
         id: 5,

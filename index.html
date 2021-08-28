@@ -20,6 +20,7 @@
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
 			<div class="item-tooltip" v-if="hoverItem.slotId != null">
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
+				<p v-if="hoverItem.slotId == -1">{{ hoverItem.item[0].title }}</p>
 				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
 				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ hoverItem.item[0].slotType.name }}</p></div>
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
@@ -42,6 +43,11 @@
 					<p style="font-size: 26px; margin-bottom: 10px;">Statistics</p>
 					<p>Total clicks: {{ player.gameStats.totalClicks }}</p>
 					<p>Total damages: {{ player.gameStats.totalDamages }}</p>
+					<p>Average damage per click: {{ player.gameStats.totalClicks == 0 ? '0' : (player.gameStats.totalDamages.div(player.gameStats.totalClicks)).toFixed(1) }}</p>
+					<p>Total XP: {{ player.gameStats.totalXP }}</p>
+					<p>Total kills: {{ player.gameStats.totalKills }}</p>
+					<p>Missed enemies: {{ player.gameStats.totalMisses }}</p>
+					<p>Total money: <span class="stats-money" v-html="moneyStylizer(player.gameStats.totalMoney)"></span></p>
 				</div>
 				<div class="settings-frame-tab-bar">
 					<div @click="settingsWindow.selectedTab = 0" :class="settingsWindow.selectedTab == 0 ? 'settings-frame-tab-activated' : ''">
@@ -56,11 +62,15 @@
 
 		<div id="content" :style="contentHeight">
 
-			<div class="enemy-related-window">
+			<div class="merchant-frame" v-if="merchantFrame.open == true">
 
 			</div>
 
-			<div class="enemy-tab">
+			<div class="enemy-related-window" v-if="progressionMode">
+
+			</div>
+
+			<div class="enemy-tab" v-if="progressionMode">
 				<div class="damagezone" @click="damageEnemy(enemies[currentEnemy])">
 					<div class="portrait">
 						<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'/'+enemies[currentEnemy].portrait+'_'+enemies[currentEnemy].portraitId+'.jpg);'"></div>
@@ -139,7 +149,7 @@
 							
 							<div v-if="showItemQualityBorder(container.item, container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 1px 2px'+getQualityColor(container.item)+';'"></div>
 
-							<div @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
+							<div @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', merchantFrame.open ? 'pouchCursor' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
 								<p v-if="container.item.stackSize > 1" style="color: white; font-style: 16px;">{{ container.item.stackSize }}</p>
 							</div>
 
@@ -154,7 +164,8 @@
 
 			<div class="player-related-window">
 				<div class="window-buttons-container">
-					<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @click="upgradeItemFrame.open ? closeItemUpgradeFrame() : upgradeItemFrame.open = true"><p>{{ String.fromCharCode(this.keybinds.upgradeItem) }}</p></div>
+					<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @mouseover="itemHoverEnter({title: 'Upgrade Weapon'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleItemUpgradeFrame()"><p>{{ String.fromCharCode(this.keybinds.upgradeItem) }}</p></div>
+					<div :class="[merchantFrame.open ? 'ui-icon-open' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame()"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
 				</div>
 
 				<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
