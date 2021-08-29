@@ -1349,12 +1349,51 @@ a {
 	cursor: url("../assets/cursors/buy.cur"), auto !important
 }
 
+.merchant-mode-button-activated {
+	background-image: url(../assets/img/ui/icons/ability_warrior_challange.png);	
+}
+
 .merchant-frame {
 	width: 393px;
 	height: 510px;
 	background-color: #aa0;
 }
 
-.merchant-mode-button-activated {
-	background-image: url(../assets/img/ui/icons/ability_warrior_challange.png);	
+.merchant-list {
+	background-color: hotpink;
+	width: 239px;
+	height: 510px;
+}
+
+.cheat-menu-item {
+	position: absolute;
+	left: 40px;
+	bottom: 100px;
+	height: 290px;
+	width: 280px;
+	background-color: #000;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.cheat-menu-item div {
+	display: flex;
+	align-items: center;
+	color: white;
+	height: 40px;
+	width: 100%;
+	border-radius: 5px;
+	background-color: #ffffff12;
+	margin: 3px 0;
+	padding: 2px;
+	transition-duration: 90ms;
+}
+
+.cheat-menu-item div:hover {
+	background-color: #ffffff2a;
+	transform: translateX(4px);
+}
+
+.cheat-menu-item div:active {
+	filter: brightness(70%)
 }

@@ -14,7 +14,7 @@ var app = new Vue({
 			open: false,
 			selectedTab: 0,
 		},
-		keybinds : {
+		keybinds: {
 			bag: 66,
 			upgradeItem: 85,
 			merchant: 77,
@@ -140,7 +140,7 @@ var app = new Vue({
 			}
 		},
 
-		'progressionMode' : function (value) {
+		'progressionMode': function (value) {
 			this.step = 0
 			if (value === false) {
 			}
@@ -412,7 +412,7 @@ var app = new Vue({
 				'middlyyes': "Cancel",
 				'no': "Select a compatible weapon",
 			}
-			
+
 			return answerMapping[this.selectedItemUpgradeConditions]
 		},
 
@@ -701,7 +701,7 @@ var app = new Vue({
 			//this.spawnEnemy()
 		},
 
-		missEnemy(){ // will change with the pool
+		missEnemy() { // will change with the pool
 			this.step = 0
 			this.player.gameStats.totalMisses++
 			for (const enemy of this.enemies) {
@@ -1187,6 +1187,20 @@ var app = new Vue({
 			this.unselectItem()
 		},
 
+		startDrag(evt, container) {
+			if (this.selectedItem.selection) {
+				this.unselectItem()
+			}
+			evt.dataTransfer.setData('slot', container.slotId)
+		},
+
+		onDrop(evt, slotId) {
+			const slot = evt.dataTransfer.getData('slot')
+      		const container = this.player.bag.slots.find(container => container.slotId == slot)
+			this.clearSlot(this.player.bag, slot)
+			this.player.bag.slots[slotId-1].item = container.item
+		},
+
 	},
 
 	mounted() {
@@ -1207,6 +1221,9 @@ var app = new Vue({
 			}
 			if (event.keyCode === this.keybinds.merchant) { // 'M'
 				this.toggleMerchantFrame()
+			}
+			if (event.keyCode === 222) { // '²'
+				this.itemCheatMenu = !this.itemCheatMenu
 			}
 		}, false)
 
