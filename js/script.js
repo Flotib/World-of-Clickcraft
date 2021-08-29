@@ -19,6 +19,9 @@ var app = new Vue({
 			upgradeItem: 85,
 			merchant: 77,
 		},
+		configurableValues: {
+			itemQualityBorderOpacity: 100,
+		},
 		maxLevel: 60,
 		giveItemId: 0,
 		itemCheatMenu: false,
@@ -975,6 +978,7 @@ var app = new Vue({
 					this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
 					this.player.weapon.item.equipable = false
 				} else {
+					this.itemHoverLeave()
 					this.player.weapon.item.splice(0, 1, item)
 					this.clearSlot(this.player.bag, slot)
 					this.player.weapon.item.equipable = false
@@ -985,14 +989,12 @@ var app = new Vue({
 
 		unequipItem(item) {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
-
-			if (item.containerName == 'playerEquipment') {
-				let actualItem = this.player.weapon.item[0]
-				actualItem.equipable = true
-				this.player.weapon.item.splice(0, 1)
-				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
-			}
-
+			let actualItem = this.player.weapon.item[0]
+			actualItem.equipable = true
+			this.player.weapon.item.splice(0, 1)
+			this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
+			
+			this.itemHoverLeave()
 			this.unselectItem()
 		},
 
@@ -1187,18 +1189,27 @@ var app = new Vue({
 			this.unselectItem()
 		},
 
-		startDrag(evt, container) {
-			if (this.selectedItem.selection) {
-				this.unselectItem()
-			}
-			evt.dataTransfer.setData('slot', container.slotId)
+		startDrag(event, container) {
+			event.path[0].classList.add("ui-item-dragging");
+			this.unselectItem()
+			this.itemHoverLeave()
+			event.dataTransfer.setData('slot', container.slotId)
 		},
 
-		onDrop(evt, slotId) {
-			const slot = evt.dataTransfer.getData('slot')
+		endDrag(event) {
+			event.path[0].classList.remove("ui-item-dragging");
+		},
+
+		onDrop(event, slotId) {
+			event.path[0].classList.remove("ui-item-dragging");
+			const slot = event.dataTransfer.getData('slot')
       		const container = this.player.bag.slots.find(container => container.slotId == slot)
 			this.clearSlot(this.player.bag, slot)
+			if (this.player.bag.slots[slotId-1].item != null) {
+				this.player.bag.slots[slot-1].item = this.player.bag.slots[slotId-1].item
+			} 
 			this.player.bag.slots[slotId-1].item = container.item
+			
 		},
 
 	},
