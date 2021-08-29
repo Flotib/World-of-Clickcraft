@@ -77,7 +77,7 @@
 						<div class="portrait-border"></div>
 					</div>
 					<div class="levelframe">
-						<div class="levelindicator"><p :class="difficultyColor(enemies[currentEnemy])">{{ enemies[currentEnemy].level }}</p></div>
+						<div class="levelindicator"><p :class="difficultyColor(enemies[currentEnemy])"><span v-if="player.level > enemies[currentEnemy].level - 10">{{ enemies[currentEnemy].level }}</span></p></div>
 					</div>
 				</div>
 				<div class="enemyname">
@@ -233,11 +233,15 @@
 				<input type="number" v-model.number="currentEnemy" style="width: 30px">
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
 				<button v-if="selectedItem.item.slotType != null && selectedItem.item.quality > 1" style="width: auto;" @click="upgradeItem(selectedItem.item)">upgrade: <span v-html="moneyStylizer(upgradeItemPrice(selectedItem.item))"></span></button>
-
+				<button @click="itemCheatMenu = !itemCheatMenu">Toggle cheat menu</button>
 			</div>
 
 			<div v-if="maxLevel > player.level" class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">
 				<div class="xpbar" :style="'width:'+(player.xp/player.xpToNextLevel)*100+'%'"></div>
+			</div>
+
+			<div v-if="itemCheatMenu" style="position: absolute; left: 40px; bottom: 100px; height: 290px; width: 280px; background-color: #000; overflow-y: scroll; overflow-x: hidden;">
+				<div style="display: flex; align-items: center; color: white; height: 40px; width: 100%; border-radius: 5px; background-color: #ffffff12; margin: 3px 0; padding: 2px;" v-for="item in items" :key="item.id" @click="addItem(item.id, player.bag.slots, 1)"><img style="width: 34px; height: 34px" :src="'assets/img/ui/icons/'+itemIcon(item)+'.png'"><p><span>{{ item.id }}</span><span> - </span><span :style="'color:'+getQualityColor(item)">{{ item.name }}</span></div>
 			</div>
 
 		</div>

@@ -21,6 +21,7 @@ var app = new Vue({
 		},
 		maxLevel: 60,
 		giveItemId: 0,
+		itemCheatMenu: false,
 		giveItemQuantity: 1,
 		rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later
 		hoverItem: {
