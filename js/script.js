@@ -153,15 +153,6 @@ var app = new Vue({
 	},
 
 	computed: {
-		contentHeight() {
-
-			let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-
-			return {
-				minHeight: vh - 100 + 'px'
-			}
-		},
-
 		unequipButtonStyles() {
 			let graylevel = 'filter: grayscale(100%) !important;'
 
@@ -1069,28 +1060,15 @@ var app = new Vue({
 			}
 		},
 
-		showItemQualityBorder(item, slotId, containerName) { // Will probably rework this lol
-			let requiredLevel = 0
-			let a = false
-			let b = false
-
+		showItemQualityBorder(item, slotId, containerName) {
 			if (this.selectedItem.slotId === slotId) {
-				a = this.selectedItem.containerName !== containerName
-			} else {
-				a = true
-			}
-
-			if (item != null) {
-				if (item.requiredLevel != null) {
-					requiredLevel = item.requiredLevel
-				}
-				b = this.player.level >= requiredLevel
-			}
-
-			if (a + b == 2) {
-				return true
-			} else {
 				return false
+			} else if (item != null) {
+				if (item.requiredLevel != null) {
+					return item.requiredLevel <= this.player.level
+				} else {
+					return true
+				}
 			}
 		},
 
