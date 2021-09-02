@@ -20,7 +20,7 @@ var app = new Vue({
 			merchant: 77,
 		},
 		configurableValues: {
-			itemQualityBorderOpacity: 100,
+			itemQualityBorderOpacity: 70,
 		},
 		maxLevel: 60,
 		giveItemId: 0,
@@ -46,7 +46,7 @@ var app = new Vue({
 			xpToNextLevel: null,
 			xp: 0,
 			progression: 0,
-			money: new BigNumber(0),
+			money: BigNumber(0),
 			bag: {
 				open: true,
 				level: 1,
@@ -87,6 +87,7 @@ var app = new Vue({
 		},
 		merchantFrame: {
 			open: false,
+			selectedMerchant: 0, // id of the merchant
 			cooldown: 900, //seconds
 			actualCooldown: 0,
 		},
@@ -442,7 +443,8 @@ var app = new Vue({
 				}
 				item.minDamage = item.baseMinDamage
 				item.maxDamage = item.baseMaxDamage
-				this.autoSellPriceAttri(item)
+				this.autoWeaponSellPriceAttri(item)
+				this.autoItemPrice(item)
 			}
 		},
 
@@ -506,7 +508,7 @@ var app = new Vue({
 			enemy.maxMoney = BigNumber(0.142619).multipliedBy(enemy.level ** 2).plus(BigNumber(1.41888).multipliedBy(enemy.level)).plus(1.43849).integerValue()
 		},
 
-		autoSellPriceAttri(item) { // initialize me when upgrading an item
+		autoWeaponSellPriceAttri(item) { // initialize me when upgrading an item
 			let quality = this.itemPriceMultiplier(item)
 			let requiredLevel = 1
 			if (item.sellPrice == null && item.equipable) {
@@ -519,6 +521,14 @@ var app = new Vue({
 				} else {
 					item.sellPrice = BigNumber(1) // /!\ Need to be change when trinkets will be available
 				}
+			}
+		},
+
+		autoItemPrice(item) {
+			if (item.sellPrice == null && item.cost != null) {
+				item.sellPrice = item.cost * 0.2
+			} else if (item.sellPrice != null && item.cost == null) {
+				item.cost = item.sellPrice * 5
 			}
 		},
 
@@ -855,10 +865,10 @@ var app = new Vue({
 			}, 3000)
 		},
 
-		getItemName(id) {
+		getItemById(id) {
 			let index = this.items.findIndex(item => item.id === id)
 			if (index >= 0) {
-				return this.items[index].name
+				return this.items[index]
 			}
 		},
 
@@ -957,6 +967,12 @@ var app = new Vue({
 
 		clearSlot(container, slotId) {
 			container.slots.splice(slotId - 1, 1, { slotId: slotId, item: null })
+		},
+
+		debugDeleteAllBagItems() {
+			for (const slot of this.player.bag.slots) {
+				this.deleteItem(this.player.bag, slot.slotId)
+			}
 		},
 
 		itemSelection(item, slotId, containerName) {
@@ -1094,7 +1110,7 @@ var app = new Vue({
 			item.maxDamage = Math.round(item.baseMaxDamage * 1.104 ** (item.upgradeLevel + 1))
 			item.minDamage = Math.round(item.maxDamage * (item.baseMinDamage / item.baseMaxDamage))
 			item.sellPrice = null
-			this.autoSellPriceAttri(item)
+			this.autoWeaponSellPriceAttri(item)
 		},
 
 		upgradeItemPrice(item) {
