@@ -1194,6 +1194,10 @@ var app = new Vue({
 			this.merchantFrame.actualCooldown = this.merchantFrame.cooldown
 		},
 
+		lockedMerchant(merchant) {
+			return merchant.requiredLevel > this.player.level
+		},
+
 		sellItem(container, slotId) {
 
 		},

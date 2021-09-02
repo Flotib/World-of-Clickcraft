@@ -65,7 +65,7 @@
 		<div id="content" :style="contentHeight">
 
 			<div class="merchant-list" v-if="merchantFrame.open == true">
-				<div v-for="merchant in merchants" :key="merchant.id" @click="merchantFrame.selectedMerchant = merchant.id"></div>
+				<div v-for="merchant in merchants" :key="merchant.id" @click="lockedMerchant(merchant) ? '' : merchantFrame.selectedMerchant = merchant.id" :class="[merchantFrame.selectedMerchant == merchant.id ? 'selected-merchant' : '', lockedMerchant(merchant) ? 'locked-merchant' : '']"></div>
 			</div>
 
 			<div class="merchant-frame" v-if="merchantFrame.open == true">

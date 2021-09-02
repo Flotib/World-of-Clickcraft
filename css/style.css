@@ -1391,6 +1391,26 @@ a {
 	box-shadow: inset 0 0 15px 0px #ffff57;
 }
 
+.merchant-list > div:active {
+	box-shadow: inset 0 0 14px 2px #ffff9d;
+	transform: scale(0.98);
+	transition-duration: 0ms;
+}
+
+.selected-merchant {
+	box-shadow: inset 0 0 8px 3px #6aafffc9 !important;
+}
+
+.selected-merchant:hover {
+	box-shadow: inset 0 0 8px 3px #6ab0ff !important;
+}
+
+.locked-merchant {
+	filter: grayscale(100%);
+	box-shadow: none !important;
+	transform: scale(1) !important;
+}
+
 .cheat-menu-item {
 	position: absolute;
 	left: 40px;
