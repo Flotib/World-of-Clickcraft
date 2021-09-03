@@ -74,7 +74,9 @@
 						<div class="portrait-border"></div>
 					</div>
 					<div style="width: 380px; height: 350px; background-color: darkred;">
-
+						<div style="background-color: yellow;width: 50px; height: 50px" v-for="item in merchantFrame.soldItems" @contextmenu.prevent="buyBackItem(item)" @mouseover="itemHoverEnter(item, merchantFrame.soldItems.indexOf(item), 'soldItems')" @mouseleave="itemHoverLeave()">
+							{{item.name}}
+						</div>
 					</div>
 				</div>
 
@@ -163,7 +165,7 @@
 								
 								<div v-if="showItemQualityBorder(container.item, container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(container.item)+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
 
-								<div @contextmenu.prevent="merchantFrame.open ? '' : (container.item.equipable && (player.level >= container.item.requiredLevel || container.item.requiredLevel == null) ? ((player.weapon.item.length != 0 ? itemHoverEnter(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') : '') + (equipItem(container.item, container.slotId))) : '')" draggable @dragstart="startDrag($event, container)" @dragend="endDrag($event)" @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', merchantFrame.open ? 'pouchCursor' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
+								<div @contextmenu.prevent="merchantFrame.open ? sellItem(container.item, container.slotId) : (container.item.equipable && (player.level >= container.item.requiredLevel || container.item.requiredLevel == null) ? ((player.weapon.item.length != 0 ? itemHoverEnter(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') : '') + (equipItem(container.item, container.slotId))) : '')" draggable @dragstart="startDrag($event, container)" @dragend="endDrag($event)" @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', merchantFrame.open ? 'pouchCursor' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
 									<div class="ui-item-stacksize">
 										<p v-if="container.item.stackSize > 1" style="color: white; font-style: 16px;">{{ container.item.stackSize }}</p>
 									</div>

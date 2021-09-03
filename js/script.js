@@ -90,6 +90,7 @@ var app = new Vue({
 			selectedMerchant: 0, // id of the merchant
 			cooldown: 900, //seconds
 			actualCooldown: 0,
+			soldItems: [],
 		},
 		progressionMode: true,
 		...window.content,
@@ -1176,11 +1177,57 @@ var app = new Vue({
 			return merchant.requiredLevel > this.player.level
 		},
 
-		sellItem(container, slotId) {
+		sellItem(item, slotId) {
+			this.unselectItem()
+			this.takeOffItemFromUpgrade()
+			if (item.stackMaxSize != null) {
+				this.player.money = this.player.money.plus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
+			} else {
+				this.player.money = this.player.money.plus(item.sellPrice)
+			}
 
+			this.merchantFrame.soldItems.unshift(item)
+
+			if (this.merchantFrame.soldItems.length > 10) {
+				this.merchantFrame.soldItems.pop()
+			}
+
+			this.deleteItem(this.player.bag, slotId)
+			this.itemHoverLeave()
+		},
+
+		buyBackItem(item) {
+			let isback = false
+			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
+			if (emptySlot === false) {
+				return
+			}
+
+			if (item.stackMaxSize != null) {
+				if (this.player.money.gte(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))) {
+					this.player.money = this.player.money.minus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
+					isback = true
+				}
+			} else {
+				if (this.player.money.gte(item.sellPrice)) {
+					this.player.money = this.player.money.minus(item.sellPrice)
+					isback = true
+				}
+			}
+
+			if (isback == true) {
+				this.player.bag.slots[emptySlot].item = item
+				let index = this.merchantFrame.soldItems.indexOf(item);
+				if (index > -1) {
+					this.merchantFrame.soldItems.splice(index, 1);
+				}
+			} else {
+				return
+			}
 		},
 
 		deleteItem(container, slotId) {
+			this.takeOffItemFromUpgrade()
 			if (container.slots[slotId - 1].item != null) {
 				this.clearSlot(container, slotId)
 			}
