@@ -1180,6 +1180,10 @@ var app = new Vue({
 		sellItem(item, slotId) {
 			this.unselectItem()
 			this.takeOffItemFromUpgrade()
+			if (item.sellPrice === undefined) {
+				return
+			}
+
 			if (item.stackMaxSize != null) {
 				this.player.money = this.player.money.plus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
 			} else {
@@ -1217,10 +1221,11 @@ var app = new Vue({
 
 			if (isback == true) {
 				this.player.bag.slots[emptySlot].item = item
-				let index = this.merchantFrame.soldItems.indexOf(item);
+				let index = this.merchantFrame.soldItems.indexOf(item)
 				if (index > -1) {
-					this.merchantFrame.soldItems.splice(index, 1);
+					this.merchantFrame.soldItems.splice(index, 1)
 				}
+				this.itemHoverLeave()
 			} else {
 				return
 			}
