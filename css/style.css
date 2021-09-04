@@ -1377,7 +1377,7 @@ a {
 
 .merchant-frame {
 	width: 393px;
-	height: 510px;
+	height: 515px;
 	background-color: #111111;
 }
 
@@ -1404,7 +1404,7 @@ a {
 
 .merchant-list {
 	width: 270px;
-	height: 490px;
+	height: 495px;
 	display: flex;
 	flex-direction: column;
 	overflow-y: scroll;
@@ -1524,6 +1524,38 @@ a {
 
 .selected-item .ui-item-overlay {
 	visibility: hidden !important;
+}
+
+.ui-shop-container {
+	position: relative;
+	max-width: 100%; /* width: 380px; */
+	height: 305px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items:center;
+	justify-content: space-around;
+	bottom: 12px;
+}
+
+.ui-shop-item {
+	height: 58px;
+	width: 175px;
+	background-color: yellow;
+}
+
+.ui-shop-item-slot {
+	width: 48px;
+	height: 48px;
+	background-color: #2fdb2c;
+	border-radius: 14%;
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+.ui-shop-item-slot div {
+	grid-row-start: 1;
+	grid-column-start: 1;
 }
 
 @media (orientation: portrait) {

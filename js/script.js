@@ -90,7 +90,8 @@ var app = new Vue({
 			selectedMerchant: 0, // id of the merchant
 			cooldown: 900, //seconds
 			actualCooldown: 0,
-			soldItems: [],
+			mode: 0, // 0 = merchant; 1 = sold items
+			soldItems: [null, null, null, null, null, null, null, null, null, null],
 		},
 		progressionMode: true,
 		...window.content,
@@ -1021,6 +1022,7 @@ var app = new Vue({
 			this.hoverItem.item.splice(0, 1, item)
 			this.hoverItem.slotId = slotId
 			this.hoverItem.containerName = containerName
+			console.log(slotId)
 		},
 
 		itemHoverLeave() {
@@ -1224,6 +1226,7 @@ var app = new Vue({
 				let index = this.merchantFrame.soldItems.indexOf(item)
 				if (index > -1) {
 					this.merchantFrame.soldItems.splice(index, 1)
+					this.merchantFrame.soldItems.push(null)
 				}
 				this.itemHoverLeave()
 			} else {
