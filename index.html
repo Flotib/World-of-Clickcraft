@@ -5,7 +5,7 @@
     <meta charset="utf-8">
 	<title>Clickcraft</title>
     <link rel="icon" href="assets/img/favicon.png" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" content="user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 	<link href="css/style.css" rel="stylesheet">
 </head>
@@ -77,7 +77,7 @@
 						<div class="ui-shop-item" v-for="item in merchantFrame.soldItems">
 							<div class="ui-shop-item-slot">
 								<div class="item-quality-border" :style="item != null ? 'box-shadow: inset 0 0 4px 2px'+getQualityColor(item)+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2) : ''"></div>
-								<div v-if="item != null" class="ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(item)+'.png);'" @contextmenu.prevent="buyBackItem(item)" @mouseover="itemHoverEnter(item, merchantFrame.soldItems.indexOf(item), 'soldItems')" @mouseleave="itemHoverLeave()">
+								<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(item)+'.png);'" @contextmenu.prevent="buyBackItem(item)" @mouseover="itemHoverEnter(item, merchantFrame.soldItems.indexOf(item), 'soldItems')" @mouseleave="itemHoverLeave()">
 									<div class="ui-item-stacksize">
 										<p v-if="item.stackSize > 1">{{ item.stackSize }}</p>
 									</div>

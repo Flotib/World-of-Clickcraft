@@ -215,7 +215,6 @@ var app = new Vue({
 
 		tooltipPosition() {
 			let e = 0
-			let rect = 0
 			let correctionY = 0
 			let correctionX = 0
 			this.cursorY
@@ -225,7 +224,6 @@ var app = new Vue({
 
 			if (document.querySelector('.item-tooltip') && this.hoverItem.slotId !== null) {
 				e = document.querySelector('.item-tooltip')
-				rect = e.getBoundingClientRect()
 				correctionY = Math.max(e.offsetHeight + 5, this.cursorY)
 				correctionX = Math.min(this.cursorX, vw - e.offsetWidth - 30)
 			}
@@ -444,6 +442,7 @@ var app = new Vue({
 		getMouseCoords(e) {
 			this.cursorX = e.pageX
 			this.cursorY = e.pageY
+			//console.log({'x':e.pageX, 'y':e.pageY})
 		},
 
 		between(x, min, max) {
@@ -1022,7 +1021,6 @@ var app = new Vue({
 			this.hoverItem.item.splice(0, 1, item)
 			this.hoverItem.slotId = slotId
 			this.hoverItem.containerName = containerName
-			console.log(slotId)
 		},
 
 		itemHoverLeave() {
