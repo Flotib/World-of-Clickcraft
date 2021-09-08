@@ -4,7 +4,20 @@ window.content.merchants = [
         requiredLevel: 0, // If i add achievements later, some merchant may have achievement requirements
         name: 'Smith Marcus',
         type: 'Black-smith',
-        stock: [1,2,4],
+        stock: [
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 2,
+                quantity: 4,
+            },
+            {
+                id: 4,
+                quantity: 1,
+            }
+        ],
     },
     {
         id: 1,

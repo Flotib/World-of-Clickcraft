@@ -74,7 +74,20 @@
 						<div class="portrait-border"></div>
 					</div>
 					<div class="ui-shop-container" @contextmenu.prevent>
-						<div class="ui-shop-item" v-for="item in merchantFrame.soldItems">
+						<!--<div v-for="n in Math.ceil(merchants[merchantFrame.selectedMerchant].stock.length / 10)">-->
+						<div v-if="merchantFrame.mode == 0" class="ui-shop-item" v-for="placeholder in 10">
+							<div class="ui-shop-item-slot">
+								<div v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id))+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+								<div v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id))+'.png);'" @contextmenu.prevent="buyItem(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id), merchants[merchantFrame.selectedMerchant].stock[placeholder-1].quantity)" @mouseover="itemHoverEnter(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id), placeholder, 'merchantItems')" @mouseleave="itemHoverLeave()">
+									<div class="ui-item-stacksize">
+										<p v-if="merchants[merchantFrame.selectedMerchant].stock[placeholder-1].quantity > 1">{{ merchants[merchantFrame.selectedMerchant].stock[placeholder-1].quantity }}</p>
+									</div>
+									<div class="ui-item-overlay"></div>
+								</div>
+							</div>
+							<p v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder" style="position: relative; left: 60px; bottom: 20px;">{{ getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id).cost }}</p>
+						</div>
+						<div v-if="merchantFrame.mode == 1" class="ui-shop-item" v-for="item in merchantFrame.soldItems">
 							<div class="ui-shop-item-slot">
 								<div class="item-quality-border" :style="item != null ? 'box-shadow: inset 0 0 4px 2px'+getQualityColor(item)+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2) : ''"></div>
 								<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(item)+'.png);'" @contextmenu.prevent="buyBackItem(item)" @mouseover="itemHoverEnter(item, merchantFrame.soldItems.indexOf(item), 'soldItems')" @mouseleave="itemHoverLeave()">
@@ -84,6 +97,14 @@
 									<div class="ui-item-overlay"></div>
 								</div>
 							</div>
+						</div>
+					</div>
+					<div class="merchant-frame-tab-bar">
+						<div @click="merchantFrame.mode = 0" :class="merchantFrame.mode == 0 ? 'merchant-frame-tab-activated' : ''">
+							<p>Merchant</p>
+						</div>
+						<div @click="merchantFrame.mode = 1" :class="merchantFrame.mode == 1 ? 'merchant-frame-tab-activated' : ''">
+							<p>Buyback</p>
 						</div>
 					</div>
 				</div>
@@ -126,7 +147,7 @@
 						<div @click="settingsWindow.open = !settingsWindow.open" class="settings-button">
 							<img src="assets/img/ui/ui-optionsbutton.png">
 						</div>
-						<p style="font-size: 24px">{{ player.name }}</p> <!--Will be editable when it will be clicked-->
+						<p style="font-size: 24px">{{ player.name }}</p>
 						<p>Level {{ player.level }}</p>
 						<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
 						<div>
@@ -167,7 +188,7 @@
 							<p>({{emptySpace(player.bag.slots)}})</p>
 						</div>
 					</div>
-					<div v-if="player.bag.open" class="bag-frame" :style="bagWidth">
+					<div v-if="player.bag.open" class="bag-frame" :style="bagWidth" @contextmenu.prevent>
 						<div v-for="container in player.bag.slots" :key="container.slotId" class="bag-container" @drop="onDrop($event, container.slotId)" @dragover.prevent @dragenter.prevent @contextmenu.prevent>
 							<div v-if="container.item" class="item-placeholder">
 								

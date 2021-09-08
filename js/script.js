@@ -518,9 +518,9 @@ var app = new Vue({
 
 		autoItemPrice(item) {
 			if (item.sellPrice == null && item.cost != null) {
-				item.sellPrice = item.cost * 0.2
+				item.sellPrice = item.cost.multipliedBy(0.2)
 			} else if (item.sellPrice != null && item.cost == null) {
-				item.cost = item.sellPrice * 5
+				item.cost = item.sellPrice.multipliedBy(5)
 			}
 		},
 
@@ -1230,6 +1230,18 @@ var app = new Vue({
 			} else {
 				return
 			}
+		},
+
+		buyItem(item, quantity) {
+			if (item.cost) {
+
+			}
+			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
+			if (emptySlot === false) {
+				return
+			}
+
+			this.addItem(item.id, this.player.bag.slots, quantity)
 		},
 
 		deleteItem(container, slotId) {
