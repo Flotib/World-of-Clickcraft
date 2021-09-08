@@ -503,7 +503,7 @@ var app = new Vue({
 		autoWeaponSellPriceAttri(item) { // initialize me when upgrading an item
 			let quality = this.itemPriceMultiplier(item)
 			let requiredLevel = 1
-			if (item.sellPrice == null && item.equipable) {
+			if (item.sellPrice == null && item.equipable && item.salable !== false) {
 				if (item.slotType.type == "weapon") {
 					if (item.requiredLevel != null) { // == null to include undefined
 						requiredLevel = item.requiredLevel
