@@ -29,7 +29,8 @@
 				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
-				<p v-if="hoverItem.item[0].sellPrice" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
+				<p v-if="hoverItem.item[0].sellPrice && hoverItem.item[0].salable !== false" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
+				<p v-if="hoverItem.item[0].salable === false && merchantFrame.open" class="item-tooltip-money">No sell price</p>
 			</div>					
 		</div>
 		

@@ -508,7 +508,6 @@ var app = new Vue({
 					if (item.requiredLevel != null) { // == null to include undefined
 						requiredLevel = item.requiredLevel
 					}
-					//item.sellPrice = new BigNumber(item.minDamage + item.maxDamage) * 10 * 1.05 ** (requiredLevel) * quality)
 					item.sellPrice = ((BigNumber(item.minDamage).plus(item.maxDamage)).multipliedBy(10).multipliedBy(BigNumber(1.05).pow(requiredLevel)).multipliedBy(quality)).integerValue()
 				} else {
 					item.sellPrice = BigNumber(1) // /!\ Need to be change when trinkets will be available
@@ -1180,7 +1179,7 @@ var app = new Vue({
 		sellItem(item, slotId) {
 			this.unselectItem()
 			this.takeOffItemFromUpgrade()
-			if (item.sellPrice === undefined) {
+			if (item.sellPrice === undefined || item.salable === false) {
 				return
 			}
 
