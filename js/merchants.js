@@ -16,7 +16,39 @@ window.content.merchants = [
             {
                 id: 4,
                 quantity: 1,
-            }
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
+            {
+                id: 1,
+                quantity: 1,
+            },
         ],
     },
     {

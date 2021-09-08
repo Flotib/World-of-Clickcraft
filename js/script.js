@@ -92,6 +92,8 @@ var app = new Vue({
 			actualCooldown: 0,
 			mode: 0, // 0 = merchant; 1 = sold items
 			soldItems: [null, null, null, null, null, null, null, null, null, null],
+			totalPages: 1,
+			page: 1,
 		},
 		progressionMode: true,
 		...window.content,
@@ -144,6 +146,10 @@ var app = new Vue({
 			} else {
 				this.progressionMode = true
 			}
+		},
+
+		'merchantFrame.selectedMerchant': function () {
+			merchantFrame.page = 1
 		},
 
 		'progressionMode': function (value) {
@@ -409,6 +415,12 @@ var app = new Vue({
 			}
 
 			return answerMapping[this.selectedItemUpgradeConditions]
+		},
+
+		merchantPageCalc() {
+			this.merchantFrame.totalPages = Math.ceil(this.merchants[this.merchantFrame.selectedMerchant].stock.length / 10)
+
+			return this.merchantFrame.totalPages
 		},
 
 	},
@@ -842,6 +854,63 @@ var app = new Vue({
 			}
 		},
 
+		moneyStylizerMerchant(money) {
+			let copper = BigNumber(0)
+			let silver = BigNumber(0)
+			let gold = BigNumber(0)
+			let diamond = BigNumber(0)
+
+			if (money != null) {
+				copper = money.modulo(100)
+
+				silver = (money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(10000)) {
+					silver = silver.modulo(100)
+				}
+
+				gold = (money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
+				if (money.gte(BigNumber(100000000000))) {
+					gold = gold.modulo(10000000)
+				}
+
+				diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+			}
+
+			if (diamond.eq(0)) {
+				if (gold.eq(0)) {
+					if (silver.eq(0)) {
+						return '<span>' + copper + this.copperimg + '</span>'
+					} else {
+						if (copper.eq(0)) {
+							return '<span>' + silver + this.silverimg + '</span>'
+						} else {
+							return '<span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+						}
+					}
+				} else { // gold.toLocaleString() works too
+					if (silver.eq(0) && copper.eq(0)) {
+						return '<span>' + gold + this.goldimg + '</span>'
+					} else {
+						return '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+					}
+				}
+			} else {
+				if (copper.eq(0)) {
+					if (silver.eq(0)) {
+						if (gold.eq(0)) {
+							return '<span>' + diamond + this.diamondimg + '</span>'
+						} else {
+							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span>'
+						}
+					} else {
+						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span>'
+					}
+				} else {
+					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+				}
+			}
+		},
+
 		clickParticles(damage) {
 			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.player.gameStats.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
@@ -1232,15 +1301,16 @@ var app = new Vue({
 		},
 
 		buyItem(item, quantity) {
-			if (item.cost) {
-
-			}
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 			if (emptySlot === false) {
 				return
 			}
-
-			this.addItem(item.id, this.player.bag.slots, quantity)
+			if (item.cost.gt(this.player.money)) {
+				return
+			} else {
+				this.player.money = this.player.money.minus(item.cost)
+				this.addItem(item.id, this.player.bag.slots, quantity)
+			}
 		},
 
 		deleteItem(container, slotId) {
@@ -1271,7 +1341,14 @@ var app = new Vue({
 				this.player.bag.slots[slot-1].item = this.player.bag.slots[slotId-1].item
 			} 
 			this.player.bag.slots[slotId-1].item = container.item
-			
+		},
+
+		prevMerchantPage() {
+			this.merchantFrame.page--
+		},
+
+		nextMerchantPage() {
+			this.merchantFrame.page++
 		},
 
 	},
