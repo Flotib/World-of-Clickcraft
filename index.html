@@ -75,18 +75,22 @@
 						<div class="portrait-border"></div>
 					</div>
 					<div class="ui-shop-container" @contextmenu.prevent>
+						<!-- Merchant Tab -->
 						<div v-if="merchantFrame.mode == 0" class="ui-shop-item" v-for="placeholder in 10">
 							<div class="ui-shop-item-slot">
-								<div v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id))+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
-								<div v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id))+'.png);'" @contextmenu.prevent="buyItem(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id), merchants[merchantFrame.selectedMerchant].stock[placeholder-1].quantity)" @mouseover="itemHoverEnter(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id), placeholder, 'merchantItems')" @mouseleave="itemHoverLeave()">
+								<div v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder+(10*(merchantFrame.page-1))" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id))+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+								<div v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder+(10*(merchantFrame.page-1))" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id))+'.png);'" @contextmenu.prevent="buyItem(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id), merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].quantity)" @mouseover="itemHoverEnter(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id), placeholder, 'merchantItems')" @mouseleave="itemHoverLeave()">
 									<div class="ui-item-stacksize">
 										<p v-if="merchants[merchantFrame.selectedMerchant].stock[placeholder-1].quantity > 1">{{ merchants[merchantFrame.selectedMerchant].stock[placeholder-1].quantity }}</p>
 									</div>
 									<div class="ui-item-overlay"></div>
 								</div>
 							</div>
-							<p v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder" style="position: relative; left: 60px; bottom: 20px; pointer-events: none;"><span v-html="moneyStylizerMerchant(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder-1].id).cost)"></span></p>
+							<div class="ui-shop-item-desc">
+								<p v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder+(10*(merchantFrame.page-1))"><span v-html="moneyStylizerMerchant(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).cost)"></span></p>
+							</div>
 						</div>
+						<!-- Buyback Tab -->
 						<div v-if="merchantFrame.mode == 1" class="ui-shop-item" v-for="item in merchantFrame.soldItems">
 							<div class="ui-shop-item-slot">
 								<div class="item-quality-border" :style="item != null ? 'box-shadow: inset 0 0 4px 2px'+getQualityColor(item)+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2) : ''"></div>
@@ -99,9 +103,9 @@
 							</div>
 						</div>
 					</div>
-					<p style="color: white; font-size: 25px;">{{ merchantFrame.page + '-' + merchantPageCalc }}</p>
-					<button style="width: 40px; height: 40px" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''">prev</button>
-					<button style="width: 40px; height: 40px" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''">next</button>
+					<p v-if="merchantPageCalc > 1" style="color: white; font-size: 25px;">{{ 'Page ' + merchantFrame.page + ' of ' + merchantPageCalc }}</p>
+					<button v-if="merchantPageCalc > 1" style="width: 40px; height: 40px" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''">prev</button>
+					<button v-if="merchantPageCalc > 1" style="width: 40px; height: 40px" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''">next</button>
 					<div class="merchant-frame-tab-bar">
 						<div @click="merchantFrame.mode = 0" :class="merchantFrame.mode == 0 ? 'merchant-frame-tab-activated' : ''">
 							<p>Merchant</p>

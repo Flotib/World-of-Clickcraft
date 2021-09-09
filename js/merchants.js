@@ -34,19 +34,19 @@ window.content.merchants = [
                 quantity: 1,
             },
             {
-                id: 1,
+                id: 4,
                 quantity: 1,
             },
             {
-                id: 1,
+                id: 5,
                 quantity: 1,
             },
             {
-                id: 1,
+                id: 6,
                 quantity: 1,
             },
             {
-                id: 1,
+                id: 7,
                 quantity: 1,
             },
         ],

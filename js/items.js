@@ -12,7 +12,6 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         icon: 'inv_sword_04',
         baseMinDamage: 1,
         baseMaxDamage: 2,
-        price: BigNumber(10)
     },
     {
         id: 2,

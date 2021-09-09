@@ -1538,7 +1538,7 @@ a {
 .ui-shop-item {
 	height: 58px;
 	width: 175px;
-	background-color: yellow;
+	display: flex;
 }
 
 .ui-shop-item-slot {
@@ -1548,11 +1548,25 @@ a {
 	border-radius: 14%;
 	display: grid;
 	grid-template-columns: 1fr;
+	margin-right: 4px;
 }
 
 .ui-shop-item-slot div {
 	grid-row-start: 1;
 	grid-column-start: 1;
+}
+
+.ui-shop-item-desc {
+	height: 56px;
+	width: 123px;
+	margin-top: 1px;
+	background-image: url(../assets/img/ui/merchant/ui-merchant-labelslots.png);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 123px 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 10px 6px 0 6px
 }
 
 .merchant-frame-tab-bar {
