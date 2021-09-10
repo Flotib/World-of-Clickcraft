@@ -854,15 +854,18 @@ var app = new Vue({
 			}
 		},
 
-		moneyStylizerMerchant(money) {
+		moneyStylizerMerchant(money, quantity) {
+			if (BigNumber(money).eq(0) || money == null) {
+				return
+			}
+			money = BigNumber(money)
+			if (quantity > 2) {
+				money = money.multipliedBy(quantity)
+			}
 			let copper = BigNumber(0)
 			let silver = BigNumber(0)
 			let gold = BigNumber(0)
 			let diamond = BigNumber(0)
-
-			if (BigNumber(money).eq(0) || money == null) {
-				return
-			}
 
 			if (money != null) {
 				copper = money.modulo(100)
@@ -1315,10 +1318,10 @@ var app = new Vue({
 			if (item.cost == null || BigNumber(item.cost).eq(0)) {
 				this.addItem(item.id, this.player.bag.slots, quantity)
 			}
-			else if (item.cost.gt(this.player.money)) {
+			else if ((item.cost.multipliedBy(quantity)).gt(this.player.money)) {
 				return
 			} else {
-				this.player.money = this.player.money.minus(item.cost)
+				this.player.money = this.player.money.minus((item.cost.multipliedBy(quantity)))
 				this.addItem(item.id, this.player.bag.slots, quantity)
 			}
 		},
