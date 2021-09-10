@@ -77,18 +77,18 @@ Download the repository and open index.html in your favorite web browser or try 
 ## Content
 
 * Clicks!
+* WoW vibes
 * Fully working leveling
 * Progression
 * Currency system
 * Character inventory
 * Weapon upgrades
 * Game stats (more incoming)
-* WoW vibes
+* Shop (with a lot of different merchants)
 
 ## Todo-list
 
 * Sounds
-* Shop
 * Crafts
 * Skills
 * Tons of items
