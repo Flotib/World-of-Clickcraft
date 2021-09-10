@@ -91,7 +91,7 @@ var app = new Vue({
 			cooldown: 900, //seconds
 			actualCooldown: 0,
 			mode: 0, // 0 = merchant; 1 = sold items
-			soldItems: [null, null, null, null, null, null, null, null, null, null],
+			soldItems: [null, null, null, null, null, null, null, null, null, null, null, null],
 			totalPages: 1,
 			page: 1,
 		},
@@ -1267,7 +1267,7 @@ var app = new Vue({
 
 			this.merchantFrame.soldItems.unshift(item)
 
-			if (this.merchantFrame.soldItems.length > 10) {
+			if (this.merchantFrame.soldItems.length > 12) {
 				this.merchantFrame.soldItems.pop()
 			}
 

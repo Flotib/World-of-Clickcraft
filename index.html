@@ -63,7 +63,7 @@
 			</div>
 		</div>
 
-		<div id="content">
+		<div id="content" @contextmenu.prevent>
 			<div class="sub-content">
 				<div class="merchant-list" v-if="merchantFrame.open == true">
 					<div v-for="merchant in merchants" :key="merchant.id" @click="lockedMerchant(merchant) ? '' : merchantFrame.selectedMerchant = merchant.id" :class="[merchantFrame.selectedMerchant == merchant.id ? 'selected-merchant' : '', lockedMerchant(merchant) ? 'locked-merchant' : '']"></div>
@@ -71,10 +71,10 @@
 
 				<div class="merchant-frame" v-if="merchantFrame.open == true">
 					<div class="merchant-frame-portrait">
-						<div class="merchant-frame-portrait-image" :style="'background-image: url(assets/img/ui/portrait/merchants/merchant_'+merchantFrame.selectedMerchant+'.jpg);'"></div>
+						<div class="merchant-frame-portrait-image" :style="'background-image: url(assets/img/ui/portrait/merchants/'+(merchantFrame.mode == 0 ? 'merchant_'+merchantFrame.selectedMerchant+'.jpg' : 'ui-buyback-icon.png')+');'"></div>
 						<div class="portrait-border"></div>
 					</div>
-					<div class="ui-shop-container" @contextmenu.prevent>
+					<div class="ui-shop-container" @contextmenu.prevent :style="merchantFrame.mode == 0 ? 'height: 314px;' : 'height: 420px;'">
 						<!-- Merchant Tab -->
 						<div v-if="merchantFrame.mode == 0" class="ui-shop-item" v-for="placeholder in 10">
 							<div class="ui-shop-item-slot">
@@ -89,7 +89,7 @@
 							</div>
 							<div class="ui-shop-item-desc">
 								<template v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder+(10*(merchantFrame.page-1))">
-									<p class="ui-shop-item-desc-name">{{ getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).name }}</p>
+									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id))">{{ getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).name }}</p>
 									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant((getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).cost), merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].quantity)"></span></p>
 								</template>
 							</div>
@@ -108,15 +108,19 @@
 							</div>
 							<div class="ui-shop-item-desc">
 								<template v-if="item != null">
-									<p class="ui-shop-item-desc-name">{{ item.name }}</p>
+									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(item)">{{ item.name }}</p>
 									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant(item.sellPrice, item.stackSize)"></span></p>
 								</template>
 							</div>
 						</div>
 					</div>
-					<p v-if="merchantPageCalc > 1" style="color: white; font-size: 25px;">{{ 'Page ' + merchantFrame.page + ' of ' + merchantPageCalc }}</p>
-					<button v-if="merchantPageCalc > 1" style="width: 40px; height: 40px" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''">prev</button>
-					<button v-if="merchantPageCalc > 1" style="width: 40px; height: 40px" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''">next</button>
+					<template v-if="merchantPageCalc > 1 && merchantFrame.mode == 0">
+						<div class="ui-shop-item-page-row">
+							<div><button class="ui-shop-item-page-prev-page" style="width: 40px; height: 40px" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''" :style="merchantFrame.page > 1 ? '' : 'background-image: url(assets/img/ui/merchant/ui-spellbookicon-prevpage-disabled.png)'"></button><p>Prev</p></div>
+							<p>{{ 'Page ' + merchantFrame.page + ' of ' + merchantPageCalc }}</p>
+							<div><p>Next</p><button class="ui-shop-item-page-next-page" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''" :style="merchantFrame.totalPages > merchantFrame.page ? '' : 'background-image: url(assets/img/ui/merchant/ui-spellbookicon-nextpage-disabled.png)'"></button></div>
+						</div>
+					</template>
 					<div class="merchant-frame-tab-bar">
 						<div @click="merchantFrame.mode = 0" :class="merchantFrame.mode == 0 ? 'merchant-frame-tab-activated' : ''">
 							<p>Merchant</p>
@@ -235,7 +239,7 @@
 						<div></div>
 						<div></div>
 						<div></div>
-						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame()"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
+						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame() + itemHoverLeave()"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
 					</div>
 
 					<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
