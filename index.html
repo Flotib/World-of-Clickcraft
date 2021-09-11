@@ -51,6 +51,7 @@
 					<p>Total kills: {{ player.gameStats.totalKills }}</p>
 					<p>Missed enemies: {{ player.gameStats.totalMisses }}</p>
 					<p>Total money: <span class="stats-money" v-html="moneyStylizer(player.gameStats.totalMoney)"></span></p>
+					<p>Money spent in weapon upgrades: <span class="stats-money" v-html="moneyStylizer(player.gameStats.moneySpentUpgradingWeapon)"></span></p>
 				</div>
 				<div class="settings-frame-tab-bar">
 					<div @click="settingsWindow.selectedTab = 0" :class="settingsWindow.selectedTab == 0 ? 'settings-frame-tab-activated' : ''">
@@ -97,6 +98,10 @@
 								<template v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder+(10*(merchantFrame.page-1))">
 									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id))">{{ getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).name }}</p>
 									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant((getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).cost), merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].quantity)"></span></p>
+									<div v-if="getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).requiredLevel > player.level" class="cant-equip-layer-shop-item-desc">
+										<div class="cant-equip-grayscale"></div>
+										<div class="cant-equip-red"></div>
+									</div>
 								</template>
 							</div>
 						</div>
@@ -128,9 +133,12 @@
 					</div>
 					<template v-if="merchantPageCalc > 1 && merchantFrame.mode == 0">
 						<div class="ui-shop-item-page-row">
-							<div><button class="ui-shop-item-page-prev-page" style="width: 40px; height: 40px" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''" :style="merchantFrame.page > 1 ? '' : 'background-image: url(assets/img/ui/merchant/ui-spellbookicon-prevpage-disabled.png)'"></button><p>Prev</p></div>
+							<div><button :class="[merchantFrame.page > 1 ? '' : 'ui-shop-item-page-prev-page-locked', 'ui-shop-item-page-prev-page']" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''"></button><p>Prev</p></div>
 							<p>{{ 'Page ' + merchantFrame.page + ' of ' + merchantPageCalc }}</p>
-							<div><p>Next</p><button class="ui-shop-item-page-next-page" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''" :style="merchantFrame.totalPages > merchantFrame.page ? '' : 'background-image: url(assets/img/ui/merchant/ui-spellbookicon-nextpage-disabled.png)'"></button></div>
+							<div><p>Next</p><button :class="[merchantFrame.totalPages > merchantFrame.page ? '' : 'ui-shop-item-page-next-page-locked', 'ui-shop-item-page-next-page']" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''"></button></div>
+						</div>
+						<div class="ui-shop-fast-buyback">
+
 						</div>
 					</template>
 					<div class="merchant-frame-tab-bar">

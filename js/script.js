@@ -75,6 +75,7 @@ var app = new Vue({
 				totalMisses: 0,
 				totalMoney: BigNumber(0),
 				totalSpentMoney: BigNumber(0),
+				moneySpentUpgradingWeapon: BigNumber(0),
 				startedDate: null,
 			}
 		},
@@ -1152,6 +1153,7 @@ var app = new Vue({
 			let price = BigNumber(this.upgradeItemPrice(item))
 			if (price.lte(this.player.money)) {
 				this.player.money = this.player.money.minus(price)
+				this.player.gameStats.moneySpentUpgradingWeapon = this.player.gameStats.moneySpentUpgradingWeapon.plus(price)
 				this.upgradeItemStatsCalculation(item)
 			} else {
 				return
@@ -1261,8 +1263,10 @@ var app = new Vue({
 
 			if (item.stackMaxSize != null) {
 				this.player.money = this.player.money.plus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
+				this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.plus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
 			} else {
 				this.player.money = this.player.money.plus(item.sellPrice)
+				this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.plus(item.sellPrice)
 			}
 
 			this.merchantFrame.soldItems.unshift(item)
@@ -1287,11 +1291,13 @@ var app = new Vue({
 			} else if (item.stackMaxSize != null) {
 				if (this.player.money.gte(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))) {
 					this.player.money = this.player.money.minus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
+					this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.minus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
 					isback = true
 				}
 			} else {
 				if (this.player.money.gte(item.sellPrice)) {
 					this.player.money = this.player.money.minus(item.sellPrice)
+					this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.minus(item.sellPrice)
 					isback = true
 				}
 			}
@@ -1396,7 +1402,7 @@ var app = new Vue({
 
 		setInterval(() => {
 			if (this.progressionMode) {
-				if (this.step % (this.fps * this.countdown) == 0) {
+				if (this.step != 0 && this.step % (this.fps * this.countdown) == 0) {
 					this.missEnemy()
 					//this.generateEnemy()
 					//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
