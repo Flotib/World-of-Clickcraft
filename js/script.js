@@ -247,12 +247,12 @@ var app = new Vue({
 					top
 				}
 			} else {
-				const right = 10 + 'px'
+				const left = 10 + 'px'
 
 				const bottom = 10 + 'px'
 
 				return {
-					right,
+					left,
 					bottom
 				}
 			}
