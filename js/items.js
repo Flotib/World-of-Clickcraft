@@ -33,7 +33,7 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         },
         icon: 'inv_jewelry_ring_03',
         requiredLevel: 5,
-        salable: false,
+        salable: true,
         cost: BigNumber(50000),
     },
     {

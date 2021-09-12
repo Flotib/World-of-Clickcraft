@@ -21,6 +21,8 @@ var app = new Vue({
 		},
 		configurableValues: {
 			itemQualityBorderOpacity: 70,
+			itemUpgradeLevel: true,
+			dynamicTooltips: true,
 		},
 		maxLevel: 60,
 		giveItemId: 0,
@@ -221,27 +223,38 @@ var app = new Vue({
 		},
 
 		tooltipPosition() {
-			let e = 0
-			let correctionY = 0
-			let correctionX = 0
-			this.cursorY
-			this.cursorX
+			if (this.configurableValues.dynamicTooltips) {
+				let e = 0
+				let correctionY = 0
+				let correctionX = 0
+				this.cursorY
+				this.cursorX
 
-			const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+				const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 
-			if (document.querySelector('.item-tooltip') && this.hoverItem.slotId !== null) {
-				e = document.querySelector('.item-tooltip')
-				correctionY = Math.max(e.offsetHeight + 5, this.cursorY)
-				correctionX = Math.min(this.cursorX, vw - e.offsetWidth - 30)
-			}
+				if (document.querySelector('.item-tooltip') && this.hoverItem.slotId !== null) {
+					e = document.querySelector('.item-tooltip')
+					correctionY = Math.max(e.offsetHeight + 5, this.cursorY)
+					correctionX = Math.min(this.cursorX, vw - e.offsetWidth - 30)
+				}
 
-			const left = correctionX + 10 + 'px'
+				const left = correctionX + 10 + 'px'
 
-			const top = correctionY - 2 + 'px'
+				const top = correctionY - 2 + 'px'
 
-			return {
-				left,
-				top
+				return {
+					left,
+					top
+				}
+			} else {
+				const right = 10 + 'px'
+
+				const bottom = 10 + 'px'
+
+				return {
+					right,
+					bottom
+				}
 			}
 		},
 
@@ -311,7 +324,7 @@ var app = new Vue({
 					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			} else {
-				return '<span>' + diamond + this.diamondimg + '</span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+				return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 			}
 		},
 
@@ -377,6 +390,11 @@ var app = new Vue({
 					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			}
+		},
+
+		playerDiamondTooltip() {
+			let diamond = (this.player.money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+			return '<span>' + diamond.toFormat() + this.diamondimg + '</span>'
 		},
 
 		hoverItemIsAWeapon() {
@@ -817,6 +835,16 @@ var app = new Vue({
 			this.player.level++
 			this.player.xp = this.player.xp - this.player.xpToNextLevel
 			this.xpToNextLevelCalc()
+		},
+
+		playerCurrentDiamondValue() {
+			let diamond = (this.player.money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+
+			if (this.player.money.gte(100000000000)) {
+				return this.itemHoverEnter({sellPrice: diamond}, 0, 'playerMoney')
+			}
+
+			return
 		},
 
 		moneyStylizer(money) {
@@ -1308,8 +1336,13 @@ var app = new Vue({
 				if (index > -1) {
 					this.merchantFrame.soldItems.splice(index, 1)
 					this.merchantFrame.soldItems.push(null)
+					if (this.merchantFrame.soldItems[index] != null) {
+						this.itemHoverLeave()
+						this.itemHoverEnter(this.merchantFrame.soldItems[index], index, 'soldItems')
+					} else {
+						this.itemHoverLeave()
+					}
 				}
-				this.itemHoverLeave()
 			} else {
 				return
 			}
