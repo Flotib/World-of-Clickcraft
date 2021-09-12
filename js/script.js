@@ -28,7 +28,6 @@ var app = new Vue({
 		giveItemId: 0,
 		itemCheatMenu: false,
 		giveItemQuantity: 1,
-		rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later
 		hoverItem: {
 			item: [],
 			slotId: null,
@@ -49,6 +48,10 @@ var app = new Vue({
 			xp: 0,
 			progression: 0,
 			money: BigNumber(0),
+			stats: {
+				rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later
+				critChance: 1, // '%'
+			},
 			bag: {
 				open: true,
 				level: 1,
@@ -72,6 +75,7 @@ var app = new Vue({
 			gameStats: {
 				totalClicks: 0,
 				totalDamages: BigNumber(0),
+				totalCriticalStrikes: 0,
 				totalXP: BigNumber(0),
 				totalKills: 0,
 				totalMisses: 0,
@@ -596,10 +600,16 @@ var app = new Vue({
 		},
 
 		damageEnemy(enemy) {
+			let crit = false
 			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
+			if (damage > 0 && this.rng(100 / this.player.stats.critChance)) {
+				damage *= 2
+				crit = true
+				this.player.gameStats.totalCriticalStrikes++
+			}
 			this.player.gameStats.totalClicks++
 			this.player.gameStats.totalDamages = this.player.gameStats.totalDamages.plus(damage)
-			this.clickParticles(damage)
+			this.clickParticles(damage, crit)
 			enemy.hp -= damage
 		},
 
@@ -702,7 +712,7 @@ var app = new Vue({
 		generateEnemy(enemy = this.chooseEnemy(), allowRare = true) {
 			let generatedEnemy = this.enemies[0]
 			Object.assign(generatedEnemy, enemy)
-			if (this.rng(this.rareChance) && allowRare) {
+			if (this.rng(this.player.stats.rareChance) && allowRare) {
 				//Lazy formula below
 				generatedEnemy.name = "Rare " + generatedEnemy.name
 				generatedEnemy.type = "rare"
@@ -947,11 +957,23 @@ var app = new Vue({
 			}
 		},
 
-		clickParticles(damage) {
-			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': this.damageParticlesDuration, 'id': this.player.gameStats.totalClicks }) //6sec - X:8px and Y:14px to center on the knife point
+		clickParticles(damage, crit) {
+			let color = '#fff'
+			let duration = this.damageParticlesDuration
+			let size = 32
+			let anim = 'fadeouttotop'
+
+			if (crit) {
+				color = '#ff0'
+				duration += 2
+				size = 38
+				anim = 'fadeouttotop-crit'
+			}
+
+			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': duration, 'id': this.player.gameStats.totalClicks, 'color': color, 'size': size + 'px', 'animation': anim}) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
 				this.damageParticles.shift()
-			}, (this.damageParticlesDuration - 1) * 1000) //to be sure to delete it as soon as it disappear
+			}, (duration - 1) * 1000) //to be sure to delete it as soon as it disappear
 		},
 
 		error(message) { // todo : div in html for the error message + css animation

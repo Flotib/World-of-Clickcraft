@@ -486,6 +486,13 @@ a {
   100% { opacity: 0; transform: translateY(-150px);}
 }
 
+@keyframes fadeouttotop-crit {
+	0% { opacity: 1; }
+	15% { opacity: 1; }
+	25% { opacity: 0; }
+	100% { opacity: 0; transform: translateY(-55px);}
+  }
+
 .showenemyinfobutton {
 	width: 90%;
 	height: 30px;

@@ -15,7 +15,7 @@
 	<div id="app">
 		
 		<div class="backgroundEnvironment" :style="'background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);'"></div>
-		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s;'">{{ particle.output }}</div>
+		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s; color: '+particle.color+'; font-size: '+particle.size+'; animation-name: '+particle.animation+';'">{{ particle.output }}</div>
 		
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
 			<div class="item-tooltip" v-if="hoverItem.slotId != null" :style="hoverItem.containerName == 'playerMoney' ? 'max-width: 10000px' : ''">
@@ -50,6 +50,7 @@
 					<p>Total clicks: {{ player.gameStats.totalClicks }}</p>
 					<p>Total damages: {{ player.gameStats.totalDamages }}</p>
 					<p>Average damage per click: {{ player.gameStats.totalClicks == 0 ? '0' : (player.gameStats.totalDamages.div(player.gameStats.totalClicks)).toFixed(1) }}</p>
+					<p>Critical strikes: {{ player.gameStats.totalCriticalStrikes }}</p>
 					<p>Total XP: {{ player.gameStats.totalXP }}</p>
 					<p>Total kills: {{ player.gameStats.totalKills }}</p>
 					<p>Missed enemies: {{ player.gameStats.totalMisses }}</p>
