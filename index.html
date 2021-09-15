@@ -71,13 +71,23 @@
 		<div id="content" @contextmenu.prevent>
 			<div class="sub-content">
 				<div class="merchant-list" v-if="merchantFrame.open == true">
-					<div v-for="merchant in merchants" :key="merchant.id" @click="lockedMerchant(merchant) ? '' : merchantFrame.selectedMerchant = merchant.id" :class="[merchantFrame.selectedMerchant == merchant.id ? 'selected-merchant' : '', lockedMerchant(merchant) ? 'locked-merchant' : '']"></div>
+					<div v-for="merchant in merchants" :key="merchant.id" @click="lockedMerchant(merchant) ? '' : merchantFrame.selectedMerchant = merchant.id" :class="[merchantFrame.selectedMerchant == merchant.id ? 'selected-merchant' : '', lockedMerchant(merchant) ? 'locked-merchant' : '']">
+						<div class="merchant-list-bg-layer" :style="'background-image: url(assets/img/ui/portrait/merchants/merchant_'+merchant.id+'.jpg)'"></div>
+						<div class="merchant-list-identity">
+							<p>{{ merchant.name }}</p>
+							<p>{{ player.level >= merchant.requiredLevel ? merchant.type : '???' }}</p>
+						</div>
+					</div>
 				</div>
 
 				<div class="merchant-frame" v-if="merchantFrame.open == true">
+					<div class="merchant-frame-bg"></div>
 					<div class="merchant-frame-portrait">
 						<div class="merchant-frame-portrait-image" :style="'background-image: url(assets/img/ui/portrait/merchants/'+(merchantFrame.mode == 0 ? 'merchant_'+merchantFrame.selectedMerchant+'.jpg' : 'ui-buyback-icon.png')+');'"></div>
 						<div class="portrait-border"></div>
+					</div>
+					<div class="merchant-frame-identity">
+						<p>{{ merchantFrame.mode == 0 ? merchants[merchantFrame.selectedMerchant].name : 'Merchant Buyback' }}</p>
 					</div>
 					<div class="ui-shop-container" @contextmenu.prevent :style="merchantFrame.mode == 0 ? 'height: 314px;' : 'height: 420px;'">
 						<!-- Merchant Tab -->
@@ -134,6 +144,10 @@
 								<template v-if="item != null">
 									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(item)">{{ item.name }}</p>
 									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant(item.sellPrice, item.stackSize)"></span></p>
+									<div v-if="item.requiredLevel > player.level" class="cant-equip-layer-shop-item-desc">
+										<div class="cant-equip-grayscale"></div>
+										<div class="cant-equip-red"></div>
+									</div>
 								</template>
 							</div>
 						</div>
@@ -168,15 +182,21 @@
 								<template v-if="merchantFrame.soldItems[0] != null">
 									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(merchantFrame.soldItems[0])">{{ merchantFrame.soldItems[0].name }}</p>
 									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant(merchantFrame.soldItems[0].sellPrice, merchantFrame.soldItems[0].stackSize)"></span></p>
+									<div v-if="merchantFrame.soldItems[0].requiredLevel > player.level" class="cant-equip-layer-shop-item-desc">
+										<div class="cant-equip-grayscale"></div>
+										<div class="cant-equip-red"></div>
+									</div>
 								</template>
 							</div>
 						</div>
 					</template>
 					<div class="merchant-frame-tab-bar">
 						<div @click="merchantFrame.mode = 0" :class="merchantFrame.mode == 0 ? 'merchant-frame-tab-activated' : ''">
+							<div class="merchant-frame-tab-bar-bg"></div>
 							<p>Merchant</p>
 						</div>
 						<div @click="merchantFrame.mode = 1" :class="merchantFrame.mode == 1 ? 'merchant-frame-tab-activated' : ''">
+							<div class="merchant-frame-tab-bar-bg"></div>
 							<p>Buyback</p>
 						</div>
 					</div>

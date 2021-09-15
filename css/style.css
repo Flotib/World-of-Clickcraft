@@ -255,7 +255,6 @@ a {
 	text-align: center;
 	font-size: 16px;
 	text-shadow: 1px 1px 0 #000;
-	
 }
 
 .graylevel {
@@ -423,6 +422,7 @@ a {
 
 .emptyxpbar {
 	position: fixed;
+	z-index: 1000;
 	bottom: 0;
 	height: 14px;
 	width: 60%;
@@ -1442,8 +1442,19 @@ a {
 	position: relative;
 	width: 393px;
 	height: 515px;
-	background-color: #111111;
+	background-color: #090909b2;
 	border: 1px solid #fff;
+	border-radius: 10px 5px 5px 5px;
+}
+
+.merchant-frame-bg {
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	background-image: url(../assets/img/ui/merchant/ui-paperdoll-slotbackground.png);
+	background-position: center;
+	background-size: cover;
 	border-radius: 10px 5px 5px 5px;
 }
 
@@ -1451,6 +1462,7 @@ a {
 	width: 90px;
 	height: 90px;
 	position: relative;
+	z-index: 1;
 	bottom: 15px;
 	right: 15px;
 	display: flex;
@@ -1468,7 +1480,21 @@ a {
 	background-repeat: no-repeat;
 }
 
+.merchant-frame-identity {
+	position: absolute;
+	color: #ffd100;
+	top: 4px;
+	right: 0;
+	width: 90%;
+	font-size: 16px;
+	text-align: center;
+	padding-bottom: 4px;
+	border-bottom: 1px solid white;
+}
+
 .merchant-list {
+	position: relative;
+	z-index: 1;
 	width: 270px;
 	height: 495px;
 	display: flex;
@@ -1485,7 +1511,8 @@ a {
 }
 
 .merchant-list > div {
-	width: 98%;
+	position: relative;
+	width: 248px;
 	height: 70px;
 	margin-right: 2%;
 	min-height: 70px;
@@ -1493,7 +1520,7 @@ a {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	background-color: #000000;
+	align-items: center;
 	border-radius: 5px;
 	border: 1px solid white;
 	transition-duration: 50ms;
@@ -1509,8 +1536,6 @@ a {
 
 .merchant-list > div:active {
 	box-shadow: inset 0 0 14px 2px #ffff9d;
-	transform: scale(0.98);
-	transition-duration: 0ms;
 }
 
 .selected-merchant {
@@ -1521,10 +1546,48 @@ a {
 	box-shadow: inset 0 0 8px 3px #6ab0ff !important;
 }
 
+.selected-merchant:active {
+	box-shadow: inset 0 0 8px 3px #88bfff !important;
+}
+
 .locked-merchant {
 	filter: grayscale(100%);
 	box-shadow: none !important;
 	transform: scale(1) !important;
+}
+
+.locked-merchant .merchant-list-bg-layer {
+	filter: brightness(30%) !important;
+}
+
+.merchant-list-bg-layer {
+	position: absolute;
+	z-index: -1 !important;
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+	background-color: #000;
+	background-position: -24px -94px;
+	background-size: 110%;
+	background-repeat: no-repeat;
+	filter: brightness(42%);
+}
+
+.merchant-list > div:hover .merchant-list-bg-layer {
+	filter: brightness(54%);
+}
+
+.merchant-list-identity {
+	display: flex;
+	flex-direction: column;
+	color: #ffd100;
+	text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000; /*text-shadow go brrrr (to create a border, dont worry)*/
+	margin-left: 10px;
+}
+
+.merchant-list-identity p:first-child {
+	color: #fff;
+	font-size: 18px;
 }
 
 .cheat-menu-item {
@@ -1779,6 +1842,7 @@ a {
 	justify-content: flex-start; 
 	align-items: flex-end;
 	position: absolute;
+	z-index: 1;
 	left: 10px;
 	bottom: -32px;
 	height: 30px;
@@ -1786,6 +1850,7 @@ a {
 }
 
 .merchant-frame-tab-bar > div {
+	position: relative;
 	width: auto; 
 	height: 100%;
 	display: flex;
@@ -1794,23 +1859,37 @@ a {
 	background-color: #000;
 	border-radius: 0 0 8px 8px;
 	border: 1px solid #eee;
-	color: #fff;
+	color: #ffd100;
 	font-size: 14px;
 	margin-left: 6px;
 	padding: 0 12px 0 12px;
 }
 
+.merchant-frame-tab-bar-bg {
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	background-image: url('../assets/img/ui/merchant/ui-paperdoll-slotbackground.png');
+	background-size: 600%;
+	background-position: left bottom;
+	border-radius: 0 0 8px 8px;
+}
+
 .merchant-frame-tab-bar > div:hover {
 	box-shadow: inset 0 0 8px 2px #4561ff;
+	color: #fff;
 }
 
 .merchant-frame-tab-bar > div:active {
 	box-shadow: inset 0 0 9px 3px #5d76ff;
+	color: #fff;
 }
 
 .merchant-frame-tab-activated {
 	height: 31px !important;
-	background-color: #111111 !important;
+	color: #fff !important;
+	background-color: #090909b2 !important;
 	border-top: transparent !important;
 }
 
