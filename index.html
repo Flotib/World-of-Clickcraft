@@ -71,11 +71,14 @@
 		<div id="content" @contextmenu.prevent>
 			<div class="sub-content">
 				<div class="merchant-list" v-if="merchantFrame.open == true">
-					<div v-for="merchant in merchants" :key="merchant.id" @click="lockedMerchant(merchant) ? '' : merchantFrame.selectedMerchant = merchant.id" :class="[merchantFrame.selectedMerchant == merchant.id ? 'selected-merchant' : '', lockedMerchant(merchant) ? 'locked-merchant' : '']">
+					<div v-for="merchant in merchants" :key="merchant.id" v-if="player.level >= merchant.requiredLevel - 5" @click="lockedMerchant(merchant) ? '' : merchantFrame.selectedMerchant = merchant.id" :class="[merchantFrame.selectedMerchant == merchant.id ? 'selected-merchant' : '', lockedMerchant(merchant) ? 'locked-merchant' : '']">
 						<div class="merchant-list-bg-layer" :style="'background-image: url(assets/img/ui/portrait/merchants/merchant_'+merchant.id+'.jpg)'"></div>
 						<div class="merchant-list-identity">
-							<p>{{ merchant.name }}</p>
-							<p>{{ player.level >= merchant.requiredLevel ? merchant.type : '???' }}</p>
+							<p :style="player.level >= merchant.requiredLevel ? '' : 'letter-spacing: 4px;'">{{ player.level >= merchant.requiredLevel ? merchant.name : '???' }}</p>
+							<p v-if="player.level >= merchant.requiredLevel">{{ merchant.type }}</p>
+						</div>
+						<div :class="[player.level >= merchant.requiredLevel ? 'yellowlevel' : 'redlevel', 'merchant-list-required-level']">
+							<p>{{ merchant.requiredLevel }}</p>
 						</div>
 					</div>
 				</div>
@@ -152,8 +155,8 @@
 							</div>
 						</div>
 					</div>
-					<template v-if="merchantPageCalc > 1 && merchantFrame.mode == 0">
-						<div class="ui-shop-item-page-row">
+					<template v-if="merchantFrame.mode == 0">
+						<div class="ui-shop-item-page-row" v-if="merchantPageCalc > 1">
 							<div><button :class="[merchantFrame.page > 1 ? '' : 'ui-shop-item-page-prev-page-locked', 'ui-shop-item-page-prev-page']" @click="merchantFrame.page > 1 ? prevMerchantPage() : ''"></button><p>Prev</p></div>
 							<p>{{ 'Page ' + merchantFrame.page + ' of ' + merchantPageCalc }}</p>
 							<div><p>Next</p><button :class="[merchantFrame.totalPages > merchantFrame.page ? '' : 'ui-shop-item-page-next-page-locked', 'ui-shop-item-page-next-page']" @click="merchantFrame.totalPages > merchantFrame.page ? nextMerchantPage() : ''"></button></div>

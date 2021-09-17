@@ -1,7 +1,7 @@
 window.content.merchants = [
     {
         id: 0,
-        requiredLevel: 0, // If i add achievements later, some merchant may have achievement requirements
+        requiredLevel: 1, // If i add achievements later, some merchant may have achievement requirements
         name: 'Smith Marcus',
         type: 'Blacksmith',
         stock: [

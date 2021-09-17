@@ -1478,6 +1478,7 @@ a {
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
+	background-color: #000;
 }
 
 .merchant-frame-identity {
@@ -1521,6 +1522,7 @@ a {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
+	justify-content: space-between;
 	border-radius: 5px;
 	border: 1px solid white;
 	transition-duration: 50ms;
@@ -1551,13 +1553,12 @@ a {
 }
 
 .locked-merchant {
-	filter: grayscale(100%);
 	box-shadow: none !important;
 	transform: scale(1) !important;
 }
 
 .locked-merchant .merchant-list-bg-layer {
-	filter: brightness(30%) !important;
+	filter: grayscale(100%) brightness(30%) !important;
 }
 
 .merchant-list-bg-layer {
@@ -1588,6 +1589,11 @@ a {
 .merchant-list-identity p:first-child {
 	color: #fff;
 	font-size: 18px;
+}
+
+.merchant-list-required-level {
+	font-size: 20px;
+	margin-right: 14px;
 }
 
 .cheat-menu-item {
