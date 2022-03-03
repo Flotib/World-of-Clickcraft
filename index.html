@@ -22,15 +22,16 @@
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
 				<p v-if="hoverItem.slotId == -1">{{ hoverItem.item[0].title }}</p>
 				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
-				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ hoverItem.item[0].slotType.name }}</p></div>
+				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ tooltipItemWeaponType }}</p></div>
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
 				<p v-if="hoverItemIsAWeapon">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
 				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
+				<p v-if="hoverItem.item[0].material === true" style="color: #68b7f2">Crafting Reagent</p>
 				<p v-if="hoverItem.item[0].sellPrice && hoverItem.item[0].salable !== false && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney'" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
-				<p v-if="hoverItem.item[0].salable === false && merchantFrame.open && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney'" class="item-tooltip-money">No sell price</p>
+				<p v-if="(hoverItem.item[0].salable === false || hoverItem.item[0].sellPrice == null) && merchantFrame.open && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney'" class="item-tooltip-money">No sell price</p>
 				<p v-if="hoverItem.containerName == 'playerMoney'" class="item-tooltip-money-no-margin item-tooltip-money"><span v-html="playerDiamondTooltip"></span></p>
 			</div>					
 		</div>
@@ -247,14 +248,28 @@
 						<p>Level {{ player.level }}</p>
 						<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
 						<div>
-							<div class="player-weapon" @contextmenu.prevent>
-								<div v-if="showItemQualityBorder(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') && player.weapon.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.weapon.item[0])+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
-								
-								<div @contextmenu.prevent="merchantFrame.open ? '' : (emptySpace(player.bag.slots) > 0 ? unequipItem(player.weapon.item[0]) : '')" @mouseover="itemHoverEnter(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0]" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerEquipment') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerEquipment')">
-									<div class="ui-item-upgrade-level" v-if="configurableValues.itemUpgradeLevel">
-										<p v-if="player.weapon.item[0].upgradeLevel > 0">{{ player.weapon.item[0].upgradeLevel }}</p>
+							<div style="display: flex; flex-direction: row;">
+								<!--Weapon-->
+								<div class="player-weapon" @contextmenu.prevent>
+									<div v-if="showItemQualityBorder(player.weapon.item[0], player.weapon.slotId, 'playerWeapon') && player.weapon.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.weapon.item[0])+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+									
+									<div @contextmenu.prevent="merchantFrame.open ? '' : (emptySpace(player.bag.slots) > 0 ? unequipItem(player.weapon) : '')" @mouseover="itemHoverEnter(player.weapon.item[0], player.weapon.slotId, 'playerWeapon')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerWeapon') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.weapon.item[0])+'.png);'" v-if="player.weapon.item[0]" @click="(selectedItem.selection) && (selectedItem.slotId == player.weapon.slotId) && (selectedItem.containerName == 'playerWeapon') ? unselectItem() : itemSelection(player.weapon.item[0], player.weapon.slotId, 'playerWeapon')">
+										<div class="ui-item-upgrade-level" v-if="configurableValues.itemUpgradeLevel">
+											<p v-if="player.weapon.item[0].upgradeLevel > 0">{{ player.weapon.item[0].upgradeLevel }}</p>
+										</div>
+										<div class="ui-item-overlay"></div>
 									</div>
-									<div class="ui-item-overlay"></div>
+								</div>
+								<!--OffHand-->
+								<div class="player-weapon player-off-hand" @contextmenu.prevent>
+									<div v-if="showItemQualityBorder(player.offHand.item[0], player.offHand.slotId, 'playerOffHand') && player.offHand.item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.offHand.item[0])+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+									
+									<div @contextmenu.prevent="merchantFrame.open ? '' : (emptySpace(player.bag.slots) > 0 ? unequipItem(player.offHand) : '')" @mouseover="itemHoverEnter(player.offHand.item[0], player.offHand.slotId, 'playerOffHand')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.offHand.slotId) && (selectedItem.containerName == 'playerOffHand') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.offHand.item[0])+'.png);'" v-if="player.offHand.item[0]" @click="(selectedItem.selection) && (selectedItem.slotId == player.offHand.slotId) && (selectedItem.containerName == 'playerOffHand') ? unselectItem() : itemSelection(player.offHand.item[0], player.offHand.slotId, 'playerOffHand')">
+										<div class="ui-item-upgrade-level" v-if="configurableValues.itemUpgradeLevel">
+											<p v-if="player.offHand.item[0].upgradeLevel > 0">{{ player.offHand.item[0].upgradeLevel }}</p>
+										</div>
+										<div class="ui-item-overlay"></div>
+									</div>
 								</div>
 							</div>
 							<div class="player-trinket">
@@ -270,10 +285,10 @@
 
 					<div class="select-item-interaction">
 						<div class="select-item-interaction-button">
-							<button class="button-color-blue" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
+							<button class="button-color-blue" :style="equipButtonStyles" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 								Equip Item
 							</button>
-							<button class="button-color-blue" :style="unequipButtonStyles" v-if="selectedItem.containerName == 'playerEquipment' || selectedItem.containerName == 'playerTrinket'" @click="(selectedItem.containerName == 'playerEquipment' && emptySpace(player.bag.slots) > 0) ? unequipItem(selectedItem.item) : ''">
+							<button class="button-color-blue" :style="unequipButtonStyles" v-if="selectedItem.containerName == 'playerWeapon' || selectedItem.containerName == 'playerOffHand' || selectedItem.containerName == 'playerTrinket'" @click="((selectedItem.containerName == 'playerWeapon' || selectedItem.containerName == 'playerOffHand' || selectedItem.containerName == 'playerTrinket') && emptySpace(player.bag.slots) > 0 ) ? unequipItem(selectedItem) : ''">
 								Unequip Item
 							</button>
 							<button v-if="selectedItem.containerName == 'playerBag' && !upgradeItemFrame.open" @click="deleteItem(player.bag, selectedItem.slotId)">
@@ -293,7 +308,7 @@
 								
 								<div v-if="showItemQualityBorder(container.item, container.slotId, 'playerBag')" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(container.item)+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
 
-								<div @contextmenu.prevent="merchantFrame.open ? sellItem(container.item, container.slotId) : (container.item.equipable && (player.level >= container.item.requiredLevel || container.item.requiredLevel == null) ? ((player.weapon.item.length != 0 ? itemHoverEnter(player.weapon.item[0], player.weapon.slotId, 'playerEquipment') : '') + (equipItem(container.item, container.slotId))) : '')" draggable @dragstart="startDrag($event, container)" @dragend="endDrag($event)" @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', merchantFrame.open ? 'pouchCursor' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
+								<div @contextmenu.prevent="merchantFrame.open ? sellItem(container.item, container.slotId) : (container.item.equipable && (player.level >= container.item.requiredLevel || container.item.requiredLevel == null) ? equipItem(container.item, container.slotId, true) : '')" draggable @dragstart="startDrag($event, container)" @dragend="endDrag($event)" @mouseover="itemHoverEnter(container.item, container.slotId, 'playerBag')" @mouseleave="itemHoverLeave()" @click="toggleSelectionItem(container.item, container.slotId, 'playerBag')" :class="[(selectedItem.slotId == container.slotId) && (selectedItem.containerName == 'playerBag') ? 'selected-item' : '', merchantFrame.open ? 'pouchCursor' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.bag.slots[container.slotId-1].item)+'.png);'">
 									<div class="ui-item-stacksize">
 										<p v-if="container.item.stackSize > 1">{{ container.item.stackSize }}</p>
 									</div>

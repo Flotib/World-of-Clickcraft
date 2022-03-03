@@ -62,6 +62,10 @@ var app = new Vue({
 				item: [],
 				slotId: 0,
 			},
+			offHand: {
+				item: [],
+				slotId: -1,
+			},
 			trinket: [
 				{
 					item: [],
@@ -168,6 +172,16 @@ var app = new Vue({
 	},
 
 	computed: {
+		equipButtonStyles() {
+			let graylevel = ''
+
+			if (this.selectedItem.item.slotType.subtype == 'Two-Hand' && this.player.weapon.item.length != 0 && this.player.offHand.item.length != 0 && this.emptySpace(this.player.bag.slots) < 1) {
+				graylevel = 'filter: grayscale(100%) !important;'
+			}
+
+			return graylevel
+		},
+
 		unequipButtonStyles() {
 			let graylevel = 'filter: grayscale(100%) !important;'
 
@@ -277,6 +291,27 @@ var app = new Vue({
 			}
 
 			return 'quality-' + qualityMapping[itemquality]
+		},
+
+		tooltipItemWeaponType() {
+			let itemWeaponType = this.hoverItem.item[0].slotType.name
+
+			const weaponTypeMapping = {
+				0: 'Sword',
+				1: 'Axe',
+				2: 'Mace',
+				3: 'Dagger',
+				4: 'Polearm',
+				5: 'Fist Weapon',
+				6: 'Staff',
+				7: 'Bow',
+				8: 'Crossbow',
+				9: 'Gun',
+				// 10: 'Wand', I'm not sure to add wands for the moment. I need to think about how they could work
+				20: 'Shield',
+			}
+
+			return weaponTypeMapping[itemWeaponType]
 		},
 
 		upgradeItemQuality() {
@@ -600,6 +635,7 @@ var app = new Vue({
 		},
 
 		damageEnemy(enemy) {
+			this.specialWeapon()
 			let crit = false
 			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
 			if (damage > 0 && this.rng(100 / this.player.stats.critChance)) {
@@ -611,6 +647,29 @@ var app = new Vue({
 			this.player.gameStats.totalDamages = this.player.gameStats.totalDamages.plus(damage)
 			this.clickParticles(damage, crit)
 			enemy.hp -= damage
+		},
+
+		specialWeapon() {
+			weapon = this.player.weapon.item
+			if ( weapon.length != 0) {
+				if (weapon[0].slotType.name == "Sword") {
+
+				} else if (weapon[0].slotType.name == "Axe") {
+
+				} else if (weapon[0].slotType.name == "Mace") {
+
+				} else if (weapon[0].slotType.name == "Dagger") {
+
+				} else if (weapon[0].slotType.name == "Polearm") {
+
+				} else if (weapon[0].slotType.name == "FistWeapon") {
+
+				} else if (weapon[0].slotType.name == "Sword") {
+
+				} else if (weapon[0].slotType.name == "Sword") {
+
+				} 
+			}
 		},
 
 		formatHpLabel(enemy) {
@@ -1103,31 +1162,87 @@ var app = new Vue({
 			this.selectedItem.containerName = containerName // name of the parent which contain the item, set by hand
 		},
 
-		equipItem(item, slot) {
+		equipItem(item, slot, click) {
 			if (item.slotType.type == 'weapon') {
-				if (this.player.weapon.item.length != 0) {
-					let actualItem = this.player.weapon.item[0]
-					actualItem.equipable = true
-					this.player.weapon.item.splice(0, 1, item)
-					this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
-					this.player.weapon.item.equipable = false
-				} else {
-					this.itemHoverLeave()
-					this.player.weapon.item.splice(0, 1, item)
-					this.clearSlot(this.player.bag, slot)
-					this.player.weapon.item.equipable = false
+				// ONE-HAND PART
+				if (item.slotType.subtype === 'One-Hand') {
+					if (this.player.weapon.item.length != 0 && this.player.offHand.item.length == 0) { // main-hand true, offHand false --> equip offHand
+						if (this.player.weapon.item[0].slotType.subtype == 'Two-Hand') {
+							let actualItem = this.player.weapon.item[0]
+							this.player.weapon.item.splice(0, 1, item)
+							this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
+							if (click !== undefined) {
+								this.itemHoverEnter(actualItem, slot, 'playerBag')
+							}
+						} else {
+							this.itemHoverLeave()
+							this.player.offHand.item.splice(0, 1, item)
+							this.clearSlot(this.player.bag, slot)
+						}
+					} else if (this.player.weapon.item.length != 0 && this.player.offHand.item.length != 0) { // main-hand true, offHand true --> switch main-hand
+						let actualItem = this.player.weapon.item[0]
+						this.player.weapon.item.splice(0, 1, item)
+						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
+						if (click !== undefined) {
+							this.itemHoverEnter(actualItem, slot, 'playerBag')
+						}
+					} else { // main-hand false, offHand true or false --> equip main-hand
+						this.itemHoverLeave()
+						this.player.weapon.item.splice(0, 1, item)
+						this.clearSlot(this.player.bag, slot)
+					}
+				// TWO-HANDED PART
+				} else { 
+					if (this.player.offHand.item.length != 0) {
+						if (this.emptySpace(this.player.bag.slots) == 0) {
+							return
+						}
+						let offHand = this.player.offHand.item[0]
+						let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
+						this.player.offHand.item.splice(0, 1)
+						this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: offHand })
+					}
+					if (this.player.weapon.item.length != 0) {
+						let mainHand = this.player.weapon.item[0]
+						this.player.weapon.item.splice(0, 1, item)
+						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: mainHand })
+						if (click !== undefined) {
+							this.itemHoverEnter(mainHand, slot, 'playerBag')
+						}
+					} else {
+						this.itemHoverLeave()
+						this.player.weapon.item.splice(0, 1, item)
+						this.clearSlot(this.player.bag, slot)
+					}
 				}
+			} else {
+				this.itemHoverEnter(item, slot, 'playerBag')
+				return
 			}
+
 			this.unselectItem()
 		},
 
-		unequipItem(item) {
+		unequipItem(selectedItem) { // slot -> exemples : this.player.weapon, this.player.offHand, this.player.trinket[0 or 1]...
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
-			let actualItem = this.player.weapon.item[0]
-			actualItem.equipable = true
-			this.player.weapon.item.splice(0, 1)
-			this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
-			
+			if (selectedItem.containerName != undefined) {
+				let slot
+				if (selectedItem.containerName == 'playerWeapon') {
+					slot = this.player.weapon
+				} else if (selectedItem.containerName == 'playerOffHand') {
+					slot = this.player.offHand
+				} else { // trinket
+					slot = this.player.trinket
+				}
+				let actualItem = slot.item[0] // not adapted for trinkets!!!!
+				slot.item.splice(0, 1)
+				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
+			} else {
+				let actualItem = selectedItem.item[0] // not adapted for trinkets!!!!
+				selectedItem.item.splice(0, 1)
+				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
+			}
+
 			this.itemHoverLeave()
 			this.unselectItem()
 		},

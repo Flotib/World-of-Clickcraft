@@ -6,6 +6,7 @@ let images = [
     "assets/img/background/elwynn.jpg",
     "assets/img/ui/ui-optionsbutton.png",
     "assets/img/ui/bag/empty-bag-slot.png",
+    "assets/img/ui/equipment/empty-offhand-slot.png",
     "assets/img/ui/equipment/empty-weapon-slot.png",
     "assets/img/ui/icons/inv_misc_pelt_wolf_ruin_04.png",
     "assets/img/ui/icons/inv_misc_questionmark.png",
@@ -273,8 +274,7 @@ let images = [
     "assets/img/ui/portrait/enemies-portraits/zombie/zombie_3.jpg",
     "assets/img/ui/portrait/enemies-portraits/zombie/zombie_4.jpg",
     "assets/img/ui/upgrade/reforgegreenarrow.png",
-    "assets/img/ui/upgrade/reliciconframe.png",
-    "assets/img/ui/upgrade/ui-paperdoll-slotbackground.png",    
+    "assets/img/ui/upgrade/reliciconframe.png", 
 ] 
 
 let pre = []

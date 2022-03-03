@@ -1,4 +1,18 @@
-window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:rare  4:epic  5:legendary  6:artifact  7:heirloom
+window.content.items = [ 
+    /*  quality table --> 0:poor  1:common  2:uncommon  3:rare  4:epic  5:legendary  6:artifact  7:heirloom
+        slotType.name table 
+            0: Sword
+            1: Axe
+            2: Mace
+            3: Dagger
+            4: Polearm
+            5: Fist Weapon
+            6: Staff
+            7: Bow
+            8: Crossbow
+            9: Gun
+            20: Shield
+    */
     {
         id: 1,
         name: 'One',
@@ -6,7 +20,7 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         quality: 3,
         slotType: {
             type: 'weapon',
-            name: 'Sword',
+            name: 0,
             subtype: 'One-Hand',
         },
         icon: 'inv_sword_04',
@@ -29,7 +43,7 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         equipable: true,
         slotType: {
             type: 'trinket',
-            name: 'Trinket',
+            subtype: 'Neck / Ring / Trinket',
         },
         icon: 'inv_jewelry_ring_03',
         requiredLevel: 5,
@@ -73,13 +87,28 @@ window.content.items = [ //  quality table --> 0:poor  1:common  2:uncommon  3:r
         quality: 4,
         slotType: {
             type: 'weapon',
-            name: 'Sword',
-            subtype: 'One-Hand',
+            name: 0,
+            subtype: 'Two-Hand',
         },
         icon: 'inv_sword_04',
         baseMinDamage: 167,
         baseMaxDamage: 209,
         requiredLevel: 60,
         quote: 'A taste of Power.',
+    },
+    {
+        id: 11,
+        name: 'Dagger test',
+        equipable: true,
+        quality: 2,
+        slotType: {
+            type: 'weapon',
+            name: 3,
+            subtype: 'One-Hand',
+        },
+        icon: 'ability_marksmanship',
+        baseMinDamage: 2,
+        baseMaxDamage: 5,
+        requiredLevel: 1,
     },
 ]

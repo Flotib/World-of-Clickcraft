@@ -872,7 +872,11 @@ a {
 	background-repeat: no-repeat;
 	background-image: url('../assets/img/ui/equipment/empty-weapon-slot.png');
 	border-radius: 14%;
-	margin: 10px 0 10px 0;
+	margin: 10px 1px 10px 1px;
+}
+
+.player-off-hand {
+	background-image: url('../assets/img/ui/equipment/empty-offhand-slot.png') !important;
 }
 
 .player-weapon div {
