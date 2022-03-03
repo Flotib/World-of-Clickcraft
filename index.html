@@ -285,6 +285,9 @@
 
 					<div class="select-item-interaction">
 						<div class="select-item-interaction-button">
+							<button class="button-color-blue" v-if="(selectedItem.containerName == 'playerWeapon' || selectedItem.containerName == 'playerOffHand') && player.weapon.item.length != 0 && player.offHand.item.length != 0" @click="switchWeapons()"> 
+								Switch
+							</button>
 							<button class="button-color-blue" :style="equipButtonStyles" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">
 								Equip Item
 							</button>

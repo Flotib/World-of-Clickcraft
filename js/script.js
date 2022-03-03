@@ -621,7 +621,9 @@ var app = new Vue({
 			if (this.player.weapon.item.length > 0) {
 				minDamage += this.player.weapon.item[0].minDamage
 			}
-
+			if (this.player.offHand.item.length > 0) {
+				minDamage += this.player.offHand.item[0].minDamage / 2
+			}
 			return Math.floor(minDamage)
 		},
 
@@ -630,7 +632,9 @@ var app = new Vue({
 			if (this.player.weapon.item.length > 0) {
 				maxDamage += this.player.weapon.item[0].maxDamage
 			}
-
+			if (this.player.offHand.item.length > 0) {
+				maxDamage += this.player.offHand.item[0].maxDamage / 2
+			}
 			return Math.floor(maxDamage)
 		},
 
@@ -1245,6 +1249,14 @@ var app = new Vue({
 
 			this.itemHoverLeave()
 			this.unselectItem()
+		},
+
+		switchWeapons() {
+			let main = this.player.weapon.item[0]
+			let off = this.player.offHand.item[0]
+			this.player.weapon.item.splice(0, 1, off)
+			this.player.offHand.item.splice(0, 1, main)
+			this.selectedItem.item = this.player.offHand.item[0]
 		},
 
 		unselectItem() {
