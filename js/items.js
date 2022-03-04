@@ -12,12 +12,15 @@ window.content.items = [
             8: Crossbow
             9: Gun
             20: Shield
+
+            unique: 0 -> not unique; 1 -> Unique; 2 -> Unique-Equipped
     */
     {
         id: 1,
         name: 'One',
         equipable: true,
         quality: 3,
+        unique: 0,
         slotType: {
             type: 'weapon',
             name: 0,
