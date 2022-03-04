@@ -24,7 +24,8 @@
 				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
 				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ tooltipItemWeaponType }}</p></div>
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
-				<p v-if="hoverItemIsAWeapon">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
+				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype !== 'Off Hand' && hoverItem.containerName !== 'playerOffHand'">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
+				<p v-if="(hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype === 'Off Hand') || hoverItem.containerName === 'playerOffHand'">({{ ((hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2)/2 }} Damage per click)</p>
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
 				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
@@ -285,7 +286,7 @@
 
 					<div class="select-item-interaction">
 						<div class="select-item-interaction-button">
-							<button class="button-color-blue" v-if="(selectedItem.containerName == 'playerWeapon' || selectedItem.containerName == 'playerOffHand') && player.weapon.item.length != 0 && player.offHand.item.length != 0" @click="switchWeapons()"> 
+							<button class="button-color-blue" :style="switchButtonStyles" v-if="(selectedItem.containerName == 'playerWeapon' || selectedItem.containerName == 'playerOffHand') && player.weapon.item.length != 0 && player.offHand.item.length != 0" @click="switchWeapons()"> 
 								Switch
 							</button>
 							<button class="button-color-blue" :style="equipButtonStyles" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">

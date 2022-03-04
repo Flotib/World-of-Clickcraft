@@ -49,8 +49,33 @@ var app = new Vue({
 			progression: 0,
 			money: BigNumber(0),
 			stats: {
-				rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later
-				critChance: 1, // '%'
+				rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later (1 out of ~100 mobs will be a rare)
+				critChance: 5, // '%'
+				agility: 0, // affect the crit chance
+				stamina: 0, // increase the mob countdown
+				strength: 0, // increase melee attack power (player min and max damage)
+				intellect: 0, // increase the speed rate 
+			},
+			skills : { // useful ressource: https://www.reddit.com/r/classicwow/comments/df6fr5/new_crit_chance_calculation_weapon_skillagility/
+				weapons : {
+					sword: {
+
+					},
+					axe: {
+
+					},
+					mace: {
+
+					},
+					Dagger: 0,
+					Polearm: 0,
+					FistWeapon: 0,
+					Staff: 0,
+					Bow: 0,
+					Crossbow: 0,
+					Gun: 0,
+					// Wand: 0,
+				},
 			},
 			bag: {
 				open: true,
@@ -175,7 +200,7 @@ var app = new Vue({
 		equipButtonStyles() {
 			let graylevel = ''
 
-			if (this.selectedItem.item.slotType.subtype == 'Two-Hand' && this.player.weapon.item.length != 0 && this.player.offHand.item.length != 0 && this.emptySpace(this.player.bag.slots) < 1) {
+			if (this.selectedItem.item.slotType.subtype == 'Two-Hand' && this.player.weapon.item.length != 0 && this.player.offHand.item.length != 0 && this.emptySpace(this.player.bag.slots) < 1) { // the level is already checked by the v-if in the html
 				graylevel = 'filter: grayscale(100%) !important;'
 			}
 
@@ -186,6 +211,16 @@ var app = new Vue({
 			let graylevel = 'filter: grayscale(100%) !important;'
 
 			if (this.emptySpace(this.player.bag.slots) > 0) {
+				graylevel = ''
+			}
+
+			return graylevel
+		},
+
+		switchButtonStyles() {
+			let graylevel = 'filter: grayscale(100%) !important;'
+
+			if (this.player.weapon.item[0].slotType.subtype === "One-Hand" && this.player.offHand.item[0].slotType.subtype === "One-Hand") {
 				graylevel = ''
 			}
 
@@ -1196,7 +1231,7 @@ var app = new Vue({
 						this.clearSlot(this.player.bag, slot)
 					}
 				// TWO-HANDED PART
-				} else { 
+				} else if (item.slotType.subtype === 'Two-Hand') { 
 					if (this.player.offHand.item.length != 0) {
 						if (this.emptySpace(this.player.bag.slots) == 0) {
 							return
@@ -1218,7 +1253,35 @@ var app = new Vue({
 						this.player.weapon.item.splice(0, 1, item)
 						this.clearSlot(this.player.bag, slot)
 					}
+				// MAIN HAND & OFF HAND PART
+				} else if (item.slotType.subtype === 'Main Hand') {
+					if (this.player.weapon.item.length != 0) {
+						let actualItem = this.player.weapon.item[0]
+						this.player.weapon.item.splice(0, 1, item)
+						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
+						if (click !== undefined) {
+							this.itemHoverEnter(actualItem, slot, 'playerBag')
+						}
+					} else {
+						this.itemHoverLeave()
+						this.player.weapon.item.splice(0, 1, item)
+						this.clearSlot(this.player.bag, slot)
+					}
+				} else { // if Off Hand
+					if (this.player.offHand.item.length != 0) {
+						let actualItem = this.player.offHand.item[0]
+						this.player.offHand.item.splice(0, 1, item)
+						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
+						if (click !== undefined) {
+							this.itemHoverEnter(actualItem, slot, 'playerBag')
+						}
+					} else {
+						this.itemHoverLeave()
+						this.player.offHand.item.splice(0, 1, item)
+						this.clearSlot(this.player.bag, slot)
+					}
 				}
+
 			} else {
 				this.itemHoverEnter(item, slot, 'playerBag')
 				return
@@ -1254,9 +1317,13 @@ var app = new Vue({
 		switchWeapons() {
 			let main = this.player.weapon.item[0]
 			let off = this.player.offHand.item[0]
-			this.player.weapon.item.splice(0, 1, off)
-			this.player.offHand.item.splice(0, 1, main)
-			this.selectedItem.item = this.player.offHand.item[0]
+			if (main.slotType.subtype !== "One-Hand" || off.slotType.subtype !== "One-Hand") {
+				return
+			} else {
+				this.player.weapon.item.splice(0, 1, off)
+				this.player.offHand.item.splice(0, 1, main)
+				this.selectedItem.item = this.player.offHand.item[0]
+			}
 		},
 
 		unselectItem() {

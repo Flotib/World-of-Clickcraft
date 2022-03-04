@@ -109,6 +109,34 @@ window.content.items = [
         icon: 'ability_marksmanship',
         baseMinDamage: 2,
         baseMaxDamage: 5,
-        requiredLevel: 1,
     },
+    {
+        id: 12,
+        name: 'The Off Hand',
+        equipable: true,
+        quality: 2,
+        slotType: {
+            type: 'weapon',
+            name: 0,
+            subtype: 'Off Hand',
+        },
+        icon: 'inv_sword_10',
+        baseMinDamage: 2,
+        baseMaxDamage: 5,
+    },
+    {
+        id: 13,
+        name: 'The Main Hand',
+        equipable: true,
+        quality: 3,
+        slotType: {
+            type: 'weapon',
+            name: 1,
+            subtype: 'Main Hand',
+        },
+        icon: 'inv_axe_04',
+        baseMinDamage: 4,
+        baseMaxDamage: 11,
+    },
+
 ]
