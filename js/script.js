@@ -349,6 +349,17 @@ var app = new Vue({
 			return weaponTypeMapping[itemWeaponType]
 		},
 
+		tooltipItemUniqueType() {
+			let itemUniqueType = this.hoverItem.item[0].unique
+
+			const weaponTypeMapping = {
+				1: 'Unique',
+				2: 'Unique-Equipped',
+			}
+
+			return weaponTypeMapping[itemUniqueType]
+		},
+
 		upgradeItemQuality() {
 			let itemquality = this.upgradeItemFrame.itemPreview[0].quality
 

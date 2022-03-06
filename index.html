@@ -22,6 +22,7 @@
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
 				<p v-if="hoverItem.slotId == -1">{{ hoverItem.item[0].title }}</p>
 				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
+				<p v-if="hoverItem.item[0].unique != 0">{{ tooltipItemUniqueType }}</p>
 				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ tooltipItemWeaponType }}</p></div>
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype !== 'Off Hand' && hoverItem.containerName !== 'playerOffHand'">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
