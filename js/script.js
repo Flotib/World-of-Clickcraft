@@ -55,6 +55,12 @@ var app = new Vue({
 				agility: 0, // affects the crit chance
 				intellect: 0, // increases the learning speed rate of weapons skill
 				stamina: 0, // increases the mob countdown
+				luck: 0,
+				baseStrength: 0,
+				baseAgility: 0,
+				baseIntellect: 0,
+				baseStamina: 0,
+				baseLuck: 0,
 			},
 			skills : { // useful ressource: https://www.reddit.com/r/classicwow/comments/df6fr5/new_crit_chance_calculation_weapon_skillagility/
 				weapons : {
@@ -138,6 +144,7 @@ var app = new Vue({
 		currentEnemyPool: 0,
 		disabledEnemies: [],
 		showEnemyInformations: false,
+		showMorePlayerStats: false,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
 		silverimg: '<img src="assets/img/ui/money/silver.png">',
 		copperimg: '<img src="assets/img/ui/money/copper.png">',
@@ -192,6 +199,26 @@ var app = new Vue({
 			this.step = 0
 			if (value === false) {
 			}
+		},
+
+		'player.stats.baseStrength': function (value, oldvalue) {
+			this.player.stats.strength += value - oldvalue
+		},
+		
+		'player.stats.baseAgility': function (value, oldvalue) {
+			this.player.stats.agility += value - oldvalue
+		},
+
+		'player.stats.baseIntellect': function (value, oldvalue) {
+			this.player.stats.intellect += value - oldvalue
+		},
+
+		'player.stats.baseStamina': function (value, oldvalue) {
+			this.player.stats.stamina += value - oldvalue
+		},
+
+		'player.stats.baseLuck': function (value, oldvalue) {
+			this.player.stats.luck += value - oldvalue
 		},
 
 	},
@@ -1213,12 +1240,26 @@ var app = new Vue({
 		},
 
 		equipItem(item, slot, click) {
+			if (item.stats !== undefined) {
+				item.stats.strength !== undefined ? this.player.stats.strength += item.stats.strength : ''
+				item.stats.agility !== undefined ? this.player.stats.agility += item.stats.agility : ''
+				item.stats.intellect !== undefined ? this.player.stats.intellect += item.stats.intellect : ''
+				item.stats.stamina !== undefined ? this.player.stats.stamina += item.stats.stamina : ''
+				item.stats.luck !== undefined ? this.player.stats.luck += item.stats.luck : ''
+			}
 			if (item.slotType.type == 'weapon') {
 				// ONE-HAND PART
 				if (item.slotType.subtype === 'One-Hand') {
 					if (this.player.weapon.item.length != 0 && this.player.offHand.item.length == 0) { // main-hand true, offHand false --> equip offHand
 						if (this.player.weapon.item[0].slotType.subtype == 'Two-Hand') {
 							let actualItem = this.player.weapon.item[0]
+							if (actualItem.stats !== undefined) {
+								actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+								actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+								actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+								actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+								actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+							}
 							this.player.weapon.item.splice(0, 1, item)
 							this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
 							if (click !== undefined) {
@@ -1231,6 +1272,13 @@ var app = new Vue({
 						}
 					} else if (this.player.weapon.item.length != 0 && this.player.offHand.item.length != 0) { // main-hand true, offHand true --> switch main-hand
 						let actualItem = this.player.weapon.item[0]
+						if (actualItem.stats !== undefined) {
+							actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+							actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+							actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+							actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+							actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+						}
 						this.player.weapon.item.splice(0, 1, item)
 						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
 						if (click !== undefined) {
@@ -1248,12 +1296,26 @@ var app = new Vue({
 							return
 						}
 						let offHand = this.player.offHand.item[0]
+						if (offHand.stats !== undefined) {
+							offHand.stats.strength !== undefined ? this.player.stats.strength -= offHand.stats.strength : ''
+							offHand.stats.agility !== undefined ? this.player.stats.agility -= offHand.stats.agility : ''
+							offHand.stats.intellect !== undefined ? this.player.stats.intellect -= offHand.stats.intellect : ''
+							offHand.stats.stamina !== undefined ? this.player.stats.stamina -= offHand.stats.stamina : ''
+							offHand.stats.luck !== undefined ? this.player.stats.luck -= offHand.stats.luck : ''
+						}
 						let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 						this.player.offHand.item.splice(0, 1)
 						this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: offHand })
 					}
 					if (this.player.weapon.item.length != 0) {
 						let mainHand = this.player.weapon.item[0]
+						if (mainHand.stats !== undefined) {
+							mainHand.stats.strength !== undefined ? this.player.stats.strength -= mainHand.stats.strength : ''
+							mainHand.stats.agility !== undefined ? this.player.stats.agility -= mainHand.stats.agility : ''
+							mainHand.stats.intellect !== undefined ? this.player.stats.intellect -= mainHand.stats.intellect : ''
+							mainHand.stats.stamina !== undefined ? this.player.stats.stamina -= mainHand.stats.stamina : ''
+							mainHand.stats.luck !== undefined ? this.player.stats.luck -= mainHand.stats.luck : ''
+						}
 						this.player.weapon.item.splice(0, 1, item)
 						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: mainHand })
 						if (click !== undefined) {
@@ -1268,6 +1330,13 @@ var app = new Vue({
 				} else if (item.slotType.subtype === 'Main Hand') {
 					if (this.player.weapon.item.length != 0) {
 						let actualItem = this.player.weapon.item[0]
+						if (actualItem.stats !== undefined) {
+							actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+							actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+							actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+							actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+							actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+						}
 						this.player.weapon.item.splice(0, 1, item)
 						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
 						if (click !== undefined) {
@@ -1281,6 +1350,13 @@ var app = new Vue({
 				} else { // if Off Hand
 					if (this.player.offHand.item.length != 0) {
 						let actualItem = this.player.offHand.item[0]
+						if (actualItem.stats !== undefined) {
+							actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+							actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+							actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+							actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+							actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+						}
 						this.player.offHand.item.splice(0, 1, item)
 						this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
 						if (click !== undefined) {
@@ -1314,10 +1390,24 @@ var app = new Vue({
 				}
 				let actualItem = slot.item[0] // not adapted for trinkets!!!!
 				slot.item.splice(0, 1)
+				if (actualItem.stats !== undefined) {
+					actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+					actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+					actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+					actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+					actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+				}
 				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
 			} else {
 				let actualItem = selectedItem.item[0] // not adapted for trinkets!!!!
 				selectedItem.item.splice(0, 1)
+				if (actualItem.stats !== undefined) {
+					actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+					actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+					actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+					actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+					actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+				}
 				this.player.bag.slots.splice(emptySlot, 1, { slotId: emptySlot + 1, item: actualItem })
 			}
 

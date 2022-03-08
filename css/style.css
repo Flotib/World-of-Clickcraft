@@ -1912,6 +1912,56 @@ a {
 	box-shadow: inset 0 0 0 0 transparent !important;
 }
 
+.ui-button-red {
+	position: absolute;
+	left: 52px;
+	top: 93px;
+	width: 22px;
+	height: 22px;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24px;
+	color: #ece256;
+	font-family: Morpheus;
+	background: linear-gradient(0deg, #49050d 0%, #6d060d 28%, #810404 50%, #6d060d 72%, #49050d 100%);
+	margin-top: 10px;
+	border-radius: 6px;
+	padding-bottom: 10px;
+	transition-duration: 50ms;
+	border: 2px #888888;
+	border-style: ridge groove groove ridge;
+}
+
+.ui-button-red:hover {
+	filter: brightness(135%);
+	color: #ccc;
+}
+
+.ui-button-red:active {
+    filter: brightness(90%);
+	border: 2px groove #929292;
+	color: #ccc;
+}
+
+.player-stats {
+	padding: 0;
+	overflow: hidden;
+	width: 90%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	transition-timing-function: ease-in-out;
+	transition-duration: 300ms;
+	font-size: 18px;
+	font-family: Arial Narrow;
+}
+
+.player-stats > * {
+	margin-bottom: 2px;
+}
+
 @media (orientation: portrait) {
 	*::-webkit-scrollbar-track {
 		all: unset;

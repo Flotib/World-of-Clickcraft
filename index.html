@@ -27,6 +27,11 @@
 				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype !== 'Off Hand' && hoverItem.containerName !== 'playerOffHand'">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
 				<p v-if="(hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype === 'Off Hand') || hoverItem.containerName === 'playerOffHand'">({{ ((hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2)/2 }} Damage per click)</p>
+				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.strength != undefined">+ {{hoverItem.item[0].stats.strength}} Strength</p>
+				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.agility != undefined">+ {{hoverItem.item[0].stats.agility}} Agility</p>
+				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.intellect != undefined">+ {{hoverItem.item[0].stats.intellect}} Intellect</p>
+				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.stamina != undefined">+ {{hoverItem.item[0].stats.stamina}} Stamina</p>
+				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.luck != undefined" style="color: #0f0">+ {{hoverItem.item[0].stats.luck}} Luck</p>
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
 				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
@@ -248,7 +253,15 @@
 						</div>
 						<p style="font-size: 24px">{{ player.name }}</p>
 						<p>Level {{ player.level }}</p>
-						<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p> 
+						<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p>
+						<button style="margin: 0" class="ui-button-red" @click="showMorePlayerStats = !showMorePlayerStats">{{ showMorePlayerStats ? '-' : '+' }}</button>
+						<span :style="'height:'+(showMorePlayerStats ? '110' : '0')+'px;'" class="player-stats">
+							<p>Strength: <span :style="player.stats.strength > player.stats.baseStrength ? 'color: #0f0' : (player.stats.baseStrength > player.stats.strength ? 'color: #ff2020' : '')">{{ player.stats.strength }}</span></p>
+							<p>Agility: <span :style="player.stats.agility > player.stats.baseAgility ? 'color: #0f0' : (player.stats.baseAgility > player.stats.agility ? 'color: #ff2020' : '')">{{ player.stats.agility }}</span></p>
+							<p>Intellect: <span :style="player.stats.intellect > player.stats.baseIntellect ? 'color: #0f0' : (player.stats.baseIntellect > player.stats.intellect ? 'color: #ff2020' : '')">{{ player.stats.intellect }}</span></p>
+							<p>Stamina: <span :style="player.stats.stamina > player.stats.baseStamina ? 'color: #0f0' : (player.stats.baseStamina > player.stats.stamina ? 'color: #ff2020' : '')">{{ player.stats.stamina }}</span></p>
+							<p>Luck: <span :style="player.stats.luck > player.stats.baseLuck ? 'color: #0f0' : (player.stats.baseLuck > player.stats.luck ? 'color: #ff2020' : '')">{{ player.stats.luck }}</span></p>
+						</span>
 						<div>
 							<div style="display: flex; flex-direction: row;">
 								<!--Weapon-->
