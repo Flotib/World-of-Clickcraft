@@ -256,7 +256,7 @@ var app = new Vue({
 
 		selectedItemUpgradeConditions() {
 			if (this.selectedItem.selection && this.selectedItem.item.slotType != null) {
-				if (this.selectedItem.item.slotType.type == 'weapon' && this.selectedItem.item.quality > 1) {
+				if (this.selectedItem.item.quality > 1) {
 					if ((this.selectedItem.slotId == this.upgradeItemFrame.inheritedSlotId && this.selectedItem.containerName != this.upgradeItemFrame.inheritedContainerName) || this.selectedItem.slotId != this.upgradeItemFrame.inheritedSlotId) {
 						return "yes"
 					} else {
@@ -1447,26 +1447,36 @@ var app = new Vue({
 			} else {
 				this.player.weapon.item.splice(0, 1, off)
 				this.player.offHand.item.splice(0, 1, main)
-				this.selectedItem.item = this.player.offHand.item[0]
+				if (this.selectedItem.slotId == 0) {
+					this.itemSelection(this.player.offHand.item[0], this.player.offHand.slotId, 'playerOffHand')
+				} else {
+					this.itemSelection(this.player.weapon.item[0], this.player.weapon.slotId, 'playerWeapon')
+				}
+				
 			}
 		},
 
 		switchTrinkets() {
-			let first = null
-			let second = null
-			if (this.player.trinkets[0].item.length != null) {
-				first = this.player.trinkets[0].item[0]
+			let first = this.player.trinkets[0].item[0]
+			let second = this.player.trinkets[1].item[0]
+			if (this.player.trinkets[0].item.length == 0) {
+				this.player.trinkets[1].item.splice(0, 1)
+				this.player.trinkets[0].item.splice(0, 1, second)
+			} else if (this.player.trinkets[1].item.length == 0) {
+				this.player.trinkets[0].item.splice(0, 1)
+				this.player.trinkets[1].item.splice(0, 1, first)
+			} else {
+				this.player.trinkets[0].item.splice(0, 1, second)
+				this.player.trinkets[1].item.splice(0, 1, first)
 			}
-			if (this.player.trinkets[1].item.length != null) {
-				second = this.player.trinkets[1].item[0]
-			}
-			this.player.trinkets[0].item.splice(0, 1, second)
-			this.player.trinkets[1].item.splice(0, 1, first)
-			if (this.selectedItem.slotId == 1) {
+			/* Create a stupid error
+			if (this.selectedItem.slotId == this.player.trinkets[0].slotId) {
 				this.itemSelection(this.player.trinket[1].item[0], this.player.trinket[1].slotType, 'playerTrinket')
 			} else {
 				this.itemSelection(this.player.trinket[0].item[0], this.player.trinket[0].slotType, 'playerTrinket')
 			}
+			*/
+			this.unselectItem()
 		},
 
 		unselectItem() {
@@ -1525,7 +1535,7 @@ var app = new Vue({
 		},
 
 		showItemQualityBorder(item, slotId, containerName) {
-			if (this.selectedItem.slotId === slotId) {
+			if (this.selectedItem.slotId === slotId && this.selectedItem.containerName === containerName) {
 				return false
 			} else if (item != null) {
 				if (item.requiredLevel != null) {

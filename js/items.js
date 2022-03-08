@@ -147,5 +147,18 @@ window.content.items = [
         baseMinDamage: 4,
         baseMaxDamage: 11,
     },
-
+    {
+        id: 14,
+        name: 'The Necklace',
+        quality: 3,
+        equipable: true,
+        slotType: {
+            type: 'trinket',
+            subtype: 'Neck',
+        },
+        stats: {
+            stamina: 2,
+        },
+        salable: true,
+    },
 ]
