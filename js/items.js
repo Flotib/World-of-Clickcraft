@@ -51,6 +51,9 @@ window.content.items = [
             type: 'trinket',
             subtype: 'Neck / Ring / Trinket',
         },
+        stats: {
+            intellect: 3,
+        },
         icon: 'inv_jewelry_ring_03',
         requiredLevel: 5,
         salable: true,

@@ -97,7 +97,7 @@ var app = new Vue({
 				item: [],
 				slotId: -1,
 			},
-			trinket: [
+			trinkets: [
 				{
 					item: [],
 					slotId: 1,
@@ -1368,7 +1368,31 @@ var app = new Vue({
 						this.clearSlot(this.player.bag, slot)
 					}
 				}
-
+			// TRINKETS PART
+			} else if (item.slotType.type == 'trinket') {
+				if (this.player.trinkets[0].item.length != 0 && this.player.trinkets[1].item.length == 0) { // trinket1 true, trinket2 false --> equip trinket2
+					this.itemHoverLeave()
+					this.player.trinkets[1].item.splice(0, 1, item)
+					this.clearSlot(this.player.bag, slot)
+				} else if (this.player.trinkets[0].item.length != 0 && this.player.trinkets[1].item.length != 0) { // trinket1 true, trinket2 true --> switch with trinket1
+					let actualItem = this.player.trinkets[0].item[0]
+					if (actualItem.stats !== undefined) {
+						actualItem.stats.strength !== undefined ? this.player.stats.strength -= actualItem.stats.strength : ''
+						actualItem.stats.agility !== undefined ? this.player.stats.agility -= actualItem.stats.agility : ''
+						actualItem.stats.intellect !== undefined ? this.player.stats.intellect -= actualItem.stats.intellect : ''
+						actualItem.stats.stamina !== undefined ? this.player.stats.stamina -= actualItem.stats.stamina : ''
+						actualItem.stats.luck !== undefined ? this.player.stats.luck -= actualItem.stats.luck : ''
+					}
+					this.player.trinkets[0].item.splice(0, 1, item)
+					this.player.bag.slots.splice(slot - 1, 1, { slotId: slot, item: actualItem })
+					if (click !== undefined) {
+						this.itemHoverEnter(actualItem, slot, 'playerBag')
+					}
+				} else { // trinket1 false, trinket2 true or false --> equip trinket1
+					this.itemHoverLeave()
+					this.player.trinkets[0].item.splice(0, 1, item)
+					this.clearSlot(this.player.bag, slot)
+				}
 			} else {
 				this.itemHoverEnter(item, slot, 'playerBag')
 				return
@@ -1386,7 +1410,7 @@ var app = new Vue({
 				} else if (selectedItem.containerName == 'playerOffHand') {
 					slot = this.player.offHand
 				} else { // trinket
-					slot = this.player.trinket
+					slot = this.player.trinkets[this.selectedItem.slotId-1]
 				}
 				let actualItem = slot.item[0] // not adapted for trinkets!!!!
 				slot.item.splice(0, 1)
@@ -1424,6 +1448,24 @@ var app = new Vue({
 				this.player.weapon.item.splice(0, 1, off)
 				this.player.offHand.item.splice(0, 1, main)
 				this.selectedItem.item = this.player.offHand.item[0]
+			}
+		},
+
+		switchTrinkets() {
+			let first = null
+			let second = null
+			if (this.player.trinkets[0].item.length != null) {
+				first = this.player.trinkets[0].item[0]
+			}
+			if (this.player.trinkets[1].item.length != null) {
+				second = this.player.trinkets[1].item[0]
+			}
+			this.player.trinkets[0].item.splice(0, 1, second)
+			this.player.trinkets[1].item.splice(0, 1, first)
+			if (this.selectedItem.slotId == 1) {
+				this.itemSelection(this.player.trinket[1].item[0], this.player.trinket[1].slotType, 'playerTrinket')
+			} else {
+				this.itemSelection(this.player.trinket[0].item[0], this.player.trinket[0].slotType, 'playerTrinket')
 			}
 		},
 

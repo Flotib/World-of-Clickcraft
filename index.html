@@ -287,9 +287,20 @@
 									</div>
 								</div>
 							</div>
-							<div class="player-trinket">
-								<div>
-
+							<div style="display: flex; flex-direction: row;">
+								<div class="player-trinket">
+									<div v-if="showItemQualityBorder(player.trinkets[0].item[0], player.trinkets[0].slotId, 'playerTrinket') && player.trinkets[0].item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.trinkets[0].item[0])+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+									
+									<div @contextmenu.prevent="merchantFrame.open ? '' : (emptySpace(player.bag.slots) > 0 ? unequipItem(player.trinkets[0]) : '')" @mouseover="itemHoverEnter(player.trinkets[0].item[0], player.trinkets[0].slotId, 'playerTrinket')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.trinkets[0].slotId) && (selectedItem.containerName == 'playerTrinket') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.trinkets[0].item[0])+'.png);'" v-if="player.trinkets[0].item[0]" @click="(selectedItem.selection) && (selectedItem.slotId == player.trinkets[0].slotId) && (selectedItem.containerName == 'playerTrinket') ? unselectItem() : itemSelection(player.trinkets[0].item[0], player.trinkets[0].slotId, 'playerTrinket')">
+										<div class="ui-item-overlay"></div>
+									</div>
+								</div>
+								<div class="player-trinket">
+									<div v-if="showItemQualityBorder(player.trinkets[1].item[0], player.trinkets[1].slotId, 'playerTrinket') && player.trinkets[1].item[0]" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(player.trinkets[1].item[0])+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+									
+									<div @contextmenu.prevent="merchantFrame.open ? '' : (emptySpace(player.bag.slots) > 0 ? unequipItem(player.trinkets[1]) : '')" @mouseover="itemHoverEnter(player.trinkets[1].item[0], player.trinkets[1].slotId, 'playerTrinket')" @mouseleave="itemHoverLeave()" :class="[(selectedItem.slotId == player.trinkets[1].slotId) && (selectedItem.containerName == 'playerTrinket') ? 'selected-item' : '', 'ui-item']" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(player.trinkets[1].item[0])+'.png);'" v-if="player.trinkets[1].item[0]" @click="(selectedItem.selection) && (selectedItem.slotId == player.trinkets[1].slotId) && (selectedItem.containerName == 'playerTrinket') ? unselectItem() : itemSelection(player.trinkets[1].item[0], player.trinkets[1].slotId, 'playerTrinket')">
+										<div class="ui-item-overlay"></div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -301,6 +312,9 @@
 					<div class="select-item-interaction">
 						<div class="select-item-interaction-button">
 							<button class="button-color-blue" :style="switchButtonStyles" v-if="(selectedItem.containerName == 'playerWeapon' || selectedItem.containerName == 'playerOffHand') && player.weapon.item.length != 0 && player.offHand.item.length != 0" @click="switchWeapons()"> 
+								Switch
+							</button>
+							<button class="button-color-blue" :style="switchButtonStyles" v-if="selectedItem.containerName == 'playerTrinket' && (player.trinkets[0].item.length != 0 || player.trinkets[1].item.length != 0)" @click="switchTrinkets()"> 
 								Switch
 							</button>
 							<button class="button-color-blue" :style="equipButtonStyles" v-if="selectedItem.containerName == 'playerBag' && (player.level >= selectedItem.item.requiredLevel || selectedItem.item.requiredLevel == null) && selectedItem.item.equipable" @click="(selectedItem.containerName == 'playerBag' && selectedItem.item.equipable) ? equipItem(selectedItem.item, selectedItem.slotId) : ''">

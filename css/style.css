@@ -872,7 +872,7 @@ a {
 	background-repeat: no-repeat;
 	background-image: url('../assets/img/ui/equipment/empty-weapon-slot.png');
 	border-radius: 14%;
-	margin: 10px 1px 10px 1px;
+	margin: 5px 1px 0px 1px;
 }
 
 .player-off-hand {
@@ -1960,6 +1960,50 @@ a {
 
 .player-stats > * {
 	margin-bottom: 2px;
+}
+
+.player-trinket {
+	display: grid;
+	grid-template-columns: 1fr;
+	width: 80px;
+	height: 80px;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-image: url('../assets/img/ui/equipment/empty-trinket-slot.png');
+	border-radius: 14%;
+	margin: 10px 1px 10px 1px;
+}
+
+.player-trinket div {
+	grid-row-start: 1;
+	grid-column-start: 1;
+}
+
+.player-trinket:hover {
+	box-shadow: inset 0 0 10px 6px #57a5ff57;
+}
+
+.player-trinket .selected-item {
+	box-shadow: inset 0 0 30px 3px #fff2aa;
+}
+
+.player-trinket .selected-item:hover {
+	box-shadow: inset 0 0 30px 3px #ffffff;
+}
+
+.player-trinket .item-tooltip-placeholder .item-tooltip {
+	left: 83px;
+	bottom: 85px;
+}
+
+.player-trinket .ui-item:hover .ui-item-overlay {
+	box-shadow: inset 0 0 10px 6px #57a5ff57;
+}
+
+.player-trinket .ui-item:active  .ui-item-overlay {
+	/* box-shadow: inset 0 0 0 2px #ffe74a, inset 0 0 9px 9px #84a6f7; */
+	box-shadow: inset 0 0 0 2px transparent;
 }
 
 @media (orientation: portrait) {
