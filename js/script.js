@@ -51,10 +51,10 @@ var app = new Vue({
 			stats: {
 				rareChance: 100, // start at 100 so 1% chance to get a rare mob - could be upgraded later (1 out of ~100 mobs will be a rare)
 				critChance: 5, // '%'
-				agility: 0, // affect the crit chance
-				stamina: 0, // increase the mob countdown
-				strength: 0, // increase melee attack power (player min and max damage)
-				intellect: 0, // increase the speed rate 
+				strength: 0, // increases melee attack power (player min and max damage)
+				agility: 0, // affects the crit chance
+				intellect: 0, // increases the learning speed rate of weapons skill
+				stamina: 0, // increases the mob countdown
 			},
 			skills : { // useful ressource: https://www.reddit.com/r/classicwow/comments/df6fr5/new_crit_chance_calculation_weapon_skillagility/
 				weapons : {

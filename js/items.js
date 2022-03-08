@@ -26,6 +26,9 @@ window.content.items = [
             name: 0,
             subtype: 'One-Hand',
         },
+        stats: {
+            strength: 2,
+        },
         icon: 'inv_sword_04',
         baseMinDamage: 1,
         baseMaxDamage: 2,
