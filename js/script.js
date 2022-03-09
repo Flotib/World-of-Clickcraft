@@ -1759,6 +1759,15 @@ var app = new Vue({
 		buyBackItem(item) {
 			let isback = false
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
+			if (item.stackMaxSize > 1) {
+				for (let i = 0; i < this.player.bag.slots.length; i++) {
+					if (this.player.bag.slots[i].item != null) {
+						if (this.player.bag.slots[i].item.id == item.id && this.player.bag.slots[i].item.stackSize + item.stackSize <= item.stackMaxSize) {
+							emptySlot = true
+						}
+					}
+				}
+			}
 			if (emptySlot === false) {
 				return
 			}
@@ -1780,7 +1789,7 @@ var app = new Vue({
 			}
 
 			if (isback == true) {
-				this.player.bag.slots[emptySlot].item = item
+				this.addItem(item.id, this.player.bag.slots, item.stackSize)
 				let index = this.merchantFrame.soldItems.indexOf(item)
 				if (index > -1) {
 					this.merchantFrame.soldItems.splice(index, 1)
@@ -1799,7 +1808,7 @@ var app = new Vue({
 
 		buyItem(item, quantity) {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
-			if (item.stackMaxSize > 1 && quantity > 1) {
+			if (item.stackMaxSize > 1) {
 				for (let i = 0; i < this.player.bag.slots.length; i++) {
 					if (this.player.bag.slots[i].item != null) {
 						if (this.player.bag.slots[i].item.id == item.id && this.player.bag.slots[i].item.stackSize + quantity <= item.stackMaxSize) {
@@ -1825,7 +1834,7 @@ var app = new Vue({
 
 		deleteItem(container, slotId) {
 			this.takeOffItemFromUpgrade()
-			if (this.shiftPressed) {
+			if (this.shiftPressed && this.selectedItem.selection === true) {
 				if (container.slots[slotId - 1].item.stackSize > 1) {
 					container.slots[slotId - 1].item.stackSize -= 1
 				} else if (container.slots[slotId - 1].item != null || container.slots[slotId - 1].item.stackSize == 1) {
