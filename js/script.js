@@ -1758,12 +1758,14 @@ var app = new Vue({
 
 		buyBackItem(item) {
 			let isback = false
+			let isStackable = false
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 			if (item.stackMaxSize > 1) {
 				for (let i = 0; i < this.player.bag.slots.length; i++) {
 					if (this.player.bag.slots[i].item != null) {
 						if (this.player.bag.slots[i].item.id == item.id && this.player.bag.slots[i].item.stackSize + item.stackSize <= item.stackMaxSize) {
 							emptySlot = true
+							isStackable = true
 						}
 					}
 				}
@@ -1779,6 +1781,7 @@ var app = new Vue({
 					this.player.money = this.player.money.minus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
 					this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.minus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.stackSize)))
 					isback = true
+					isStackable = true
 				}
 			} else {
 				if (this.player.money.gte(item.sellPrice)) {
@@ -1789,7 +1792,11 @@ var app = new Vue({
 			}
 
 			if (isback == true) {
-				this.addItem(item.id, this.player.bag.slots, item.stackSize)
+				if (isStackable === true) {
+					this.addItem(item.id, this.player.bag.slots, item.stackSize)
+				} else {
+					this.player.bag.slots[emptySlot].item = item
+				}
 				let index = this.merchantFrame.soldItems.indexOf(item)
 				if (index > -1) {
 					this.merchantFrame.soldItems.splice(index, 1)
