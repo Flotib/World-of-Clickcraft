@@ -7,6 +7,7 @@ var app = new Vue({
 		cursorX: null,
 		cursorY: null,
 		keyPressed: false,
+		shiftPressed: false,
 		damageParticlesDuration: 6,
 		damageParticles: [],
 		errorMessages: [],
@@ -192,7 +193,7 @@ var app = new Vue({
 		},
 
 		'merchantFrame.selectedMerchant': function () {
-			merchantFrame.page = 1
+			this.merchantFrame.page = 1
 		},
 
 		'progressionMode': function (value) {
@@ -1778,6 +1779,15 @@ var app = new Vue({
 
 		buyItem(item, quantity) {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
+			if (item.stackMaxSize > 1 && quantity > 1) {
+				for (let i = 0; i < this.player.bag.slots.length; i++) {
+					if (this.player.bag.slots[i].item != null) {
+						if (this.player.bag.slots[i].item.id == item.id && this.player.bag.slots[i].item.stackSize + quantity <= item.stackMaxSize) {
+							emptySlot = true
+						}
+					}
+				}
+			}
 			if (emptySlot === false) {
 				return
 			}
@@ -1795,7 +1805,13 @@ var app = new Vue({
 
 		deleteItem(container, slotId) {
 			this.takeOffItemFromUpgrade()
-			if (container.slots[slotId - 1].item != null) {
+			if (this.shiftPressed) {
+				if (container.slots[slotId - 1].item.stackSize > 1) {
+					container.slots[slotId - 1].item.stackSize -= 1
+				} else if (container.slots[slotId - 1].item != null || container.slots[slotId - 1].item.stackSize == 1) {
+					this.clearSlot(container, slotId)
+				}
+			} else if (container.slots[slotId - 1].item != null || container.slots[slotId - 1].item.stackSize == 1) {
 				this.clearSlot(container, slotId)
 			}
 			this.unselectItem()
@@ -1855,10 +1871,14 @@ var app = new Vue({
 			if (event.keyCode === 222) { // '²'
 				this.itemCheatMenu = !this.itemCheatMenu
 			}
+			if (event.keyCode === 16) { // shift
+				this.shiftPressed = true
+			}
 		}, false)
 
 		document.addEventListener("keyup", (event) => {
 			this.keyPressed = false
+			this.shiftPressed = false
 		}, false)
 
 		setInterval(() => {

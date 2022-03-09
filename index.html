@@ -326,7 +326,7 @@
 								Unequip Item
 							</button>
 							<button v-if="selectedItem.containerName == 'playerBag' && !upgradeItemFrame.open" @click="deleteItem(player.bag, selectedItem.slotId)">
-								Delete Item
+								{{shiftPressed ? 'Delete (1)' : 'Delete Item'}}
 							</button>
 							<button v-if="selectedItem.selection" @click="unselectItem()">
 								Unselect
