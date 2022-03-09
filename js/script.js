@@ -222,6 +222,26 @@ var app = new Vue({
 			this.player.stats.luck += value - oldvalue
 		},
 
+		'player.stats.strength': function (value, oldvalue) {
+			
+		},
+		
+		'player.stats.agility': function (value, oldvalue) {
+			
+		},
+
+		'player.stats.intellect': function (value, oldvalue) {
+			
+		},
+
+		'player.stats.stamina': function (value, oldvalue) {
+			
+		},
+
+		'player.stats.luck': function (value, oldvalue) {
+			
+		},
+
 	},
 
 	computed: {
