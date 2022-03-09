@@ -18,7 +18,7 @@
 		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s; color: '+particle.color+'; font-size: '+particle.size+'; animation-name: '+particle.animation+';'">{{ particle.output }}</div>
 		
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
-			<div class="item-tooltip" v-if="hoverItem.slotId != null" :style="hoverItem.containerName == 'playerMoney' ? 'max-width: 10000px' : ''">
+			<div class="item-tooltip" v-if="hoverItem.slotId != null" :style="hoverItem.containerName == 'playerMoney' || hoverItem.containerName == 'merchantItemPrice' ? 'max-width: 10000px' : ''">
 				<p :class="tooltipItemQuality">{{ hoverItem.item[0].name }}</p>
 				<p v-if="hoverItem.slotId == -1">{{ hoverItem.item[0].title }}</p>
 				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
@@ -37,9 +37,10 @@
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100" class="tooltip-text">"{{ hoverItem.item[0].quote }}"</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
 				<p v-if="hoverItem.item[0].material === true" style="color: #68b7f2">Crafting Reagent</p>
-				<p v-if="hoverItem.item[0].sellPrice && hoverItem.item[0].salable !== false && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney'" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
-				<p v-if="(hoverItem.item[0].salable === false || hoverItem.item[0].sellPrice == null) && merchantFrame.open && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney'" class="item-tooltip-money">No sell price</p>
+				<p v-if="hoverItem.item[0].sellPrice && hoverItem.item[0].salable !== false && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney' && hoverItem.containerName != 'merchantItemPrice'" class="item-tooltip-money tooltip-text-sell-price">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
+				<p v-if="(hoverItem.item[0].salable === false || hoverItem.item[0].sellPrice == null) && merchantFrame.open && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney' && hoverItem.containerName != 'merchantItemPrice'" class="item-tooltip-money">No sell price</p>
 				<p v-if="hoverItem.containerName == 'playerMoney'" class="item-tooltip-money-no-margin item-tooltip-money"><span v-html="playerDiamondTooltip"></span></p>
+				<p v-if="hoverItem.containerName == 'merchantItemPrice'" class="item-tooltip-money-no-margin-border item-tooltip-money"><span v-html="merchantItemDiamondTooltip"></p>
 			</div>					
 		</div>
 		
@@ -122,7 +123,7 @@
 							<div class="ui-shop-item-desc">
 								<template v-if="merchants[merchantFrame.selectedMerchant].stock.length >= placeholder+(10*(merchantFrame.page-1))">
 									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id))">{{ getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).name }}</p>
-									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant((getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).cost), merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].quantity)"></span></p>
+									<p class="ui-shop-item-desc-price" @mouseover="merchantItemCurrentDiamondValue((getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).cost), merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].quantity)" @mouseleave="itemHoverLeave()"><span v-html="moneyStylizerMerchant((getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).cost), merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].quantity)"></span></p>
 									<div v-if="getItemById(merchants[merchantFrame.selectedMerchant].stock[placeholder+(10*(merchantFrame.page-1))-1].id).requiredLevel > player.level" class="cant-equip-layer-shop-item-desc">
 										<div class="cant-equip-grayscale"></div>
 										<div class="cant-equip-red"></div>
@@ -154,7 +155,7 @@
 							<div class="ui-shop-item-desc">
 								<template v-if="item != null">
 									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(item)">{{ item.name }}</p>
-									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant(item.sellPrice, item.stackSize)"></span></p>
+									<p class="ui-shop-item-desc-price" @mouseover="merchantItemCurrentDiamondValue(item.sellPrice, item.stackSize)" @mouseleave="itemHoverLeave()"><span v-html="moneyStylizerMerchant(item.sellPrice, item.stackSize)"></span></p>
 									<div v-if="item.requiredLevel > player.level" class="cant-equip-layer-shop-item-desc">
 										<div class="cant-equip-grayscale"></div>
 										<div class="cant-equip-red"></div>
@@ -192,7 +193,7 @@
 							<div class="ui-shop-item-desc">
 								<template v-if="merchantFrame.soldItems[0] != null">
 									<p class="ui-shop-item-desc-name" :style="'color:'+getQualityColor(merchantFrame.soldItems[0])">{{ merchantFrame.soldItems[0].name }}</p>
-									<p class="ui-shop-item-desc-price"><span v-html="moneyStylizerMerchant(merchantFrame.soldItems[0].sellPrice, merchantFrame.soldItems[0].stackSize)"></span></p>
+									<p class="ui-shop-item-desc-price" @mouseover="merchantItemCurrentDiamondValue(merchantFrame.soldItems[0].sellPrice, merchantFrame.soldItems[0].stackSize)" @mouseleave="itemHoverLeave()"><span v-html="moneyStylizerMerchant(merchantFrame.soldItems[0].sellPrice, merchantFrame.soldItems[0].stackSize)"></span></p>
 									<div v-if="merchantFrame.soldItems[0].requiredLevel > player.level" class="cant-equip-layer-shop-item-desc">
 										<div class="cant-equip-grayscale"></div>
 										<div class="cant-equip-red"></div>

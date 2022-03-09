@@ -990,6 +990,11 @@ a {
     white-space: nowrap;
 }
 
+.item-tooltip .tooltip-text-sell-price {
+	overflow: hidden;
+    white-space: nowrap;
+}
+
 .item-tooltip p {
 	font-size: 18px;
 	line-height: 20px;
@@ -1039,6 +1044,14 @@ a {
 .item-tooltip-money img {
 	margin-left: 2px;
 	margin-right: 6px;
+}
+
+.item-tooltip-money-no-margin-border span:first-child {
+	margin-left: 0 !important;
+}
+
+.item-tooltip-money-no-margin-border span:nth-child(4) img {
+	margin-right: 0 !important;
 }
 
 .item-tooltip-money-no-margin {

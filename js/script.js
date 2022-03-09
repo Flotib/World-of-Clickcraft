@@ -349,7 +349,6 @@ var app = new Vue({
 
 			if (document.querySelector('.item-tooltip') && this.hoverItem.slotId !== null) {
 				e = document.querySelector('.item-tooltip')
-				console.log(e.offsetWidth)
 				return e.offsetWidth
 			} else {
 				return null
@@ -509,15 +508,15 @@ var app = new Vue({
 				if (copper.eq(0)) {
 					if (silver.eq(0)) {
 						if (gold.eq(0)) {
-							return '<span>' + diamond + this.diamondimg + '</span>'
+							return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>'
 						} else {
-							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span>'
+							return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span>'
 						}
 					} else {
-						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span>'
+						return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span>'
 					}
 				} else {
-					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+					return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			}
 		},
@@ -525,6 +524,31 @@ var app = new Vue({
 		playerDiamondTooltip() {
 			let diamond = (this.player.money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
 			return '<span>' + diamond.toFormat() + this.diamondimg + '</span>'
+		},
+
+		merchantItemDiamondTooltip() {
+			let money = BigNumber(this.hoverItem.item[0].sellPrice)
+
+			let copper = BigNumber(0)
+			let silver = BigNumber(0)
+			let gold = BigNumber(0)
+			let diamond = BigNumber(0)
+
+			copper = money.modulo(100)
+
+			silver = (money.div(100)).integerValue(BigNumber.ROUND_FLOOR)
+			if (money.gte(10000)) {
+				silver = silver.modulo(100)
+			}
+
+			gold = (money.div(10000)).integerValue(BigNumber.ROUND_FLOOR)
+			if (money.gte(BigNumber(100000000000))) {
+				gold = gold.modulo(10000000)
+			}
+			
+			diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
+			
+			return '<span>' + diamond.toFormat() + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 		},
 
 		hoverItemIsAWeapon() {
@@ -1043,7 +1067,7 @@ var app = new Vue({
 					return '<span></span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			} else {
-				return '<span>' + diamond + this.diamondimg + '</span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+				return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span><span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 			}
 		},
 
@@ -1095,20 +1119,36 @@ var app = new Vue({
 					}
 				}
 			} else {
+				if (diamond.gt(9999999999)) {
+					return '<span>' + (diamond > 999999999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>'
+				}
 				if (copper.eq(0)) {
 					if (silver.eq(0)) {
-						if (gold.eq(0)) {
-							return '<span>' + diamond + this.diamondimg + '</span>'
+						if (gold.eq(0)) { // change that later --> hover to show a tooltip of the real value --> hide gold, silver & copper after a certain amount
+							return '<span>' + (diamond > 999999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>'
 						} else {
-							return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span>'
+							return '<span>' + (diamond > 999999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span>'
 						}
 					} else {
-						return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span>'
+						return '<span>' + (diamond > 99999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span>'
 					}
 				} else {
-					return '<span>' + diamond + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
+					return '<span>' + (diamond > 9999999 ? diamond.toPrecision(3, 1) : diamond) + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 				}
 			}
+		},
+
+		merchantItemCurrentDiamondValue(money, quantity) {
+			money = BigNumber(money)
+			
+			if (money.lte(BigNumber(999999999900000000000))) {
+				return
+			}
+			if (quantity > 2) {
+				money = money.multipliedBy(quantity)
+			}
+
+			return this.itemHoverEnter({sellPrice: money}, 0, 'merchantItemPrice')
 		},
 
 		clickParticles(damage, crit) {
@@ -1582,6 +1622,7 @@ var app = new Vue({
 			item.minDamage = Math.round(item.maxDamage * (item.baseMinDamage / item.baseMaxDamage))
 			item.sellPrice = null
 			this.autoWeaponSellPriceAttri(item)
+			//item.sellPrice = BigNumber(item.sellPrice).plus(BigNumber(item.sellPrice).multipliedBy(BigNumber(item.upgradeLevel).multipliedBy(0.08))).integerValue()	
 		},
 
 		upgradeItemPrice(item) {

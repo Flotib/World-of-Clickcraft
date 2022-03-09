@@ -173,8 +173,8 @@ window.content.items = [
             subtype: 'One-Hand',
         },
         icon: 'inv_sword_04',
-        baseMinDamage: 5000000000000,
-        baseMaxDamage: 5000000000000,
+        baseMinDamage: 4123654163870475,
+        baseMaxDamage: 6123477859174104,
         effectDescription: 'Use: Nullam ullamcorper congue nibh, vel semper urna bibendum vitae. Nunc vulputate augue in congue rhoncus. Sed faucibus dui enim, ac euismod nisl elementum consectetur. Suspendisse sagittis nisl id quam cursus finibus. Etiam ut fringilla nibh, nec fermentum diam. Ut vitae diam nisl. Donec mattis scelerisque fringilla. Donec tempor erat nibh, a elementum nisl mollis non. Vivamus sed nibh ligula. Sed cursus sem eros, sed malesuada magna vehicula vitae.',
         quote: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla maximus ut lectus id viverra. Vestibulum quam ante, tincidunt at leo eleifend, semper faucibus lacus. Duis orci urna, tristique ut bibendum vel, feugiat sit amet elit. Fusce consectetur, ipsum eget luctus mattis, lorem justo vehicula metus, a sollicitudin eros libero vitae orci. Pellentesque vitae commodo tellus. Nullam dolor erat, aliquet non mattis a, volutpat nec enim. Phasellus maximus pellentesque interdum. Pellentesque non nulla non est pharetra rhoncus. Donec blandit facilisis malesuada. Proin ut arcu justo.'
     },
