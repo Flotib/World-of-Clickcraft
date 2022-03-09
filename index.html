@@ -24,7 +24,7 @@
 				<p v-if="hoverItem.item[0].upgradeLevel !== undefined && hoverItem.item[0].upgradeLevel !== 0" style="color: #ffd100">Item Level {{ hoverItem.item[0].upgradeLevel }}</p>
 				<p v-if="hoverItem.item[0].unique != 0">{{ tooltipItemUniqueType }}</p>
 				<div v-if="hoverItem.item[0].slotType != null"><p>{{ hoverItem.item[0].slotType.subtype }}</p><p>{{ tooltipItemWeaponType }}</p></div>
-				<p v-if="hoverItemIsAWeapon">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
+				<p v-if="hoverItemIsAWeapon" class="tooltip-text-damage">{{ hoverItem.item[0].minDamage }} - {{ hoverItem.item[0].maxDamage }} Damage</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype !== 'Off Hand' && hoverItem.containerName !== 'playerOffHand'">({{ (hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2 }} Damage per click)</p>
 				<p v-if="(hoverItemIsAWeapon && hoverItem.item[0].slotType.subtype === 'Off Hand') || hoverItem.containerName === 'playerOffHand'">({{ ((hoverItem.item[0].minDamage + hoverItem.item[0].maxDamage) / 2)/2 }} Damage per click)</p>
 				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.strength != undefined">+ {{hoverItem.item[0].stats.strength}} Strength</p>
@@ -33,8 +33,8 @@
 				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.stamina != undefined">+ {{hoverItem.item[0].stats.stamina}} Stamina</p>
 				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.luck != undefined" style="color: #0f0">+ {{hoverItem.item[0].stats.luck}} Luck</p>
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
-				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0">{{ hoverItem.item[0].effectDescription }}</p>
-				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100">"{{ hoverItem.item[0].quote }}"</p>
+				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0" class="tooltip-text">{{ hoverItem.item[0].effectDescription }}</p>
+				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100" class="tooltip-text">"{{ hoverItem.item[0].quote }}"</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
 				<p v-if="hoverItem.item[0].material === true" style="color: #68b7f2">Crafting Reagent</p>
 				<p v-if="hoverItem.item[0].sellPrice && hoverItem.item[0].salable !== false && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney'" class="item-tooltip-money">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
@@ -254,7 +254,7 @@
 						<p style="font-size: 24px">{{ player.name }}</p>
 						<p>Level {{ player.level }}</p>
 						<p>Damage: {{ totalMinDamage() }} - {{ totalMaxDamage() }}</p>
-						<button style="margin: 0" class="ui-button-red" @click="showMorePlayerStats = !showMorePlayerStats">{{ showMorePlayerStats ? '-' : '+' }}</button>
+						<button style="margin: 0" class="ui-button-red ui-button-player-stats" @click="showMorePlayerStats = !showMorePlayerStats">{{ showMorePlayerStats ? '-' : '+' }}</button>
 						<span :style="'height:'+(showMorePlayerStats ? '110' : '0')+'px;'" class="player-stats">
 							<p>Strength: <span :style="player.stats.strength > player.stats.baseStrength ? 'color: #0f0' : (player.stats.baseStrength > player.stats.strength ? 'color: #ff2020' : '')">{{ player.stats.strength }}</span></p>
 							<p>Agility: <span :style="player.stats.agility > player.stats.baseAgility ? 'color: #0f0' : (player.stats.baseAgility > player.stats.agility ? 'color: #ff2020' : '')">{{ player.stats.agility }}</span></p>

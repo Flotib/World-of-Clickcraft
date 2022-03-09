@@ -338,6 +338,24 @@ var app = new Vue({
 			}
 		},
 
+		tooltipTextWidth() {
+			let e = 0
+			let correctionY = 0
+			let correctionX = 0
+			this.cursorY
+			this.cursorX
+
+			const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+
+			if (document.querySelector('.item-tooltip') && this.hoverItem.slotId !== null) {
+				e = document.querySelector('.item-tooltip')
+				console.log(e.offsetWidth)
+				return e.offsetWidth
+			} else {
+				return null
+			}
+		},
+
 		tooltipItemQuality() {
 			let itemquality = this.hoverItem.item[0].quality
 

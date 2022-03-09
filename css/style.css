@@ -960,7 +960,7 @@ a {
 
 .item-tooltip-placeholder {
 	position: absolute;
-	width: 280px;
+	width: 280px; /* max size */
 	pointer-events: none;
 	user-select: none;
 }
@@ -971,7 +971,7 @@ a {
 	position: absolute;
 	z-index: 1000;
 	width: auto;
-	max-width: 280px; /* 280px default, if sellprice is too high can be a problem*/
+	max-width: 680px; /* 280px default, if sellprice is too high it can be a problem*/
 	height: auto;
 	pointer-events: none;
 	user-select: none;
@@ -983,6 +983,11 @@ a {
 	padding: 8px;
 	pointer-events: none;
 	user-select: none;
+}
+
+.item-tooltip .tooltip-text-damage {
+	overflow: hidden;
+    white-space: nowrap;
 }
 
 .item-tooltip p {
@@ -1913,11 +1918,6 @@ a {
 }
 
 .ui-button-red {
-	position: absolute;
-	left: 52px;
-	top: 93px;
-	width: 22px;
-	height: 22px;
 	margin: 0;
 	display: flex;
 	align-items: center;
@@ -1943,6 +1943,14 @@ a {
     filter: brightness(90%);
 	border: 2px groove #929292;
 	color: #ccc;
+}
+
+.ui-button-player-stats {
+	position: absolute;
+	left: 10px;
+	top: 5px;
+	width: 22px;
+	height: 22px;
 }
 
 .player-stats {
