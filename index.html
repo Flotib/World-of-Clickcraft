@@ -15,6 +15,11 @@
 	<div id="app">
 		
 		<div class="backgroundEnvironment" :style="'background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);'"></div>
+		<div class="error-message-box">
+			<div v-for="message in errorMessages" class="error-message">
+				{{message.msg}}
+			</div>
+		</div>
 		<div v-for="particle in damageParticles" :key="particle.id" class="damageparticle" :style="'top: '+particle.posY+'px; left: '+particle.posX+'px; animation-duration: '+particle.duration+'s; color: '+particle.color+'; font-size: '+particle.size+'; animation-name: '+particle.animation+';'">{{ particle.output }}</div>
 		
 		<div class="item-tooltip-placeholder" :style="tooltipPosition">
@@ -431,6 +436,7 @@
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
 				<button v-if="selectedItem.item.slotType != null && selectedItem.item.quality > 1" style="width: auto;" @click="upgradeItem(selectedItem.item)">upgrade: <span v-html="moneyStylizer(upgradeItemPrice(selectedItem.item))"></span></button>
 				<button @click="itemCheatMenu = !itemCheatMenu">Toggle cheat menu</button>
+				<button @click="error(Math.random())">Test error</button>
 			</div>
 
 			<div v-if="maxLevel > player.level" class="emptyxpbar" :data-label="hoverxp ? player.xp+' / '+player.xpToNextLevel+' ('+Math.round(player.xp/player.xpToNextLevel*100)+'%)': ''" @mouseover="hoverxp = true" @mouseleave="hoverxp = false">

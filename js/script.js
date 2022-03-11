@@ -65,14 +65,18 @@ var app = new Vue({
 			},
 			skills : { // useful ressource: https://www.reddit.com/r/classicwow/comments/df6fr5/new_crit_chance_calculation_weapon_skillagility/
 				weapons : {
+					maxSkill: 5, // level*5 -> 300 max at lvl 60
 					sword: {
-
+						oneHanded: 0,
+						twoHanded: 0,
 					},
 					axe: {
-
+						oneHanded: 0,
+						twoHanded: 0,
 					},
 					mace: {
-
+						oneHanded: 0,
+						twoHanded: 0,
 					},
 					Dagger: 0,
 					Polearm: 0,
@@ -172,6 +176,7 @@ var app = new Vue({
 
 		'player.level': function () {
 			this.xpToNextLevelCalc()
+			this.player.skills.weapons.maxSkill = this.player.level * 5
 		},
 
 		'player.xp': function () {
@@ -1192,9 +1197,16 @@ var app = new Vue({
 		},
 
 		error(message) { // todo : div in html for the error message + css animation
-			this.errorMessages.push({ 'msg': message })
-			setTimeout(() => {
+			let randomId = this.rand(1, 100000)
+			if (this.errorMessages.length > 2) {
 				this.errorMessages.shift()
+			}
+			this.errorMessages.push({ 'msg': message, 'id': randomId })
+			setTimeout(() => {
+				let index = this.errorMessages.findIndex(message => message.id === randomId)
+				if (index >= 0) {
+					this.errorMessages.shift()
+				}
 			}, 3000)
 		},
 

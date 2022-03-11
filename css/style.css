@@ -2035,6 +2035,28 @@ a {
 	box-shadow: inset 0 0 0 2px transparent;
 }
 
+.error-message-box {
+	position: fixed;
+	display: flex;
+	width: 400px;
+	height: 100px;
+	bottom: 80px;
+	left: 50%;
+	transform: translateX(-50%);
+	align-items: center;
+	justify-content: flex-end;
+	flex-direction: column;
+	background-color: red;
+}
+
+.error-message {
+	text-align: center;
+	width: 100%;
+	height: 22px;
+	background-color: blue;
+	margin: 4px
+}
+
 @media (orientation: portrait) {
 	*::-webkit-scrollbar-track {
 		all: unset;
