@@ -7,7 +7,7 @@ window.content.enemies = [
         hp: 60,
         level: null,
         poolLevel: 0,
-        type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
+        type: 'normal', // 'normal', 'rare', 'rareElite', 'elite', 'boss'
         killCount: 0,
         minMoney: null,
         maxMoney: null,
@@ -21,7 +21,7 @@ window.content.enemies = [
         hp: 40,
         level: null,
         poolLevel: 0,
-        type: 'normal', // 'normal', 'rare', 'rareelite', 'elite', 'boss'
+        type: 'normal', // 'normal', 'rare', 'rareElite', 'elite', 'boss'
         killCount: 0,
         minMoney: null,
         maxMoney: null,

@@ -24,6 +24,7 @@ var app = new Vue({
 			itemQualityBorderOpacity: 70,
 			itemUpgradeLevel: true,
 			dynamicTooltips: true,
+			errorMessages: true,
 		},
 		maxLevel: 60,
 		giveItemId: 0,
@@ -707,8 +708,15 @@ var app = new Vue({
 		},
 
 		autoMoneyAttri(enemy) { //https://www.desmos.com/calculator?lang=fr and https://www.dcode.fr/recherche-equation-fonction
-			enemy.minMoney = BigNumber(0.131559).multipliedBy(enemy.level ** 2).plus(BigNumber(0.432517).multipliedBy(enemy.level)).plus(0.436728).integerValue()
-			enemy.maxMoney = BigNumber(0.142619).multipliedBy(enemy.level ** 2).plus(BigNumber(1.41888).multipliedBy(enemy.level)).plus(1.43849).integerValue()
+			if (enemy.minMoney == null || enemy.maxMoney == null) {
+				let eliteMoneyMultiplier = BigNumber(3.1)
+				enemy.minMoney = BigNumber(0.131559).multipliedBy(enemy.level ** 2).plus(BigNumber(0.432517).multipliedBy(enemy.level)).plus(0.436728).integerValue()
+				enemy.maxMoney = BigNumber(0.142619).multipliedBy(enemy.level ** 2).plus(BigNumber(1.41888).multipliedBy(enemy.level)).plus(1.43849).integerValue()
+				if (enemy.type == 'rare' || enemy.type == 'rareElite' || enemy.type == 'elite') {
+					enemy.minMoney = BigNumber((enemy.minMoney).multipliedBy(eliteMoneyMultiplier)).integerValue()
+					enemy.maxMoney = BigNumber((enemy.maxMoney).multipliedBy(eliteMoneyMultiplier)).integerValue()
+				}
+			}		
 		},
 
 		autoWeaponSellPriceAttri(item) { // initialize me when upgrading an item
@@ -782,9 +790,9 @@ var app = new Vue({
 		damageEnemy(enemy) {
 			this.specialWeapon()
 			let crit = false
-			let damage = this.rand(this.totalMinDamage(), this.totalMaxDamage())
-			if (damage > 0 && this.rng(100 / this.player.stats.critChance)) {
-				damage *= 2
+			let damage = this.randBigNumber(BigNumber(this.totalMinDamage()), BigNumber(this.totalMaxDamage()))
+			if (damage.gt(0) && this.rng(100 / this.player.stats.critChance)) {
+				damage = damage.multipliedBy(2)
 				crit = true
 				this.player.gameStats.totalCriticalStrikes++
 			}
@@ -1190,15 +1198,18 @@ var app = new Vue({
 				anim = 'fadeouttotop-crit'
 			}
 
-			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage, 'duration': duration, 'id': this.player.gameStats.totalClicks, 'color': color, 'size': size + 'px', 'animation': anim}) //6sec - X:8px and Y:14px to center on the knife point
+			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage.toFormat(), 'duration': duration, 'id': this.player.gameStats.totalClicks, 'color': color, 'size': size + 'px', 'animation': anim}) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
 				this.damageParticles.shift()
 			}, (duration - 1) * 1000) //to be sure to delete it as soon as it disappear
 		},
 
 		error(message) { // todo : div in html for the error message + css animation
+			if (this.configurableValues.errorMessages === false) {
+				return
+			}
 			let randomId = this.rand(1, 100000)
-			if (this.errorMessages.length > 2) {
+			if (this.errorMessages.length > 4) {
 				this.errorMessages.shift()
 			}
 			this.errorMessages.push({ 'msg': message, 'id': randomId })
@@ -1207,7 +1218,21 @@ var app = new Vue({
 				if (index >= 0) {
 					this.errorMessages.shift()
 				}
-			}, 3000)
+			}, 4000)
+		},
+
+		errorFullInventory() {
+			this.error('Your inventory is full.')
+		},
+
+		errorLevelTooLow(item) {
+			if (item.equipable) {
+				this.error('Your level is too low to use that item.')
+			}
+		},
+
+		errorNotEnoughMoney() {
+			this.error("You don't have enough money.")
 		},
 
 		getItemById(id) {
@@ -1248,6 +1273,7 @@ var app = new Vue({
 			} else {
 				let emptySlot = this.getFirstEmptySpace(target)
 				if (emptySlot === false) {
+					this.errorFullInventory()
 					return
 				}
 
@@ -1384,6 +1410,7 @@ var app = new Vue({
 				} else if (item.slotType.subtype === 'Two-Hand') { 
 					if (this.player.offHand.item.length != 0) {
 						if (this.emptySpace(this.player.bag.slots) == 0) {
+							this.errorFullInventory()
 							return
 						}
 						let offHand = this.player.offHand.item[0]
@@ -1486,6 +1513,7 @@ var app = new Vue({
 				}
 			} else {
 				this.itemHoverEnter(item, slot, 'playerBag')
+				this.error("You can't equip this item.")
 				return
 			}
 
@@ -1534,6 +1562,7 @@ var app = new Vue({
 			let main = this.player.weapon.item[0]
 			let off = this.player.offHand.item[0]
 			if (main.slotType.subtype !== "One-Hand" || off.slotType.subtype !== "One-Hand") {
+				this.error('One of you weapon or both are limited to one hand.')
 				return
 			} else {
 				this.player.weapon.item.splice(0, 1, off)
@@ -1783,6 +1812,7 @@ var app = new Vue({
 				}
 			}
 			if (emptySlot === false) {
+				this.errorFullInventory()
 				return
 			}
 			
@@ -1821,6 +1851,7 @@ var app = new Vue({
 					}
 				}
 			} else {
+				this.errorNotEnoughMoney()
 				return
 			}
 		},
@@ -1837,6 +1868,7 @@ var app = new Vue({
 				}
 			}
 			if (emptySlot === false) {
+				this.errorFullInventory()
 				return
 			}
 			
@@ -1844,6 +1876,7 @@ var app = new Vue({
 				this.addItem(item.id, this.player.bag.slots, quantity)
 			}
 			else if ((item.cost.multipliedBy(quantity)).gt(this.player.money)) {
+				this.errorNotEnoughMoney()
 				return
 			} else {
 				this.player.money = this.player.money.minus((item.cost.multipliedBy(quantity)))

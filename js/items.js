@@ -152,6 +152,7 @@ window.content.items = [
         name: 'The Necklace',
         quality: 3,
         equipable: true,
+        icon: 'inv_jewelry_necklace_01',
         slotType: {
             type: 'trinket',
             subtype: 'Neck',

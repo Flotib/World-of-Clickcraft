@@ -1313,7 +1313,17 @@ a {
 	border-radius: 10px;
 	border: 1px solid #aaa;
 	color: #fff;
-	font-size: 22px;
+	font-size: 18px;
+	line-height: 28px;
+}
+
+.settings-frame > div > p:first-of-type {
+	font-size: 26px;
+	margin-bottom: 10px;
+}
+
+.settings-frame div p {
+	margin-right: 12px;
 }
 
 .settings-config {
@@ -1321,6 +1331,18 @@ a {
 	height: 100%;
 	border-radius: 10px;
 	padding: 10px 20px;
+	display: flex;
+	flex-direction: column;
+}
+
+.settings-config > div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.settings-config > div > input {
+	margin-top: 4px;
 }
 
 .settings-stats {
@@ -2039,23 +2061,31 @@ a {
 	position: fixed;
 	display: flex;
 	width: 400px;
-	height: 100px;
+	height: 110px;
 	bottom: 80px;
 	left: 50%;
 	transform: translateX(-50%);
 	align-items: center;
 	justify-content: flex-end;
-	flex-direction: column;
-	background-color: red;
+	flex-direction: column-reverse;
+	user-select: none;
+	pointer-events: none;
 }
 
 .error-message {
+	color: red;
 	text-align: center;
 	width: 100%;
 	height: 22px;
-	background-color: blue;
-	margin: 4px
+	animation: fadeout 5s linear;
 }
+
+@keyframes fadeout {
+	0% { opacity: 1; }
+	56% { opacity: 1; }
+	76% { opacity: 0; }
+	100% { opacity: 0; }
+  }
 
 @media (orientation: portrait) {
 	*::-webkit-scrollbar-track {
