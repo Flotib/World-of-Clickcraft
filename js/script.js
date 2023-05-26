@@ -1899,18 +1899,18 @@ var app = new Vue({
 		},
 
 		startDrag(event, container) {
-			event.path[0].classList.add("ui-item-dragging")
+			event.target.classList.add("ui-item-dragging")
 			this.unselectItem()
 			this.itemHoverLeave()
 			event.dataTransfer.setData('slot', container.slotId)
 		},
 
 		endDrag(event) {
-			event.path[0].classList.remove("ui-item-dragging")
+			event.target.classList.remove("ui-item-dragging")
 		},
 
 		onDrop(event, slotId) {
-			event.path[0].classList.remove("ui-item-dragging")
+			event.target.classList.remove("ui-item-dragging")
 			const slot = event.dataTransfer.getData('slot')
       		const container = this.player.bag.slots.find(container => container.slotId == slot)
 			this.clearSlot(this.player.bag, slot)
