@@ -157,13 +157,90 @@ a {
 	margin: 5px 0 5px 0;
 }
 
-.enemy-related-window {
+.loot-corpses-window {
+	display: relative;
+	width: 280px;
+	height: auto;
+	max-height: 450px;
+	background-color: darkorchid;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding: 10px;
+}
+
+.dead-enemy {
+	display: flex;
+	width: 95%;
+	height: 40px;
+	margin: 0 0 8px 0;
+	background-color: gray;
+	align-items: center;
+	padding: 2px 5px 2px 5px;
+}
+
+.dead-enemy div {
+	margin-right: 6px
+}
+
+.dead-enemy-portrait {
+	height: 34px;
+	width: 34px;
+	background-size: contain;
+}
+
+.loot-frame {
+	position: absolute;
+	z-index: 50;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	width: 350px;
-	height: auto;
+	width: 205px;
+	height: 300px;
+	padding: 8px;
+	background-color: grey;
+	border: 2px solid black;
+	border-radius: 8px;
+	overflow-y: scroll;
+}
+
+.loot-frame-item {
+	display: flex;
+	height: 50px;
+	width: 100%;
+	margin: 0 0 6px 0;
+}
+
+.loot-frame-item-desc {
+	position: relative;
+	height: 50px;
+	width: 145px;
+	/*margin-top: 1px;*/
+	background-image: url(../assets/img/ui/merchant/ui-merchant-labelslots.png);
+	background-repeat: no-repeat;
+	background-size: 145px 50px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 10px 6px 2px 6px;
+}
+
+.loot-frame-item-desc-overlay {
+	z-index: 100;
+	display: flex;
+	position: absolute;
+	height: 50px;
+	width: 145px;
+	right: 10px;
+	border-radius: 5px;
+}
+
+.loot-frame-item:hover .loot-frame-item-desc-overlay {
+	box-shadow: inset yellow 0px 0px 8px 4px; 
+}
+
+.loot-frame-item-icon {
+	height: 50px;
+	width: 50px;
+	margin-right: 4px;
 }
 
 .enemy-tab {

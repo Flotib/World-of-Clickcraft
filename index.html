@@ -220,10 +220,39 @@
 					</div>
 				</div>
 
-				<div class="enemy-related-window" v-if="progressionMode">
-
+				<div class="loot-corpses-window" v-if="progressionMode && deadEnemies[0]">
+					<div v-for="deadEnemy in deadEnemies" class="pouchCursor dead-enemy" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
+						<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
+						<div :class="difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
+						<div>{{deadEnemy.name}}</div>
+							<!--<div v-for="item in deadEnemy.loots" class="item-placeholder">-->
+							<!--<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(item.itemId))+'.png);'"></div>-->
+							<!--</div>-->
+					</div>
 				</div>
 
+				<div v-if="lootFrameOpen" class="loot-frame" :style="'left:'+lootFrameX+'px; top:'+lootFrameY+'px'">
+					<div class="loot-frame-item" v-for="loot in lootFrameOpen.loots" @mouseover="itemHoverEnter(getItemById(loot.itemId), lootFrameOpen.loots.indexOf(loot), 'lootFrame')" @mouseleave="itemHoverLeave()" @click="lootItem(loot.itemId, loot.quantity)">
+						<div class="loot-frame-item-hover"></div>
+					
+						<div class="loot-frame-item-icon">
+
+							<div class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(loot.itemId))+'.png);'">
+								<div v-if="showItemQualityBorder(getItemById(loot.itemId), 1, 'lootFrame')" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(getItemById(loot.itemId))+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+								<div class="ui-item-stacksize">
+									<p v-if="loot.quantity > 1">{{ loot.quantity }}</p>
+								</div>
+							</div>
+							
+						</div>
+
+						<div class="loot-frame-item-desc-overlay"></div>
+						<div class="loot-frame-item-desc"></div>
+					</div>
+				</div>
+
+
+				
 				<div class="enemy-tab" v-if="progressionMode">
 					<div class="damagezone" @click="damageEnemy(enemies[currentEnemy])">
 						<div class="portrait">
@@ -374,7 +403,7 @@
 						<div></div>
 						<div></div>
 						<div></div>
-						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame() + itemHoverLeave()"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
+						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame() + itemHoverLeave() + closeLootFrame()"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
 					</div>
 
 					<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">

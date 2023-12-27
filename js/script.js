@@ -41,6 +41,9 @@ var app = new Vue({
 			slotId: null,
 			containerName: null,
 		},
+		lootFrameOpen: false,
+		lootFrameX: 0,
+		lootFrameY: 0,
 		player: {
 			name: 'Player',
 			minDamage: 0,
@@ -64,8 +67,8 @@ var app = new Vue({
 				baseStamina: 0,
 				baseLuck: 0,
 			},
-			skills : { // useful ressource: https://www.reddit.com/r/classicwow/comments/df6fr5/new_crit_chance_calculation_weapon_skillagility/
-				weapons : {
+			skills: { // useful ressource: https://www.reddit.com/r/classicwow/comments/df6fr5/new_crit_chance_calculation_weapon_skillagility/
+				weapons: {
 					maxSkill: 5, // level*5 -> 300 max at lvl 60
 					sword: {
 						oneHanded: 0,
@@ -149,6 +152,7 @@ var app = new Vue({
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
 		currentEnemyPool: 0,
 		disabledEnemies: [],
+		deadEnemies: [],
 		showEnemyInformations: false,
 		showMorePlayerStats: false,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
@@ -211,7 +215,7 @@ var app = new Vue({
 		'player.stats.baseStrength': function (value, oldvalue) {
 			this.player.stats.strength += value - oldvalue
 		},
-		
+
 		'player.stats.baseAgility': function (value, oldvalue) {
 			this.player.stats.agility += value - oldvalue
 		},
@@ -229,23 +233,23 @@ var app = new Vue({
 		},
 
 		'player.stats.strength': function (value, oldvalue) {
-			
+
 		},
-		
+
 		'player.stats.agility': function (value, oldvalue) {
-			
+
 		},
 
 		'player.stats.intellect': function (value, oldvalue) {
-			
+
 		},
 
 		'player.stats.stamina': function (value, oldvalue) {
-			
+
 		},
 
 		'player.stats.luck': function (value, oldvalue) {
-			
+
 		},
 
 	},
@@ -572,9 +576,9 @@ var app = new Vue({
 			if (money.gte(BigNumber(100000000000))) {
 				gold = gold.modulo(10000000)
 			}
-			
+
 			diamond = (money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
-			
+
 			return '<span>' + diamond.toFormat() + this.diamondimg + '</span>' + '<span>' + gold + this.goldimg + '</span><span>' + silver + this.silverimg + '</span><span>' + copper + this.copperimg + '</span>'
 		},
 
@@ -716,7 +720,7 @@ var app = new Vue({
 					enemy.minMoney = BigNumber((enemy.minMoney).multipliedBy(eliteMoneyMultiplier)).integerValue()
 					enemy.maxMoney = BigNumber((enemy.maxMoney).multipliedBy(eliteMoneyMultiplier)).integerValue()
 				}
-			}		
+			}
 		},
 
 		autoWeaponSellPriceAttri(item) { // initialize me when upgrading an item
@@ -804,7 +808,7 @@ var app = new Vue({
 
 		specialWeapon() {
 			weapon = this.player.weapon.item
-			if ( weapon.length != 0) {
+			if (weapon.length != 0) {
 				if (weapon[0].slotType.name == "Sword") {
 
 				} else if (weapon[0].slotType.name == "Axe") {
@@ -821,7 +825,7 @@ var app = new Vue({
 
 				} else if (weapon[0].slotType.name == "Sword") {
 
-				} 
+				}
 			}
 		},
 
@@ -941,6 +945,142 @@ var app = new Vue({
 		},
 		*/
 
+		lootGeneration(enemy) {
+			let loot = [];
+
+			for (let i = 0; i < enemy.lootTable.length; i++) {
+				let lootTableIndex = enemy.lootTable[i];
+				let items = this.lootTables[lootTableIndex];
+
+				for (let j = 0; j < items.length; j++) {
+					let item = items[j];
+					let randomChance = Math.random() * 100;
+					if (randomChance <= item.rate) {
+						let quantity = Math.floor(Math.random() * (item.maxQuantity - item.minQuantity + 1)) + item.minQuantity;
+						loot.push({ itemId: item.itemId, quantity: quantity });
+					}
+				}
+			}
+
+			/*for (let i = 0; i < loot.length; i++) {
+				this.addItem(loot[i].itemId, this.player.bag.slots, loot[i].quantity) //will be replace by "corpses"
+			}*/
+
+			if (loot.length > 0) {
+				this.deadEnemies.push({ loots: loot, name: enemy.name, portrait: enemy.portrait, portraitId: enemy.portraitId, level: enemy.level })
+			}
+		},
+
+		openLootFrame(enemy) {
+			this.lootFrameOpen = enemy
+			this.lootFramePosition()
+			console.log(this.lootFrameOpen)
+		},
+
+		closeLootFrame() {
+			this.lootFrameOpen = false
+		},
+
+		lootFramePosition() {
+			let correctionY = 0
+			let correctionX = 0
+			this.cursorY
+			this.cursorX
+
+			const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+
+			correctionY = this.cursorY
+			correctionX = this.cursorX
+
+			this.lootFrameX = correctionX - 0 // -65
+			this.lootFrameY = correctionY - 0 // -35
+
+		},
+
+		lootItem(id, quantity) {
+			this.itemHoverLeave()
+			let target = this.player.bag.slots
+			let newQuantity = 0
+			let indexBag = -1
+			let itemClone = JSON.parse(JSON.stringify(this.items))
+			let index = this.items.findIndex(item => item.id === id)
+			if (index < 0) {
+				return
+			}
+
+			if (this.items[index].stackMaxSize > 1) {
+				for (let i = 0; i < target.length; i++) {
+					if (target[i].item != null) {
+						if (target[i].item.id == id && target[i].item.stackSize < target[i].item.stackMaxSize) {
+							indexBag = i
+							break
+						}
+					}
+				}
+			}
+
+			if (indexBag >= 0 && this.items[index].stackMaxSize > 1 && target[indexBag].item.stackSize < target[indexBag].item.stackMaxSize) {
+				if (target[indexBag].item.stackSize + quantity <= target[indexBag].item.stackMaxSize) {
+					target[indexBag].item.stackSize += quantity
+				} else {
+					newQuantity = target[indexBag].item.stackSize + quantity - target[indexBag].item.stackMaxSize
+					target[indexBag].item.stackSize = target[indexBag].item.stackMaxSize
+					this.lootItem(id, newQuantity)
+				}
+			} else {
+				let emptySlot = this.getFirstEmptySpace(target)
+				if (emptySlot === false) {
+					this.errorFullInventory()
+					return
+				}
+
+				if (quantity > 1) {
+					if (this.items[index].stackMaxSize > 1) {
+						if (quantity > this.items[index].stackMaxSize) {
+							target[emptySlot].item = itemClone[index]
+							target[emptySlot].item.stackSize = target[emptySlot].item.stackMaxSize
+							newQuantity = quantity - this.items[index].stackMaxSize
+							this.lootItem(id, newQuantity)
+						} else {
+							target[emptySlot].item = itemClone[index]
+							target[emptySlot].item.stackSize = quantity
+						}
+					} else {
+						target[emptySlot].item = itemClone[index]
+						newQuantity = quantity - 1
+						this.lootItem(id, newQuantity)
+					}
+				} else {
+					target[emptySlot].item = itemClone[index]
+				}
+			}
+
+			this.clearItemFromCorpse(id) // besoin de modifier plus tard, si le sac est plein mais que l'item que l'on ramasse possède 3 piles (stackables sur le même item dans le sac), il va se supprimer même si 2 piles sont ramassées (et qu'il en reste donc une)
+		},
+
+		clearItemFromCorpse(itemId) {
+			if (this.lootFrameOpen) {
+				for (let i = 0; i < this.lootFrameOpen.loots.length; i++) {
+					let currentItem = this.lootFrameOpen.loots[i];
+					if (currentItem.itemId === itemId) {
+						this.lootFrameOpen.loots.splice(i, 1);
+						if (this.lootFrameOpen.loots.length === 0) {
+							this.removeEmptyCorpse(this.lootFrameOpen);
+							this.lootFrameOpen = false;
+						}
+						break;
+					}
+				}
+			}
+		},
+
+		removeEmptyCorpse(deadEnemy) {
+			let index = this.deadEnemies.indexOf(deadEnemy);
+			if (index !== -1) {
+				this.deadEnemies.splice(index, 1);
+			}
+		},
+
 		enemyDeadEvent(enemy) {
 			enemy.killCount++
 			this.player.gameStats.totalKills++
@@ -953,6 +1093,7 @@ var app = new Vue({
 			if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
 			}
+			this.lootGeneration(enemy)
 			this.step = 0
 			enemy.hp = enemy.maxHp
 			//this.spawnEnemy()
@@ -1063,7 +1204,7 @@ var app = new Vue({
 			let diamond = (this.player.money.div(BigNumber(100000000000))).integerValue(BigNumber.ROUND_FLOOR)
 
 			if (this.player.money.gte(100000000000)) {
-				return this.itemHoverEnter({sellPrice: diamond}, 0, 'playerMoney')
+				return this.itemHoverEnter({ sellPrice: diamond }, 0, 'playerMoney')
 			}
 
 			return
@@ -1174,7 +1315,7 @@ var app = new Vue({
 
 		merchantItemCurrentDiamondValue(money, quantity) {
 			money = BigNumber(money)
-			
+
 			if (money.lte(BigNumber(999999999900000000000))) {
 				return
 			}
@@ -1182,7 +1323,7 @@ var app = new Vue({
 				money = money.multipliedBy(quantity)
 			}
 
-			return this.itemHoverEnter({sellPrice: money}, 0, 'merchantItemPrice')
+			return this.itemHoverEnter({ sellPrice: money }, 0, 'merchantItemPrice')
 		},
 
 		clickParticles(damage, crit) {
@@ -1198,7 +1339,7 @@ var app = new Vue({
 				anim = 'fadeouttotop-crit'
 			}
 
-			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage.toFormat(), 'duration': duration, 'id': this.player.gameStats.totalClicks, 'color': color, 'size': size + 'px', 'animation': anim}) //6sec - X:8px and Y:14px to center on the knife point
+			this.damageParticles.push({ 'posX': this.cursorX - this.rand(4, 16), 'posY': this.cursorY - 34, 'output': damage.toFormat(), 'duration': duration, 'id': this.player.gameStats.totalClicks, 'color': color, 'size': size + 'px', 'animation': anim }) //6sec - X:8px and Y:14px to center on the knife point
 			setTimeout(() => {
 				this.damageParticles.shift()
 			}, (duration - 1) * 1000) //to be sure to delete it as soon as it disappear
@@ -1406,8 +1547,8 @@ var app = new Vue({
 						this.player.weapon.item.splice(0, 1, item)
 						this.clearSlot(this.player.bag, slot)
 					}
-				// TWO-HANDED PART
-				} else if (item.slotType.subtype === 'Two-Hand') { 
+					// TWO-HANDED PART
+				} else if (item.slotType.subtype === 'Two-Hand') {
 					if (this.player.offHand.item.length != 0) {
 						if (this.emptySpace(this.player.bag.slots) == 0) {
 							this.errorFullInventory()
@@ -1444,7 +1585,7 @@ var app = new Vue({
 						this.player.weapon.item.splice(0, 1, item)
 						this.clearSlot(this.player.bag, slot)
 					}
-				// MAIN HAND & OFF HAND PART
+					// MAIN HAND & OFF HAND PART
 				} else if (item.slotType.subtype === 'Main Hand') {
 					if (this.player.weapon.item.length != 0) {
 						let actualItem = this.player.weapon.item[0]
@@ -1486,7 +1627,7 @@ var app = new Vue({
 						this.clearSlot(this.player.bag, slot)
 					}
 				}
-			// TRINKETS PART
+				// TRINKETS PART
 			} else if (item.slotType.type == 'trinket') {
 				if (this.player.trinkets[0].item.length != 0 && this.player.trinkets[1].item.length == 0) { // trinket1 true, trinket2 false --> equip trinket2
 					this.itemHoverLeave()
@@ -1529,7 +1670,7 @@ var app = new Vue({
 				} else if (selectedItem.containerName == 'playerOffHand') {
 					slot = this.player.offHand
 				} else { // trinket
-					slot = this.player.trinkets[this.selectedItem.slotId-1]
+					slot = this.player.trinkets[this.selectedItem.slotId - 1]
 				}
 				let actualItem = slot.item[0] // not adapted for trinkets!!!!
 				slot.item.splice(0, 1)
@@ -1572,7 +1713,7 @@ var app = new Vue({
 				} else {
 					this.itemSelection(this.player.weapon.item[0], this.player.weapon.slotId, 'playerWeapon')
 				}
-				
+
 			}
 		},
 
@@ -1815,7 +1956,7 @@ var app = new Vue({
 				this.errorFullInventory()
 				return
 			}
-			
+
 			if (item.sellPrice == null || BigNumber(item.sellPrice).eq(0)) {
 				isback = true
 			} else if (item.stackMaxSize != null) {
@@ -1856,6 +1997,26 @@ var app = new Vue({
 			}
 		},
 
+		dropItem(item, quantity) {
+			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
+			if (item.stackMaxSize > 1) {
+				for (let i = 0; i < this.player.bag.slots.length; i++) {
+					if (this.player.bag.slots[i].item != null) {
+						if (this.player.bag.slots[i].item.id == item.id && this.player.bag.slots[i].item.stackSize + quantity <= item.stackMaxSize) {
+							emptySlot = true
+						}
+					}
+				}
+			}
+			if (emptySlot === false) {
+				this.errorFullInventory()
+				return
+			}
+
+			this.addItem(item.id, this.player.bag.slots, quantity)
+
+		},
+
 		buyItem(item, quantity) {
 			let emptySlot = this.getFirstEmptySpace(this.player.bag.slots)
 			if (item.stackMaxSize > 1) {
@@ -1871,7 +2032,7 @@ var app = new Vue({
 				this.errorFullInventory()
 				return
 			}
-			
+
 			if (item.cost == null || BigNumber(item.cost).eq(0)) {
 				this.addItem(item.id, this.player.bag.slots, quantity)
 			}
@@ -1912,12 +2073,12 @@ var app = new Vue({
 		onDrop(event, slotId) {
 			event.target.classList.remove("ui-item-dragging")
 			const slot = event.dataTransfer.getData('slot')
-      		const container = this.player.bag.slots.find(container => container.slotId == slot)
+			const container = this.player.bag.slots.find(container => container.slotId == slot)
 			this.clearSlot(this.player.bag, slot)
-			if (this.player.bag.slots[slotId-1].item != null) {
-				this.player.bag.slots[slot-1].item = this.player.bag.slots[slotId-1].item
-			} 
-			this.player.bag.slots[slotId-1].item = container.item
+			if (this.player.bag.slots[slotId - 1].item != null) {
+				this.player.bag.slots[slot - 1].item = this.player.bag.slots[slotId - 1].item
+			}
+			this.player.bag.slots[slotId - 1].item = container.item
 		},
 
 		prevMerchantPage() {

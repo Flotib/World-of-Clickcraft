@@ -26,6 +26,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [0],
     },
     {
         name: 'Kobold',
@@ -40,6 +41,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
     {
         name: 'Bandit',
@@ -54,6 +56,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
     {
         name: 'Boar',
@@ -68,6 +71,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
     {
         name: 'Forest Spider',
@@ -82,6 +86,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
     {
         name: 'Murloc',
@@ -96,6 +101,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
     {
         name: 'Bear',
@@ -110,6 +116,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
     {
         name: 'Rivepaw Gnoll',
@@ -124,5 +131,6 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
+        lootTable: [],
     },
 ]
