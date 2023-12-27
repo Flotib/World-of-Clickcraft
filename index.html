@@ -14,7 +14,7 @@
 
 	<div id="app">
 		
-		<div class="backgroundEnvironment" :style="'background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);'"></div>
+		<div class="backgroundEnvironment" :style="merchantFrame.open?'background-image: url(assets/img/background/town.jpg':('background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);')"></div>
 		<div class="error-message-box">
 			<div v-for="message in errorMessages" :key="message.id" class="error-message">
 				{{message.msg}}
@@ -458,6 +458,7 @@
 	
 	<script src="js/images-preload.js"></script>
 	<script src='js/bignumber.min.js'></script>
+	<script src="js/loottables.js"></script>
 	<script src='js/enemies.js'></script>
 	<script src='js/items.js'></script>
 	<script src='js/merchants.js'></script>

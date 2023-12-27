@@ -1,0 +1,3 @@
+window.content.lootTables = [
+
+]

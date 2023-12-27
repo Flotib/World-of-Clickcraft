@@ -179,4 +179,40 @@ window.content.items = [
         effectDescription: 'Use: Nullam ullamcorper congue nibh, vel semper urna bibendum vitae. Nunc vulputate augue in congue rhoncus. Sed faucibus dui enim, ac euismod nisl elementum consectetur. Suspendisse sagittis nisl id quam cursus finibus. Etiam ut fringilla nibh, nec fermentum diam. Ut vitae diam nisl. Donec mattis scelerisque fringilla. Donec tempor erat nibh, a elementum nisl mollis non. Vivamus sed nibh ligula. Sed cursus sem eros, sed malesuada magna vehicula vitae.',
         quote: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla maximus ut lectus id viverra. Vestibulum quam ante, tincidunt at leo eleifend, semper faucibus lacus. Duis orci urna, tristique ut bibendum vel, feugiat sit amet elit. Fusce consectetur, ipsum eget luctus mattis, lorem justo vehicula metus, a sollicitudin eros libero vitae orci. Pellentesque vitae commodo tellus. Nullam dolor erat, aliquet non mattis a, volutpat nec enim. Phasellus maximus pellentesque interdum. Pellentesque non nulla non est pharetra rhoncus. Donec blandit facilisis malesuada. Proin ut arcu justo.'
     },
+    {
+        id: 16,
+        name: "Sharpened Letter Opener",
+        equipable: true,
+        quality: 0,
+        unique: 0,
+        slotType: {
+            type: "weapon",
+            name: 3,
+            subtype: "One-Hand"
+        },
+        stats: {},
+        icon: "inv_weapon_shortblade_05",
+        baseMinDamage: 2,
+        baseMaxDamage: 5,
+        requiredLevel: 2,
+        salable: true
+    },
+    {
+        id: 17,
+        name: "Threshadon Fang",
+        equipable: true,
+        quality: 0,
+        unique: 0,
+        slotType: {
+            type: "weapon",
+            name: 3,
+            subtype: "One-Hand"
+        },
+        stats: {},
+        icon: "inv_misc_bone_06",
+        baseMinDamage: 5,
+        baseMaxDamage: 10,
+        requiredLevel: 11,
+        salable: true
+    },    
 ]
