@@ -153,6 +153,7 @@ var app = new Vue({
 		currentEnemyPool: 0,
 		disabledEnemies: [],
 		deadEnemies: [],
+		deadEnemiesTimers: {},
 		showEnemyInformations: false,
 		showMorePlayerStats: false,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
@@ -655,6 +656,12 @@ var app = new Vue({
 			}
 		},
 
+		generateUniqueId() {
+			// Implement a function to generate a unique identifier (you can use a library like uuid)
+			// For simplicity, a basic timestamp-based identifier is used here
+			return Date.now().toString();
+		},
+
 		getMouseCoords(e) {
 			this.cursorX = e.pageX
 			this.cursorY = e.pageY
@@ -967,18 +974,71 @@ var app = new Vue({
 			}*/
 
 			if (loot.length > 0) {
-				this.deadEnemies.push({ loots: loot, name: enemy.name, portrait: enemy.portrait, portraitId: enemy.portraitId, level: enemy.level })
+				const timingMap = {
+					'normal': 300,
+					'rare': 300,
+					'elite': 1000,
+					'rareElite': 1000,
+					'boss': 1800
+				};
+			
+				const timing = timingMap[enemy.type] || 120; // Use 120 if no type
+			
+				const deadEnemy = {
+					loots: loot,
+					name: enemy.name,
+					portrait: enemy.portrait,
+					portraitId: enemy.portraitId,
+					level: enemy.level,
+					timing: timing,
+					baseTiming: timing
+				};	
+
+				this.deadEnemies.push(deadEnemy);
+
+				const timerId = this.generateUniqueId();
+				this.deadEnemiesTimers[timerId] = setInterval(() => {
+					deadEnemy.timing--;
+					if (deadEnemy.timing <= 0) {
+					// Timer reached 0, delete the dead enemy from the list
+					this.closeLootFrame(deadEnemy)
+					this.deadEnemies = this.deadEnemies.filter((enemy) => enemy !== deadEnemy);
+					clearInterval(this.deadEnemiesTimers[timerId]); // Stop the timer
+					delete this.deadEnemiesTimers[timerId]; // Remove the timer reference
+					}
+				}, 1000);
 			}
 		},
+
+		startTimer(index) {
+			const timerInterval = 1000; // 1 second interval
+			const timer = setInterval(() => {
+			  this.deadEnemies[index].timing--;
+		
+			  if (this.deadEnemies[index].timing <= 0) {
+				// Timer reached 0, delete the dead enemy from the list
+				this.deadEnemies.splice(index, 1);
+				clearInterval(timer); // Stop the timer
+			  }
+			}, timerInterval);
+		  },
 
 		openLootFrame(enemy) {
 			this.lootFrameOpen = enemy
 			this.lootFramePosition()
-			console.log(this.lootFrameOpen)
+			if (this.shiftPressed) { // shift click
+				for (let i = 0; i < enemy.loots.length; i++) {
+					this.lootItem(enemy.loots[i].itemId, enemy.loots[i].quantity)
+				}
+			}
 		},
 
-		closeLootFrame() {
-			this.lootFrameOpen = false
+		closeLootFrame(deadEnemy) {
+			if (this.lootFrameOpen === deadEnemy) {
+				this.lootFrameOpen = false
+			} else if (deadEnemy === 'merchant' || deadEnemy === 'close') {
+				this.lootFrameOpen = false
+			}
 		},
 
 		lootFramePosition() {
@@ -2115,6 +2175,9 @@ var app = new Vue({
 			}
 			if (event.keyCode === 16) { // shift
 				this.shiftPressed = true
+			}
+			if (event.keyCode === 27) { // esc
+				this.closeLootFrame('close')
 			}
 		}, false)
 

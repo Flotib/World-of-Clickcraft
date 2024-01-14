@@ -162,10 +162,12 @@ a {
 	width: 280px;
 	height: auto;
 	max-height: 450px;
-	background-color: darkorchid;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	padding: 10px;
+	background-color: #000000;
+	border-radius: 10px;
+	border: 1px solid #aaa;
 }
 
 .dead-enemy {
@@ -176,6 +178,20 @@ a {
 	background-color: gray;
 	align-items: center;
 	padding: 2px 5px 2px 5px;
+	border-radius: 7px;
+}
+
+.loot-corpses-window::-webkit-scrollbar-thumb {
+	background: white;
+	border-radius: 0 6px 6px 0;
+}
+  
+.loot-corpses-window::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.dead-enemy:hover {
+	box-shadow: inset 0 0 5px 4px #f1e74d !important;
 }
 
 .dead-enemy div {
@@ -186,6 +202,17 @@ a {
 	height: 34px;
 	width: 34px;
 	background-size: contain;
+	border-radius: 1000px;
+}
+
+.dead-enemy-cooldown {
+	position: relative;
+	right: 40px;
+	height: 34px;
+	width: 34px;
+	z-index: 20;
+    pointer-events: none;
+	border-radius: 1000px;
 }
 
 .loot-frame {
@@ -1553,6 +1580,14 @@ a {
 
 .pouchCursor {
 	cursor: url("../assets/cursors/buy.cur"), auto !important
+}
+
+.lootCursor {
+	cursor: url("../assets/cursors/buy.cur"), auto !important
+}
+
+.lootallCursor {
+	cursor: url("../assets/cursors/lootall.cur"), auto !important
 }
 
 .merchant-mode-button-activated {

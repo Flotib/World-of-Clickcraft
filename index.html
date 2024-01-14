@@ -221,8 +221,9 @@
 				</div>
 
 				<div class="loot-corpses-window" v-if="progressionMode && deadEnemies[0]">
-					<div v-for="deadEnemy in deadEnemies" class="pouchCursor dead-enemy" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
+					<div v-for="deadEnemy in deadEnemies" :class="shiftPressed?'lootallCursor dead-enemy':'lootCursor dead-enemy'" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
 						<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
+						<div class="dead-enemy-cooldown" :style="'background: conic-gradient(#14161bdd '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg, transparent '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg);'"></div>
 						<div :class="difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
 						<div>{{deadEnemy.name}}</div>
 							<!--<div v-for="item in deadEnemy.loots" class="item-placeholder">-->
@@ -403,7 +404,7 @@
 						<div></div>
 						<div></div>
 						<div></div>
-						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame() + itemHoverLeave() + closeLootFrame()"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
+						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame() + itemHoverLeave() + closeLootFrame('merchant')"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
 					</div>
 
 					<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
