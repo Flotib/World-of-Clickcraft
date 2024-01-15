@@ -336,6 +336,7 @@ a {
 	display: flex;
 	font-size: 15px;
 	align-items: center;
+	overflow: hidden;
 }
 
 .loot-frame-item-desc-overlay {

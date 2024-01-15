@@ -164,7 +164,7 @@ window.content.items = [
     },
     {
         id: 15,
-        name: 'Text test',
+        name: 'Text test Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla maximus ut lectus id viverra.',
         equipable: true,
         quality: 3,
         unique: 0,

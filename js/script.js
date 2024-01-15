@@ -1839,6 +1839,14 @@ var app = new Vue({
 			return icon
 		},
 
+		cutText(text, maxLength) {
+			if (text.length > maxLength) {
+			  return text.substring(0, maxLength - 3) + '...';
+			} else {
+			  return text;
+			}
+		},
+
 		getQualityColor(item) {
 			switch (item.quality) { // Thx Dorian!
 				case 0:
