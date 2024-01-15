@@ -26,7 +26,7 @@ window.content.enemies = [
         minMoney: null,
         maxMoney: null,
         levelenvironment: 'elwynn',
-        lootTable: [1],
+        lootTable: [0],
     },
     {
         name: 'Kobold',
