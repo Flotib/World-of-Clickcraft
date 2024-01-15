@@ -175,7 +175,7 @@ a {
 	width: 95%;
 	height: 40px;
 	margin: 0 0 8px 0;
-	background-color: gray;
+	background-color: #363636;
 	align-items: center;
 	padding: 2px 5px 2px 5px;
 	border-radius: 7px;
@@ -217,37 +217,125 @@ a {
 
 .loot-frame {
 	position: absolute;
+	display: flex;
+	z-index: 50;
+	flex-direction: column;
+	justify-content: end;
+	align-items: center;
+	width: 215px;
+	height: 300px;
+	padding: 8px;
+	background-size: contain;
+	border-radius: 8px;
+	background-image: url(../assets/img/ui/lootframe/ui-lootpanel.png);
+	background-repeat: no-repeat;
+	overflow: hidden;
+	filter: drop-shadow(-3px 3px 2px #000000);
+}
+
+.loot-frame-container {
+	position: absolute;
 	z-index: 50;
 	display: flex;
 	flex-direction: column;
-	width: 205px;
-	height: 300px;
-	padding: 8px;
-	background-color: grey;
-	border: 2px solid black;
+	right: 7px;
+	top: 93px;
+	width: 201px;
+	height: 212px;
+	/*padding: 8px;*/
+	/*background-image: url(../assets/img/ui/merchant/ui-paperdoll-slotbackground.png);*/
+	background-size: cover;
 	border-radius: 8px;
 	overflow-y: scroll;
+}
+
+.loot-frame-container::-webkit-scrollbar {
+	width: 5px; /* Set the desired width in pixels */
+}
+
+.loot-frame-container::-webkit-scrollbar-thumb {
+	background: #ffffff77;
+	border-radius: 6px 6px 6px 6px;
+}
+  
+.loot-frame-container::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.loot-frame-close-button {
+	position: absolute;
+	z-index: 50;
+	top: 16px;
+	right: 3px;
+	width: 25px;
+	height: 25px;
+	background-image: url(../assets/img/ui/lootframe/closebuttonup.png);
+	background-size: contain;
+	border-radius: 8px;
+}
+
+.loot-frame-close-button:hover {
+	box-shadow: inset #ac13138f 0px 0px 6px 3px; 
+}
+
+.loot-frame-close-button:active {
+	box-shadow: none !important;
+	background-image: url(../assets/img/ui/lootframe/closebuttondown.png) !important;
+}
+
+.loot-frame-top-text{
+	position: absolute;
+	top: 20px; /* 18 for centering */
+	left: 85px;
+	width: 114px;
+	height: 20px;
+	text-align: center;
+	font-size: 15px;
+	color: #eccc14;
+}
+
+.loot-frame-portrait {
+	position: absolute;
+	top: 6px;
+	left: 8px;
+	width: 72px;
+	height: 72px;
+	background-image: url(../assets/img/ui/lootframe/lootpanel-icon.png);
+	background-size: 105%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: black;
+	border-radius: 10000px;
 }
 
 .loot-frame-item {
 	display: flex;
 	height: 50px;
 	width: 100%;
-	margin: 0 0 6px 0;
+	margin: 0 0 4px 0;
 }
 
 .loot-frame-item-desc {
 	position: relative;
 	height: 50px;
-	width: 145px;
+	width: 122px;
 	/*margin-top: 1px;*/
-	background-image: url(../assets/img/ui/merchant/ui-merchant-labelslots.png);
+	background-color: #000000b7;
 	background-repeat: no-repeat;
-	background-size: 145px 50px;
+	background-size: 122px 50px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 10px 6px 2px 6px;
+	padding: 0 6px 0 6px;
+	border-radius: 6px;
+	border: solid 1px #2c2c2c;
+}
+
+.loot-frame-item-desc p {
+	height: 100%;
+	display: flex;
+	font-size: 15px;
+	align-items: center;
 }
 
 .loot-frame-item-desc-overlay {
@@ -255,13 +343,14 @@ a {
 	display: flex;
 	position: absolute;
 	height: 50px;
-	width: 145px;
-	right: 10px;
-	border-radius: 5px;
+	width: 134px;
+	right: 7px;
+	margin-top: 1px;
+	border-radius: 6px;
 }
 
 .loot-frame-item:hover .loot-frame-item-desc-overlay {
-	box-shadow: inset yellow 0px 0px 8px 4px; 
+	box-shadow: inset #6788e4 0px 0px 6px 3px; 
 }
 
 .loot-frame-item-icon {

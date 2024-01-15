@@ -225,7 +225,7 @@
 						<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
 						<div class="dead-enemy-cooldown" :style="'background: conic-gradient(#14161bdd '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg, transparent '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg);'"></div>
 						<div :class="difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
-						<div>{{deadEnemy.name}}</div>
+						<div style="color: white">{{deadEnemy.name}}</div>
 							<!--<div v-for="item in deadEnemy.loots" class="item-placeholder">-->
 							<!--<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(item.itemId))+'.png);'"></div>-->
 							<!--</div>-->
@@ -233,22 +233,29 @@
 				</div>
 
 				<div v-if="lootFrameOpen" class="loot-frame" :style="'left:'+lootFrameX+'px; top:'+lootFrameY+'px'">
-					<div class="loot-frame-item" v-for="loot in lootFrameOpen.loots" @mouseover="itemHoverEnter(getItemById(loot.itemId), lootFrameOpen.loots.indexOf(loot), 'lootFrame')" @mouseleave="itemHoverLeave()" @click="lootItem(loot.itemId, loot.quantity)">
-						<div class="loot-frame-item-hover"></div>
-					
-						<div class="loot-frame-item-icon">
+					<div class="loot-frame-close-button" @click='closeLootFrame("close")'></div>
+					<div class="loot-frame-top-text">Items</div>
+					<div class="loot-frame-portrait"></div>
+					<div class="loot-frame-container">
+						<div class="loot-frame-item" v-for="loot in lootFrameOpen.loots" @mouseover="itemHoverEnter(getItemById(loot.itemId), lootFrameOpen.loots.indexOf(loot), 'lootFrame', loot.quantity)" @mouseleave="itemHoverLeave()" @click="lootItem(loot.itemId, loot.quantity)">
+							<div class="loot-frame-item-hover"></div>
+						
+							<div class="loot-frame-item-icon">
 
-							<div class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(loot.itemId))+'.png);'">
-								<div v-if="showItemQualityBorder(getItemById(loot.itemId), 1, 'lootFrame')" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(getItemById(loot.itemId))+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
-								<div class="ui-item-stacksize">
-									<p v-if="loot.quantity > 1">{{ loot.quantity }}</p>
+								<div class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(loot.itemId))+'.png);'">
+									<div v-if="showItemQualityBorder(getItemById(loot.itemId), 1, 'lootFrame')" class="item-quality-border" :style="'box-shadow: inset 0 0 4px 2px'+getQualityColor(getItemById(loot.itemId))+'; opacity:'+(configurableValues.itemQualityBorderOpacity/100).toFixed(2)"></div>
+									<div class="ui-item-stacksize">
+										<p v-if="loot.quantity > 1">{{ loot.quantity }}</p>
+									</div>
 								</div>
+								
 							</div>
-							
-						</div>
 
-						<div class="loot-frame-item-desc-overlay"></div>
-						<div class="loot-frame-item-desc"></div>
+							<div class="loot-frame-item-desc-overlay"></div>
+							<div class="loot-frame-item-desc">
+								<p :style="'color: '+getQualityColor(getItemById(loot.itemId))">{{ getItemById(loot.itemId).name }}</p>
+							</div>
+						</div>
 					</div>
 				</div>
 

@@ -1811,10 +1811,17 @@ var app = new Vue({
 			(this.selectedItem.selection) && (this.selectedItem.slotId == slotId) && (this.selectedItem.containerName == containerName) ? this.unselectItem() : this.itemSelection(item, slotId, containerName)
 		},
 
-		itemHoverEnter(item, slotId, containerName) {
-			this.hoverItem.item.splice(0, 1, item)
-			this.hoverItem.slotId = slotId
-			this.hoverItem.containerName = containerName
+		itemHoverEnter(item, slotId, containerName, quantity) {
+			if (containerName === 'lootFrame') {
+				this.hoverItem.item.splice(0, 1, item)
+				this.hoverItem.slotId = slotId
+				this.hoverItem.containerName = containerName
+				this.hoverItem.item[0].stackSize = quantity
+			} else {
+				this.hoverItem.item.splice(0, 1, item)
+				this.hoverItem.slotId = slotId
+				this.hoverItem.containerName = containerName
+			}
 		},
 
 		itemHoverLeave() {
