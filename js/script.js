@@ -1974,8 +1974,10 @@ var app = new Vue({
 		toggleMerchantFrame() {
 			if (this.merchantFrame.open) {
 				this.merchantFrame.open = false
+				this.itemHoverEnter({title: 'Hearthstone to Town', effectDescription: Math.round(this.merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface')
 				this.merchantCooldown()
 			} else {
+				this.itemHoverEnter({title: 'Leave Town', effectDescription: Math.round(this.merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface')
 				this.merchantFrame.open = true
 			}
 		},

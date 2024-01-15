@@ -43,7 +43,7 @@
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
 				<p v-if="hoverItem.item[0].material === true" style="color: #68b7f2">Crafting Reagent</p>
 				<p v-if="hoverItem.item[0].sellPrice && hoverItem.item[0].salable !== false && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney' && hoverItem.containerName != 'merchantItemPrice'" class="item-tooltip-money tooltip-text-sell-price">Sell Price:<span v-html="moneyStylizerTooltip"></span></p>
-				<p v-if="(hoverItem.item[0].salable === false || hoverItem.item[0].sellPrice == null) && merchantFrame.open && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney' && hoverItem.containerName != 'merchantItemPrice'" class="item-tooltip-money">No sell price</p>
+				<p v-if="(hoverItem.item[0].salable === false || hoverItem.item[0].sellPrice == null) && merchantFrame.open && hoverItem.containerName != 'merchantItems' && hoverItem.containerName != 'soldItems' && hoverItem.containerName != 'playerMoney' && hoverItem.containerName != 'merchantItemPrice' && hoverItem.containerName != 'interface'" class="item-tooltip-money">No sell price</p>
 				<p v-if="hoverItem.containerName == 'playerMoney'" class="item-tooltip-money-no-margin item-tooltip-money"><span v-html="playerDiamondTooltip"></span></p>
 				<p v-if="hoverItem.containerName == 'merchantItemPrice'" class="item-tooltip-money-no-margin-border item-tooltip-money"><span v-html="merchantItemDiamondTooltip"></p>
 			</div>					
@@ -407,11 +407,11 @@
 
 				<div class="player-related-window">
 					<div class="window-buttons-container">
-						<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @mouseover="itemHoverEnter({title: 'Upgrade Weapon'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleItemUpgradeFrame()"><p>{{ String.fromCharCode(this.keybinds.upgradeItem) }}</p></div>
+						<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @mouseover="itemHoverEnter({title: 'Upgrade Weapon'}, -1, 'interface')" @mouseleave="itemHoverLeave()" @click="toggleItemUpgradeFrame()"><p>{{ String.fromCharCode(this.keybinds.upgradeItem) }}</p></div>
 						<div></div>
 						<div></div>
 						<div></div>
-						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Go back to enemies', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1) : itemHoverEnter({title: 'Visit the Merchant', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, -1)" @mouseleave="itemHoverLeave()" @click="toggleMerchantFrame() + itemHoverLeave() + closeLootFrame('merchant')"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
+						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Leave Town', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface') : itemHoverEnter({title: 'Hearthstone to Town', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface')" @mouseleave="itemHoverLeave()" @click="itemHoverLeave() + toggleMerchantFrame() + closeLootFrame('merchant')"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>
 					</div>
 
 					<div v-if="upgradeItemFrame.open" class="upgrade-item-frame">
