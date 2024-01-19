@@ -161,6 +161,7 @@ a {
 	display: relative;
 	width: 280px;
 	height: auto;
+	min-height: 44px;
 	max-height: 450px;
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -380,10 +381,91 @@ a {
 	border-radius: 10px;
 	border: 1px solid #aaa;
 	width: 280px;
+	margin-bottom: 15px;
 }
 
 .enemy-tab > * {
 	margin-bottom: 10px;
+}
+
+.enemies-selection-frame {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: #000000;
+	border-radius: 10px;
+	border: 1px solid #aaa;
+	width: 280px;
+	padding: 14px 10px 14px 10px;
+	height: auto;
+}
+
+.enemies-selection-tab {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #2b2929;
+	height: 46px;
+	width: 95%;
+	margin-bottom: 22px;
+	padding: 8px;
+	border-radius: 5px;
+	transition-duration: 140ms;
+	color: white;
+}
+
+.enemies-selection-frame :last-child.enemies-selection-tab {
+	margin: 0;
+}
+
+.enemies-selection-tab:hover {
+	filter: brightness(130%);
+	box-shadow: yellow 0px 0px 10px 4px;
+	transform: scale(1.03);
+}
+
+.enemies-selection-tab-disabled {
+	filter: grayscale(100%) brightness(60%);
+	transform: scale(0.96);
+	box-shadow: none !important;
+}
+
+.enemies-selection-tab-disabled:hover {
+	filter: grayscale(100%) brightness(88%);
+	transform: scale(0.96);
+}
+
+.enemies-selection-portrait-overlap {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 86px;
+}
+
+.enemies-selection-portrait {
+	position: relative;
+	z-index: 10;
+	width: 70px;
+	height: 70px;
+	background-position: center;
+	background-size: cover;
+	border-radius: 10000px;
+}
+
+.enemies-selection-portrait-border {
+	position: absolute;
+	top: -9px;
+	left: 0;
+	z-index: 15;
+	width: 86px;
+	height: 86px;
+	border-radius: 100%;
+	background-image: url('../assets/img/ui/portrait/enemyframe.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 .damagezone {
@@ -410,6 +492,7 @@ a {
 
 .portrait-border {
 	position: absolute;
+	z-index: 30;
 	width: 100%;
 	height: 100%;
 	border-radius: 100%;
@@ -431,6 +514,7 @@ a {
 
 .damagezone:active .portrait {
 	transform: scale(0.975);
+	z-index: 30;
 }
 
 .levelframe {
@@ -448,6 +532,7 @@ a {
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
+	z-index: 100;
 }
 
 .levelindicator {

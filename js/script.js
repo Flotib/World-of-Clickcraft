@@ -149,13 +149,11 @@ var app = new Vue({
 		},
 		progressionMode: true,
 		...window.content,
-		enemyPool: [], //Putting this variable here for now
-		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
+		currentEnemy: 0,
 		currentEnemyPool: 0,
-		disabledEnemies: [],
+		selectedEnemy: 0,
 		deadEnemiesLimit: 40,
 		deadEnemies: [],
-		deadEnemiesTimers: {},
 		showEnemyInformations: false,
 		showMorePlayerStats: false,
 		goldimg: '<img src="assets/img/ui/money/gold.png">',
@@ -166,12 +164,6 @@ var app = new Vue({
 	},
 
 	watch: {
-		currentEnemy: function (enemy, oldenemy) {
-			this.enemies[oldenemy].hp = this.enemies[oldenemy].maxHp
-			this.step = 0
-			this.countdown = (this.enemies[enemy].type == 'normal' || this.enemies[enemy].type == 'rare') ? 10 : 30 // May change later
-		},
-
 		/*
 		'currentEnemyPool': function () {
 			if (this.currentEnemyPool == this.enemyPool.length) {
@@ -657,6 +649,8 @@ var app = new Vue({
 				this.autoWeaponSellPriceAttri(item)
 				this.autoItemPrice(item)
 			}
+
+			this.spawnEnemy()
 		},
 
 		generateUniqueId() {
@@ -824,10 +818,10 @@ var app = new Vue({
 
 		specialWeapon() {
 			const weapon = this.player.weapon.item;
-		
+
 			if (weapon.length !== 0) {
 				const weaponType = weapon[0].slotType.type;
-		
+
 				switch (weaponType) {
 					case 0:
 						// Swords are "normal", no special effect
@@ -865,39 +859,39 @@ var app = new Vue({
 				}
 			}
 		},
-		
+
 		axeSpecialEffect() {
 			// Axes can critical strike for x2 damages
 		},
-		
+
 		maceSpecialEffect() {
 			// Maces has a chance to increase the mob countdown
 		},
-		
+
 		daggerSpecialEffect() {
 			// Daggers can hit multiple times with one click
 		},
-		
+
 		polearmSpecialEffect() {
 			// Handle special effect for polearms
 		},
-		
+
 		fistWeaponSpecialEffect() {
 			// Handle special effect for fist weapons
 		},
-		
+
 		staffSpecialEffect() {
 			// Staves has a chance to cast a spell
 		},
-		
+
 		bowSpecialEffect() {
 			// Handle special effect for bows
 		},
-		
+
 		crossbowSpecialEffect() {
 			// Handle special effect for crossbows
 		},
-		
+
 		gunSpecialEffect() {
 			// Guns deal up to x2 damages during the first 3 seconds
 		},
@@ -1019,11 +1013,11 @@ var app = new Vue({
 		*/
 
 		lootGeneration(enemy) {
-			if ( this.deadEnemies.length == this.deadEnemiesLimit) {
+			if (this.deadEnemies.length == this.deadEnemiesLimit) {
 				this.errorCorpses()
 				return
 			}
-			
+
 			let loot = [];
 
 			for (let i = 0; i < enemy.lootTable.length; i++) {
@@ -1051,21 +1045,22 @@ var app = new Vue({
 					'rareElite': 1000,
 					'boss': 1800
 				};
-			
+
 				const timing = timingMap[enemy.type] || 120; // Use 120 if no type
-			
+
 				const deadEnemy = {
 					loots: loot,
 					name: enemy.name,
 					portrait: enemy.portrait,
 					portraitId: enemy.portraitId,
 					level: enemy.level,
+					type: enemy.type,
 					timing: timing,
 					baseTiming: timing
-				};	
+				};
 
 				this.deadEnemies.push(deadEnemy);
-				
+
 				const timer = setInterval(() => {
 					deadEnemy.timing--;
 					if (deadEnemy.timing <= 0) {
@@ -1082,7 +1077,7 @@ var app = new Vue({
 			this.lootFrameOpen = enemy
 			this.lootFramePosition()
 			if (this.shiftPressed) { // shift click
-				for (let i = enemy.loots.length - 1; i >= 0 ; i--) {
+				for (let i = enemy.loots.length - 1; i >= 0; i--) {
 					this.lootItem(enemy.loots[i].itemId, enemy.loots[i].quantity)
 				}
 			}
@@ -1196,6 +1191,23 @@ var app = new Vue({
 			}
 		},
 
+		spawnEnemy() {
+			const availableEnemies = this.enemiesPools[this.currentEnemyPool].enemies.filter((_, index) => !this.enemiesPools[this.currentEnemyPool].disabled[index]);
+			this.selectedEnemy = availableEnemies[this.rand(0, availableEnemies.length - 1)]
+		},
+
+		toggleEnemyStatus(index) {
+			const isDisabled = this.enemiesPools[this.currentEnemyPool].disabled[index];
+			const numEnabledEnemies = this.enemiesPools[this.currentEnemyPool].disabled.filter(Boolean).length;
+
+			if (!isDisabled && numEnabledEnemies === this.enemiesPools[this.currentEnemyPool].enemies.length - 1) {
+				this.errorPoolDisabled()
+				return
+			}
+
+			this.$set(this.enemiesPools[this.currentEnemyPool].disabled, index, !isDisabled);
+		},
+
 		enemyDeadEvent(enemy) {
 			enemy.killCount++
 			this.player.gameStats.totalKills++
@@ -1205,21 +1217,26 @@ var app = new Vue({
 			money = this.randBigNumber(enemy.minMoney, enemy.maxMoney)
 			this.player.gameStats.totalMoney = this.player.gameStats.totalMoney.plus(money)
 			this.player.money = this.player.money.plus(money)
-			if (this.player.progression <= this.enemies.indexOf(enemy)) {
+			/*if (this.player.progression <= this.enemies.indexOf(enemy)) {
 				this.player.progression++
-			}
+			}*/
 			this.lootGeneration(enemy)
 			this.lastUpdateTime = Date.now();
 			enemy.hp = enemy.maxHp
-			//this.spawnEnemy()
+			this.spawnEnemy()
 		},
 
-		missEnemy() { // will change with the pool
-			this.step = 0
+		missEnemy() {
 			this.player.gameStats.totalMisses++
-			for (const enemy of this.enemies) {
-				enemy.hp = enemy.maxHp
+			const currentEnemyPool = this.currentEnemyPool;
+			const currentEnemies = this.enemiesPools[currentEnemyPool].enemies;
+
+			for (const enemyIndex of currentEnemies) {
+				const enemy = this.enemies[enemyIndex];
+				enemy.hp = enemy.maxHp;
 			}
+
+			this.spawnEnemy()
 		},
 
 		playerXp(enemy) {
@@ -1493,6 +1510,10 @@ var app = new Vue({
 
 		errorCorpses() {
 			this.error('There are too many corpses.')
+		},
+
+		errorPoolDisabled() {
+			this.error("You can't disable every mobs")
 		},
 
 		getItemById(id) {
@@ -1900,9 +1921,9 @@ var app = new Vue({
 
 		cutText(text, maxLength) {
 			if (text.length > maxLength) {
-			  return text.substring(0, maxLength - 3) + '...';
+				return text.substring(0, maxLength - 3) + '...';
 			} else {
-			  return text;
+				return text;
 			}
 		},
 
@@ -2035,12 +2056,12 @@ var app = new Vue({
 				this.merchantFrame.open = false
 				this.merchantCooldown()
 				if (click) {
-					this.itemHoverEnter({title: 'Hearthstone to Town', effectDescription: Math.round(this.merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface')
+					this.itemHoverEnter({ title: 'Hearthstone to Town', effectDescription: Math.round(this.merchantFrame.cooldown / 60 * 100) / 100 + ' min cooldown' }, -1, 'interface')
 				}
 			} else {
 				this.merchantFrame.open = true
 				if (click) {
-					this.itemHoverEnter({title: 'Leave Town', effectDescription: Math.round(this.merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface')
+					this.itemHoverEnter({ title: 'Leave Town', effectDescription: Math.round(this.merchantFrame.cooldown / 60 * 100) / 100 + ' min cooldown' }, -1, 'interface')
 				}
 			}
 		},
@@ -2267,7 +2288,7 @@ var app = new Vue({
 		}, false)
 
 		this.lastUpdateTime = Date.now();
-		
+
 		setInterval(() => {
 			const currentTime = Date.now();
 			this.step = (currentTime - this.lastUpdateTime) / 1000;

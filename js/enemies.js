@@ -11,7 +11,6 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
     },*/
     {
         name: 'Young Wolf',
@@ -20,12 +19,13 @@ window.content.enemies = [
         maxHp: 40,
         hp: 40,
         level: null,
+        minLevel: null,
+        maxLevel: null,
         poolLevel: 0,
         type: 'normal', // 'normal', 'rare', 'rareElite', 'elite', 'boss'
         killCount: 0,
-        minMoney: null,
+        minMoney: null, // need to update how minMoney and maxMoney work, level will work in range
         maxMoney: null,
-        levelenvironment: 'elwynn',
         lootTable: [0],
     },
     {
@@ -40,8 +40,7 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
-        lootTable: [],
+        lootTable: [0],
     },
     {
         name: 'Bandit',
@@ -55,8 +54,7 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
-        lootTable: [],
+        lootTable: [0],
     },
     {
         name: 'Boar',
@@ -70,7 +68,6 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
         lootTable: [],
     },
     {
@@ -85,7 +82,6 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
         lootTable: [],
     },
     {
@@ -100,7 +96,6 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
         lootTable: [],
     },
     {
@@ -115,7 +110,6 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
         lootTable: [],
     },
     {
@@ -130,7 +124,6 @@ window.content.enemies = [
         killCount: 0,
         minMoney: null,
         maxMoney: null,
-        levelenvironment: 'elwynn',
         lootTable: [],
     },
 ]

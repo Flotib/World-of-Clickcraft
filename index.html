@@ -14,7 +14,7 @@
 
 	<div id="app">
 		
-		<div class="backgroundEnvironment" :style="merchantFrame.open?'background-image: url(assets/img/background/town.jpg':('background-image: url(assets/img/background/'+enemies[currentEnemy].levelenvironment+'.jpg);')"></div>
+		<div class="backgroundEnvironment" :style="merchantFrame.open?'background-image: url(assets/img/background/town.jpg':('background-image: url(assets/img/background/'+enemiesPools[currentEnemyPool].levelEnvironment+'.jpg);')"></div>
 		<div class="error-message-box">
 			<div v-for="message in errorMessages" :key="message.id" class="error-message">
 				{{message.msg}}
@@ -220,12 +220,23 @@
 					</div>
 				</div>
 
-				<div class="loot-corpses-window" v-if="progressionMode && deadEnemies[0]">
+				<div class="enemies-selection-frame" v-if="progressionMode">
+					<div v-for="(enemy, index) in enemiesPools[currentEnemyPool].enemies" :key="index" :class="['enemies-selection-tab', {'enemies-selection-tab-disabled': enemiesPools[currentEnemyPool].disabled[index]}]" @click="toggleEnemyStatus(index)">
+						<div class="enemies-selection-portrait-overlap">
+							<div class="enemies-selection-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[enemiesPools[currentEnemyPool].enemies[index]].portrait+'/'+enemies[enemiesPools[currentEnemyPool].enemies[index]].portrait+'_'+enemies[enemiesPools[currentEnemyPool].enemies[index]].portraitId+'.jpg);'"></div>
+							<div class="enemies-selection-portrait-border"></div>
+						</div>
+						<p>{{ cutText(enemies[enemiesPools[currentEnemyPool].enemies[index]].name, 16) }}</p>
+						<p :class="enemies[enemiesPools[currentEnemyPool].enemies[index]].type == 'boss' ? 'skulllevel': difficultyColor(enemies[enemiesPools[currentEnemyPool].enemies[index]])" style="font-size: 14px">lvl {{ enemies[enemiesPools[currentEnemyPool].enemies[index]].level }}</p>
+					</div>
+				</div>
+
+				<div class="loot-corpses-window" v-if="progressionMode">
 					<div class="loot-corpses-count">Corpses : {{ deadEnemies.length }} / {{deadEnemiesLimit}} </div>
 					<div v-for="deadEnemy in deadEnemies" :class="shiftPressed?'lootallCursor dead-enemy':'lootCursor dead-enemy'" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
 						<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
 						<div class="dead-enemy-cooldown" :style="'background: conic-gradient(#14161bdd '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg, transparent '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg);'"></div>
-						<div :class="difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
+						<div :class="deadEnemy.type == 'boss' ? 'skulllevel' : difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
 						<div style="color: white">{{deadEnemy.name}}</div>
 							<!--<div v-for="item in deadEnemy.loots" class="item-placeholder">-->
 							<!--<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(item.itemId))+'.png);'"></div>-->
@@ -263,30 +274,30 @@
 
 				
 				<div class="enemy-tab" v-if="progressionMode">
-					<div class="damagezone" @click="damageEnemy(enemies[currentEnemy])">
+					<div class="damagezone" @click="damageEnemy(enemies[selectedEnemy])">
 						<div class="portrait">
-							<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[currentEnemy].portrait+'/'+enemies[currentEnemy].portrait+'_'+enemies[currentEnemy].portraitId+'.jpg);'"></div>
-							<div class="portrait-border"></div>
+							<div class="portrait-mob-image" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[selectedEnemy].portrait+'/'+enemies[selectedEnemy].portrait+'_'+enemies[selectedEnemy].portraitId+'.jpg);'"></div>
+							<div class="portrait-border" ></div>
 						</div>
 						<div class="levelframe">
-							<div class="levelindicator"><p :class="difficultyColor(enemies[currentEnemy])"><span v-if="player.level > enemies[currentEnemy].level - 10">{{ enemies[currentEnemy].level }}</span></p></div>
+							<div class="levelindicator"><p :class="enemies[selectedEnemy].type == 'boss' ? 'skulllevel': difficultyColor(enemies[selectedEnemy])"><span v-if="player.level > enemies[selectedEnemy].level - 10 && enemies[selectedEnemy].type != 'boss'">{{ enemies[selectedEnemy].level }}</span></p></div>
 						</div>
 					</div>
 					<div class="enemyname">
-						<p>{{ enemies[currentEnemy].name }}</p>
+						<p>{{ enemies[selectedEnemy].name }}</p>
 					</div>
-					<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[currentEnemy])" style="margin-top: 10px;">
-						<div class="hpbar" :style="'width:'+Math.max(enemies[currentEnemy].hp/enemies[currentEnemy].maxHp*100, 0)+'%'"></div>
+					<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[selectedEnemy])" style="margin-top: 10px;">
+						<div class="hpbar" :style="'width:'+Math.max(enemies[selectedEnemy].hp/enemies[selectedEnemy].maxHp*100, 0)+'%'"></div>
 					</div>
 					<div class="emptyressourcebar" :data-label="(countdown-(step)).toFixed(1)+'s'">
 						<div class="timebar" :style="'width:'+(100-(step)/countdown*100)+'%'"></div>
 					</div>
 					<button @click="showEnemyInformations=!showEnemyInformations" class="showenemyinfobutton">{{ showEnemyInformations ? '-' : '+' }}</button>
 					<div :style="'height:'+(showEnemyInformations ? '160' : '0')+'px;'" class="enemyInformations">
-						<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[currentEnemy].minMoney)"></p><p v-html="moneyStylizer(enemies[currentEnemy].maxMoney)"></p></div>
-						<p class="xpamount">{{ monsterXp(enemies[currentEnemy]) }} xp</p>
-						<div v-if="killToLevelUp(enemies[currentEnemy])!='noxp'"><p class="killsleft">{{ killToLevelUp(enemies[currentEnemy]) }} kill{{ killToLevelUp(enemies[currentEnemy])>1 ? 's' : ''}} left</p></div>
-						<p class="killcount">Killed {{ enemies[currentEnemy].killCount }} time{{enemies[currentEnemy].killCount>1 ? 's' : ''}}</p>
+						<div class="enemymoneyui"><p v-html="moneyStylizer(enemies[selectedEnemy].minMoney)"></p><p v-html="moneyStylizer(enemies[selectedEnemy].maxMoney)"></p></div>
+						<p class="xpamount">{{ monsterXp(enemies[selectedEnemy]) }} xp</p>
+						<div v-if="killToLevelUp(enemies[selectedEnemy])!='noxp'"><p class="killsleft">{{ killToLevelUp(enemies[selectedEnemy]) }} kill{{ killToLevelUp(enemies[selectedEnemy])>1 ? 's' : ''}} left</p></div>
+						<p class="killcount">Killed {{ enemies[selectedEnemy].killCount }} time{{enemies[selectedEnemy].killCount>1 ? 's' : ''}}</p>
 					</div>
 				</div>
 			</div>
@@ -455,11 +466,11 @@
 			</div>
 			
 			<div style="display: inline-block; position: fixed; bottom: 35px;">
-				<button v-if="enemies[currentEnemy-1]!=null" @click="currentEnemy--">prev</button>
-				<button v-if="enemies[currentEnemy+1]!=null && player.progression>currentEnemy" @click="currentEnemy++">next</button>
+				<button v-if="enemiesPools[currentEnemyPool-1]!=null" @click="currentEnemyPool--">prev</button>
+				<button v-if="enemiesPools[currentEnemyPool+1]!=null" @click="currentEnemyPool++">next</button><!--&& player.progression>currentEnemyPool-->
 				<button @click="player.level++">+1 lvl</button>
-				<button @click="enemies[currentEnemy].level++">+1 lvl enemy</button>
-				<button @click="enemies[currentEnemy].hp=0">instant kill</button>
+				<button @click="enemies[selectedEnemy].level++">+1 lvl enemy</button>
+				<button @click="enemies[selectedEnemy].hp=0">instant kill</button>
 				<button @click="addItem(rand(1,2), player.bag.slots, 1)">add item 1-2</button>
 				<button @click="addItem(2, player.bag.slots, 3)">add x3 id2 {{getItemById(2).name}}</button>
 				<input type="number" v-model.number="player.xp" style="width: 30px">
@@ -470,7 +481,7 @@
 				<button @click="player.money = player.money.plus(49000000000000)">490 d</button>
 				<button @click="player.money = player.money.plus(490000000000000000)">4900000 d</button>
 				<button @click="player.money = player.money.plus(49000000000000000000000000000000000000000000)">4.9e32 d</button>
-				<input type="number" v-model.number="enemies[currentEnemy].level" style="width: 30px">
+				<input type="number" v-model.number="enemies[selectedEnemy].level" style="width: 30px">
 				<input type="number" v-model.number="currentEnemy" style="width: 30px">
 				<input type="number" v-model.number="player.bag.bagSpace" style="width: 30px">
 				<button v-if="selectedItem.item.slotType != null && selectedItem.item.quality > 1" style="width: auto;" @click="upgradeItem(selectedItem.item)">upgrade: <span v-html="moneyStylizer(upgradeItemPrice(selectedItem.item))"></span></button>
@@ -498,6 +509,7 @@
 	<script src='js/bignumber.min.js'></script>
 	<script src="js/loottables.js"></script>
 	<script src='js/enemies.js'></script>
+	<script src='js/enemiesPools.js'></script>
 	<script src='js/items.js'></script>
 	<script src='js/merchants.js'></script>
 	<script src="js/script.js"></script>
