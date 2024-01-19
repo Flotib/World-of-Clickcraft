@@ -4,6 +4,7 @@ var app = new Vue({
 		step: 0,
 		fps: 50,
 		countdown: 10, //sec
+		lastUpdateTime: 0,
 		cursorX: null,
 		cursorY: null,
 		keyPressed: false,
@@ -152,6 +153,7 @@ var app = new Vue({
 		currentEnemy: 0, // Need to rework this later (with a function) to be able to create differents array of enemies for dungeons and "raids"
 		currentEnemyPool: 0,
 		disabledEnemies: [],
+		deadEnemiesLimit: 40,
 		deadEnemies: [],
 		deadEnemiesTimers: {},
 		showEnemyInformations: false,
@@ -193,6 +195,7 @@ var app = new Vue({
 
 		'player.bag.bagSpace': function (slots) {
 			this.updateSlots(this.player.bag.slots, slots)
+			//this.player.bag.level = Math.floor(slots / 8) I need to find a good way
 		},
 
 		'merchantFrame.open': function (value) {
@@ -703,13 +706,19 @@ var app = new Vue({
 			return rand
 		},
 
-		rng(chance) { // 1 / chance * 100 = % - /!\ chance is not a percentage
+		rng(chance) { // chance in percent
 			let loot = false
-			if (this.rand(1, chance) == this.rand(1, chance)) {
+			let rand = this.randPlayerChance()
+			if (rand <= chance) {
 				loot = true
 			}
 
 			return loot
+		},
+
+		randPlayerChance() { // need to add function with player's luck stat + player level
+			let chance = (Math.random() * 100) - (this.player.stats.luck / 100)
+			return chance
 		},
 
 		autoLevelAttri(enemy) {
@@ -802,7 +811,7 @@ var app = new Vue({
 			this.specialWeapon()
 			let crit = false
 			let damage = this.randBigNumber(BigNumber(this.totalMinDamage()), BigNumber(this.totalMaxDamage()))
-			if (damage.gt(0) && this.rng(100 / this.player.stats.critChance)) {
+			if (damage.gt(0) && this.rng(this.player.stats.critChance)) {
 				damage = damage.multipliedBy(2)
 				crit = true
 				this.player.gameStats.totalCriticalStrikes++
@@ -814,26 +823,83 @@ var app = new Vue({
 		},
 
 		specialWeapon() {
-			weapon = this.player.weapon.item
-			if (weapon.length != 0) {
-				if (weapon[0].slotType.name == "Sword") {
-
-				} else if (weapon[0].slotType.name == "Axe") {
-
-				} else if (weapon[0].slotType.name == "Mace") {
-
-				} else if (weapon[0].slotType.name == "Dagger") {
-
-				} else if (weapon[0].slotType.name == "Polearm") {
-
-				} else if (weapon[0].slotType.name == "FistWeapon") {
-
-				} else if (weapon[0].slotType.name == "Sword") {
-
-				} else if (weapon[0].slotType.name == "Sword") {
-
+			const weapon = this.player.weapon.item;
+		
+			if (weapon.length !== 0) {
+				const weaponType = weapon[0].slotType.type;
+		
+				switch (weaponType) {
+					case 0:
+						// Swords are "normal", no special effect
+						break;
+					case 1:
+						this.axeSpecialEffect();
+						break;
+					case 2:
+						this.maceSpecialEffect();
+						break;
+					case 3:
+						this.daggerSpecialEffect();
+						break;
+					case 4:
+						this.polearmSpecialEffect();
+						break;
+					case 5:
+						this.fistWeaponSpecialEffect();
+						break;
+					case 6:
+						this.staffSpecialEffect();
+						break;
+					case 7:
+						this.bowSpecialEffect();
+						break;
+					case 8:
+						this.crossbowSpecialEffect();
+						break;
+					case 9:
+						this.gunSpecialEffect();
+						break;
+					// Handle other weapon types as needed
+					default:
+						break;
 				}
 			}
+		},
+		
+		axeSpecialEffect() {
+			// Axes can critical strike for x2 damages
+		},
+		
+		maceSpecialEffect() {
+			// Maces has a chance to increase the mob countdown
+		},
+		
+		daggerSpecialEffect() {
+			// Daggers can hit multiple times with one click
+		},
+		
+		polearmSpecialEffect() {
+			// Handle special effect for polearms
+		},
+		
+		fistWeaponSpecialEffect() {
+			// Handle special effect for fist weapons
+		},
+		
+		staffSpecialEffect() {
+			// Staves has a chance to cast a spell
+		},
+		
+		bowSpecialEffect() {
+			// Handle special effect for bows
+		},
+		
+		crossbowSpecialEffect() {
+			// Handle special effect for crossbows
+		},
+		
+		gunSpecialEffect() {
+			// Guns deal up to x2 damages during the first 3 seconds
 		},
 
 		formatHpLabel(enemy) {
@@ -953,6 +1019,11 @@ var app = new Vue({
 		*/
 
 		lootGeneration(enemy) {
+			if ( this.deadEnemies.length == this.deadEnemiesLimit) {
+				this.errorCorpses()
+				return
+			}
+			
 			let loot = [];
 
 			for (let i = 0; i < enemy.lootTable.length; i++) {
@@ -961,9 +1032,8 @@ var app = new Vue({
 
 				for (let j = 0; j < items.length; j++) {
 					let item = items[j];
-					let randomChance = Math.random() * 100;
-					if (randomChance <= item.rate) {
-						let quantity = Math.floor(Math.random() * (item.maxQuantity - item.minQuantity + 1)) + item.minQuantity;
+					if (this.rng(item.rate)) {
+						let quantity = this.rand(item.minQuantity, item.maxQuantity)
 						loot.push({ itemId: item.itemId, quantity: quantity });
 					}
 				}
@@ -995,39 +1065,24 @@ var app = new Vue({
 				};	
 
 				this.deadEnemies.push(deadEnemy);
-
-				const timerId = this.generateUniqueId();
-				this.deadEnemiesTimers[timerId] = setInterval(() => {
+				
+				const timer = setInterval(() => {
 					deadEnemy.timing--;
 					if (deadEnemy.timing <= 0) {
-					// Timer reached 0, delete the dead enemy from the list
-					this.closeLootFrame(deadEnemy)
-					this.deadEnemies = this.deadEnemies.filter((enemy) => enemy !== deadEnemy);
-					clearInterval(this.deadEnemiesTimers[timerId]); // Stop the timer
-					delete this.deadEnemiesTimers[timerId]; // Remove the timer reference
+						// Timer reached 0, delete the dead enemy from the list
+						this.closeLootFrame(deadEnemy);
+						this.deadEnemies = this.deadEnemies.filter((enemy) => enemy !== deadEnemy);
+						clearInterval(timer); // Stop the timer
 					}
 				}, 1000);
 			}
 		},
 
-		startTimer(index) {
-			const timerInterval = 1000; // 1 second interval
-			const timer = setInterval(() => {
-			  this.deadEnemies[index].timing--;
-		
-			  if (this.deadEnemies[index].timing <= 0) {
-				// Timer reached 0, delete the dead enemy from the list
-				this.deadEnemies.splice(index, 1);
-				clearInterval(timer); // Stop the timer
-			  }
-			}, timerInterval);
-		  },
-
 		openLootFrame(enemy) {
 			this.lootFrameOpen = enemy
 			this.lootFramePosition()
 			if (this.shiftPressed) { // shift click
-				for (let i = 0; i < enemy.loots.length; i++) {
+				for (let i = enemy.loots.length - 1; i >= 0 ; i--) {
 					this.lootItem(enemy.loots[i].itemId, enemy.loots[i].quantity)
 				}
 			}
@@ -1154,7 +1209,7 @@ var app = new Vue({
 				this.player.progression++
 			}
 			this.lootGeneration(enemy)
-			this.step = 0
+			this.lastUpdateTime = Date.now();
 			enemy.hp = enemy.maxHp
 			//this.spawnEnemy()
 		},
@@ -1434,6 +1489,10 @@ var app = new Vue({
 
 		errorNotEnoughMoney() {
 			this.error("You don't have enough money.")
+		},
+
+		errorCorpses() {
+			this.error('There are too many corpses.')
 		},
 
 		getItemById(id) {
@@ -2207,15 +2266,17 @@ var app = new Vue({
 			this.shiftPressed = false
 		}, false)
 
+		this.lastUpdateTime = Date.now();
+		
 		setInterval(() => {
+			const currentTime = Date.now();
+			this.step = (currentTime - this.lastUpdateTime) / 1000;
 			if (this.progressionMode) {
-				if (this.step != 0 && this.step % (this.fps * this.countdown) == 0) {
-					this.missEnemy()
-					//this.generateEnemy()
-					//this.enemies[this.currentEnemyPool] = this.chooseEnemy()
+				if (this.step >= this.countdown) {
+					this.missEnemy();
+					this.lastUpdateTime = currentTime; // Réinitialisez le temps
 				}
 			}
-			this.step++
-		}, 1000 / this.fps)
+		}, 1000 / this.fps);
 	},
 })

@@ -181,6 +181,10 @@ a {
 	border-radius: 7px;
 }
 
+.loot-corpses-window :last-child.dead-enemy {
+	margin: 0;
+}
+
 .loot-corpses-window::-webkit-scrollbar-thumb {
 	background: white;
 	border-radius: 0 6px 6px 0;
@@ -358,6 +362,13 @@ a {
 	height: 50px;
 	width: 50px;
 	margin-right: 4px;
+}
+
+.loot-corpses-count {
+	position: absolute;
+	top: 0;
+	color: yellow;
+	font-size: 14px;
 }
 
 .enemy-tab {

@@ -221,6 +221,7 @@
 				</div>
 
 				<div class="loot-corpses-window" v-if="progressionMode && deadEnemies[0]">
+					<div class="loot-corpses-count">Corpses : {{ deadEnemies.length }} / {{deadEnemiesLimit}} </div>
 					<div v-for="deadEnemy in deadEnemies" :class="shiftPressed?'lootallCursor dead-enemy':'lootCursor dead-enemy'" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
 						<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
 						<div class="dead-enemy-cooldown" :style="'background: conic-gradient(#14161bdd '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg, transparent '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg);'"></div>
@@ -277,8 +278,8 @@
 					<div class="emptyressourcebar" :data-label="formatHpLabel(enemies[currentEnemy])" style="margin-top: 10px;">
 						<div class="hpbar" :style="'width:'+Math.max(enemies[currentEnemy].hp/enemies[currentEnemy].maxHp*100, 0)+'%'"></div>
 					</div>
-					<div class="emptyressourcebar" :data-label="(countdown-(step/fps)).toFixed(1)+'s'">
-						<div class="timebar" :style="'width:'+(100-(step/fps)/countdown*100)+'%'"></div>
+					<div class="emptyressourcebar" :data-label="(countdown-(step)).toFixed(1)+'s'">
+						<div class="timebar" :style="'width:'+(100-(step)/countdown*100)+'%'"></div>
 					</div>
 					<button @click="showEnemyInformations=!showEnemyInformations" class="showenemyinfobutton">{{ showEnemyInformations ? '-' : '+' }}</button>
 					<div :style="'height:'+(showEnemyInformations ? '160' : '0')+'px;'" class="enemyInformations">
@@ -487,7 +488,7 @@
 					<input type="number" v-model.number="giveItemQuantity" style="width: 30px; height: 25px; background-color: #6ce7d3; margin-right: 10px;">
 					<button style="background-color: darkred; padding: 1px 4px 4px 1px;" @click="debugDeleteAllBagItems()">Empty the bag</button>
 				</div>
-				<div v-for="item in items" :key="item.id" @mouseover="itemHoverEnter(item, 0, -1)" @mouseleave="itemHoverLeave()" @click="addItem(item.id, player.bag.slots, giveItemQuantity)"><img style="width: 34px; height: 34px" :src="'assets/img/ui/icons/'+itemIcon(item)+'.png'"><p><span>{{ item.id }}</span><span> - </span><span :style="'color:'+getQualityColor(item)">{{ item.name }}</span></div>
+				<div v-for="item in items" :key="item.id" @mouseover="itemHoverEnter(item, 0, -1)" @mouseleave="itemHoverLeave()" @click="addItem(item.id, player.bag.slots, giveItemQuantity)"><img style="width: 34px; height: 34px" :src="'assets/img/ui/icons/'+itemIcon(item)+'.png'"><p><span>{{ item.id }}</span><span> - </span><span :style="'color:'+getQualityColor(item)">{{ cutText(item.name, 28) }}</span></div>
 			</div>
 
 		</div>
