@@ -38,6 +38,7 @@
 				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.stamina != undefined">+ {{hoverItem.item[0].stats.stamina}} Stamina</p>
 				<p v-if="hoverItem.item[0].stats !== undefined && hoverItem.item[0].stats.luck != undefined" style="color: #0f0">+ {{hoverItem.item[0].stats.luck}} Luck</p>
 				<p v-if="hoverItem.item[0].requiredLevel != null" :style="requiresLevelText">Requires Level {{ hoverItem.item[0].requiredLevel }}</p>
+				<p v-if="hoverItem.item[0].unlockLevel != null" style="color: #ff2020">Unlock at Level {{ hoverItem.item[0].unlockLevel }}</p>
 				<p v-if="hoverItem.item[0].effectDescription != null" style="color: #0f0" class="tooltip-text">{{ hoverItem.item[0].effectDescription }}</p>
 				<p v-if="hoverItem.item[0].quote != null" style="color: #ffd100" class="tooltip-text">"{{ hoverItem.item[0].quote }}"</p>
 				<p v-if="hoverItemIsAWeapon && hoverItem.item[0].quality > 1 && upgradeItemFrame.open && hoverItem.containerName != 'upgradeFrame'" style="color: #f700ff; font-style: italic;">This weapon can be upgraded</p>
@@ -221,27 +222,36 @@
 				</div>
 
 				<div class="enemies-selection-frame" v-if="progressionMode">
+					<div class="enemy-selection-frame-header">Enemies</div>
 					<div v-for="(enemy, index) in enemiesPools[currentEnemyPool].enemies" :key="index" :class="['enemies-selection-tab', {'enemies-selection-tab-disabled': enemiesPools[currentEnemyPool].disabled[index]}]" @click="toggleEnemyStatus(index)">
 						<div class="enemies-selection-portrait-overlap">
 							<div class="enemies-selection-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+enemies[enemiesPools[currentEnemyPool].enemies[index]].portrait+'/'+enemies[enemiesPools[currentEnemyPool].enemies[index]].portrait+'_'+enemies[enemiesPools[currentEnemyPool].enemies[index]].portraitId+'.jpg);'"></div>
 							<div class="enemies-selection-portrait-border"></div>
 						</div>
 						<p>{{ cutText(enemies[enemiesPools[currentEnemyPool].enemies[index]].name, 16) }}</p>
-						<p :class="enemies[enemiesPools[currentEnemyPool].enemies[index]].type == 'boss' ? 'skulllevel': difficultyColor(enemies[enemiesPools[currentEnemyPool].enemies[index]])" style="font-size: 14px">lvl {{ enemies[enemiesPools[currentEnemyPool].enemies[index]].level }}</p>
+						<p v-if="enemies[enemiesPools[currentEnemyPool].enemies[index]].type == 'boss'" class="skulllevel"></p>
+						<span v-if="enemies[enemiesPools[currentEnemyPool].enemies[index]].type != 'boss'" class="enemies-selection-frame-level-container">
+							<p :class="difficultyColor(enemies[enemiesPools[currentEnemyPool].enemies[index]])" style="font-size: 14px">lvl {{ enemies[enemiesPools[currentEnemyPool].enemies[index]].minLevel }}</p>
+							<div class="enemies-selection-frame-level-separator"></div>
+							<p :class="difficultyColor(enemies[enemiesPools[currentEnemyPool].enemies[index]])" style="font-size: 14px">lvl {{ enemies[enemiesPools[currentEnemyPool].enemies[index]].maxLevel }}</p>
+						</span>
 					</div>
 				</div>
 
-				<div class="loot-corpses-window" v-if="progressionMode">
-					<div class="loot-corpses-count">Corpses : {{ deadEnemies.length }} / {{deadEnemiesLimit}} </div>
-					<div v-for="deadEnemy in deadEnemies" :class="shiftPressed?'lootallCursor dead-enemy':'lootCursor dead-enemy'" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
-						<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
-						<div class="dead-enemy-cooldown" :style="'background: conic-gradient(#14161bdd '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg, transparent '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg);'"></div>
-						<div :class="deadEnemy.type == 'boss' ? 'skulllevel' : difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
-						<div style="color: white">{{deadEnemy.name}}</div>
-							<!--<div v-for="item in deadEnemy.loots" class="item-placeholder">-->
-							<!--<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(item.itemId))+'.png);'"></div>-->
-							<!--</div>-->
+				<div class="loot-tab" v-if="progressionMode">
+					<div class="loot-corpses-window">
+						<div class="loot-corpses-count">Corpses : {{ deadEnemies.length }} / {{deadEnemiesLimit}} </div>
+						<div v-for="deadEnemy in deadEnemies" :class="shiftPressed?'lootallCursor dead-enemy':'lootCursor dead-enemy'" :style="deadEnemy.open ? 'background-color: #1f1f1f !important':''" @click="openLootFrame(deadEnemy)" @contextmenu.prevent="openLootFrame(deadEnemy)">
+							<div class="dead-enemy-portrait" :style="'background-image: url(assets/img/ui/portrait/enemies-portraits/'+deadEnemy.portrait+'/'+deadEnemy.portrait+'_'+deadEnemy.portraitId+'.jpg);'"></div>
+							<div class="dead-enemy-cooldown" :style="'background: conic-gradient(#14161bdd '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg, transparent '+(360*(1-deadEnemy.timing/deadEnemy.baseTiming))+'deg);'"></div>
+							<div :class="deadEnemy.type == 'boss' ? 'skulllevel' : difficultyColor(deadEnemy)">{{deadEnemy.level}}</div>
+							<div style="color: white">{{deadEnemy.name}}</div>
+								<!--<div v-for="item in deadEnemy.loots" class="item-placeholder">-->
+								<!--<div v-if="item != null" class="pouchCursor ui-item" :style="'background-image: url(assets/img/ui/icons/'+itemIcon(getItemById(item.itemId))+'.png);'"></div>-->
+								<!--</div>-->
+						</div>
 					</div>
+					<div class="loot-all-button" :style="deadEnemies.length == 0 ? 'filter: grayscale(100%)':''" @click="lootAll()">Loot all</div>
 				</div>
 
 				<div v-if="lootFrameOpen" class="loot-frame" :style="'left:'+lootFrameX+'px; top:'+lootFrameY+'px'">
@@ -420,7 +430,7 @@
 				<div class="player-related-window">
 					<div class="window-buttons-container">
 						<div :class="[upgradeItemFrame.open ? 'ui-icon-open' : '', 'upgrade-window-button ui-hover-window-button']" @mouseover="itemHoverEnter({title: 'Upgrade Weapon'}, -1, 'interface')" @mouseleave="itemHoverLeave()" @click="toggleItemUpgradeFrame()"><p>{{ String.fromCharCode(this.keybinds.upgradeItem) }}</p></div>
-						<div></div>
+						<div :class="[talentTree.open ? 'ui-icon-open' : '', talentTree.unlocked ? 'ui-hover-window-button' : 'ui-item-dragging', 'talent-tree-button']" @mouseover="itemHoverEnter({title: 'Talent Tree', unlockLevel: talentTree.unlocked ? null:'10'}, -1, 'interface')" @mouseleave="itemHoverLeave()" @click="toggleTalentTree()"><p>{{ String.fromCharCode(this.keybinds.talentTree) }}</p></div>
 						<div></div>
 						<div></div>
 						<div :class="[merchantFrame.open ? 'merchant-mode-button-activated' : '', 'merchant-mode-button ui-hover-window-button']" @mouseover="merchantFrame.open ? itemHoverEnter({title: 'Leave Town', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface') : itemHoverEnter({title: 'Hearthstone to Town', effectDescription: Math.round(merchantFrame.cooldown/60*100)/100+' min cooldown'}, -1, 'interface')" @mouseleave="itemHoverLeave()" @click="itemHoverLeave() + toggleMerchantFrame(1) + closeLootFrame('merchant')"><p>{{ String.fromCharCode(this.keybinds.merchant) }}</p></div>

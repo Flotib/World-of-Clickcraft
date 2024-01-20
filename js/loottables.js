@@ -57,4 +57,12 @@ window.content.lootTables = [
             maxQuantity: 1,
         },
     ],
+    [ //2 TEST
+        {
+            itemId: 13,
+            rate: 0.6, //percent
+            minQuantity: 1,
+            maxQuantity: 1,
+        },
+    ],
 ]

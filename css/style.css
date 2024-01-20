@@ -157,12 +157,18 @@ a {
 	margin: 5px 0 5px 0;
 }
 
+.loot-tab {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
 .loot-corpses-window {
 	display: relative;
 	width: 280px;
 	height: auto;
 	min-height: 44px;
-	max-height: 450px;
+	max-height: 458px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	padding: 10px;
@@ -197,6 +203,10 @@ a {
 
 .dead-enemy:hover {
 	box-shadow: inset 0 0 5px 4px #f1e74d !important;
+}
+
+.dead-enemy:active {
+	box-shadow: inset 0 0 10px 8px #f1e74d !important;
 }
 
 .dead-enemy div {
@@ -372,6 +382,33 @@ a {
 	font-size: 14px;
 }
 
+.loot-all-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 150px;
+	height: 26px;
+	background-color: red;
+	margin-top: 5px;
+	border-radius: 100px;
+	color: #ece256;
+	background: linear-gradient(0deg, #6e0713 0%, #880811 28%, #990606 50%, #880811 72%, #6e0713 100%);
+	transition-duration: 50ms;
+	border: 2px #d6d6d6;
+	border-style: ridge groove groove ridge;
+}
+
+.loot-all-button:hover {
+	filter: brightness(135%);
+	color: #ccc;
+}
+
+.loot-all-button:active {
+    filter: brightness(90%);
+	border: 2px groove #929292;
+	color: #ccc;
+}
+
 .enemy-tab {
 	display: flex;
 	flex-direction: column;
@@ -386,6 +423,18 @@ a {
 
 .enemy-tab > * {
 	margin-bottom: 10px;
+}
+
+.enemy-selection-frame-header {
+	position: relative;
+	color: yellow;
+	text-shadow: 0 0 3px #000, 0 0 3px #000, 0 0 3px #000, 0 0 3px #000,
+             0 0 3px #000, 0 0 3px #000, 0 0 3px #000, 0 0 3px #000,
+             0 0 3px #000, 0 0 3px #000, 0 0 3px #000, 0 0 3px #000,
+             0 0 3px #000;
+	font-size: 20px;
+	margin: -12px;
+	top: -20px;
 }
 
 .enemies-selection-frame {
@@ -421,7 +470,13 @@ a {
 
 .enemies-selection-tab:hover {
 	filter: brightness(130%);
-	box-shadow: yellow 0px 0px 10px 4px;
+	box-shadow: #ffd904 0px 0px 10px 4px;
+	transform: scale(1.03);
+}
+
+.enemies-selection-tab:active {
+	filter: brightness(130%);
+	box-shadow: inset 0 0 14px 2px #ffff9d;
 	transform: scale(1.03);
 }
 
@@ -466,6 +521,20 @@ a {
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
+}
+
+.enemies-selection-frame-level-container {
+	height: 110%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: column;
+}
+
+.enemies-selection-frame-level-separator {
+	width: 8px;
+	height: 1px;
+	background-color: white;
 }
 
 .damagezone {
@@ -1732,6 +1801,10 @@ a {
 	background-image: url(../assets/img/ui/icons/inv_misc_rune_01.png); /* ../assets/img/ui/icons/inv_misc_bag_10.png */
 }
 
+.talent-tree-button {
+	background-image: url(../assets/img/ui/icons/ability_marksmanship.png);
+}
+
 .text-shadow-2px {
 	text-shadow: 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000, 0px 0px 2px #000;
 }
@@ -2368,6 +2441,7 @@ a {
 	flex-direction: column-reverse;
 	user-select: none;
 	pointer-events: none;
+	z-index: 10000;
 }
 
 .error-message {

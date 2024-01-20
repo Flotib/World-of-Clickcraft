@@ -214,5 +214,25 @@ window.content.items = [
         baseMaxDamage: 10,
         requiredLevel: 11,
         salable: true
-    },    
+    },
+    {
+        id: 18,
+        name: "Training Sword",
+        equipable: true,
+        quality: 2,
+        unique: 0,
+        slotType: {
+            type: "weapon",
+            name: 0,
+            subtype: "Two-Hand"
+        },
+        stats: {
+            agility: "2"
+        },
+        icon: "inv_sword_45",
+        baseMinDamage: 5,
+        baseMaxDamage: 7,
+        requiredLevel: 3,
+        salable: true
+    },
 ]

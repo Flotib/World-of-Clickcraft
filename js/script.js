@@ -20,6 +20,7 @@ var app = new Vue({
 			bag: 66,
 			upgradeItem: 85,
 			merchant: 77,
+			talentTree: 75,
 		},
 		configurableValues: {
 			itemQualityBorderOpacity: 70,
@@ -47,8 +48,8 @@ var app = new Vue({
 		lootFrameY: 0,
 		player: {
 			name: 'Player',
-			minDamage: 0,
-			maxDamage: 1,
+			minDamage: 1,
+			maxDamage: 2,
 			level: 1,
 			xpToNextLevel: null,
 			xp: 0,
@@ -61,7 +62,7 @@ var app = new Vue({
 				agility: 0, // affects the crit chance
 				intellect: 0, // increases the learning speed rate of weapons skill
 				stamina: 0, // increases the mob countdown
-				luck: 0,
+				luck: 0, // increases drop rate and crit chance
 				baseStrength: 0,
 				baseAgility: 0,
 				baseIntellect: 0,
@@ -147,6 +148,13 @@ var app = new Vue({
 			totalPages: 1,
 			page: 1,
 		},
+		talentTree: {
+			open: false,
+			unlocked: false,
+			points: 0,
+			spentPoints: 0,
+			talents: [], // I will probably create its own proper file
+		},
 		progressionMode: true,
 		...window.content,
 		currentEnemy: 0,
@@ -177,6 +185,10 @@ var app = new Vue({
 		'player.level': function () {
 			this.xpToNextLevelCalc()
 			this.player.skills.weapons.maxSkill = this.player.level * 5
+			if (this.player.level >= 10) {
+				this.talentTree.unlocked = true
+				this.talentTree.points++
+			}
 		},
 
 		'player.xp': function () {
@@ -246,6 +258,15 @@ var app = new Vue({
 
 		'player.stats.luck': function (value, oldvalue) {
 
+		},
+		'lootFrameOpen.id': function (value, oldValue) {
+			// Recherchez l'ancien ennemi par son id dans deadEnemies
+			const oldEnemy = this.deadEnemies.find(enemy => enemy.id === oldValue);
+
+			// Si l'ancien ennemi est trouvé, mettez à jour sa propriété 'open' à false
+			if (oldEnemy) {
+				oldEnemy.open = false;
+			}
 		},
 
 	},
@@ -1020,7 +1041,7 @@ var app = new Vue({
 
 			let loot = [];
 
-			for (let i = 0; i < enemy.lootTable.length; i++) {
+			for (let i = 0; i < enemy.lootTable.length; i++) { // need to add a specific way for boss (instead of rolling the dice for every loots in the table, chose 1 item (and another one maybe --> it can be the same item))
 				let lootTableIndex = enemy.lootTable[i];
 				let items = this.lootTables[lootTableIndex];
 
@@ -1033,9 +1054,41 @@ var app = new Vue({
 				}
 			}
 
-			/*for (let i = 0; i < loot.length; i++) {
-				this.addItem(loot[i].itemId, this.player.bag.slots, loot[i].quantity) //will be replace by "corpses"
-			}*/
+			if (this.currentEnemyPool != null) {
+				for (let i = 0; i < this.enemiesPools[this.currentEnemyPool].lootTable.length; i++) {
+					let lootTableIndex = this.enemiesPools[this.currentEnemyPool].lootTable[i]
+					let items = this.lootTables[lootTableIndex]
+
+					for (const item of items) {
+						if (this.rng(item.rate)) {
+							let quantity = this.rand(item.minQuantity, item.maxQuantity)
+							const existingItemIndex = loot.findIndex(existingItem => existingItem.itemId === item.itemId)
+
+							const stackMaxSize = this.getItemById(item.itemId).stackMaxSize
+
+							if (existingItemIndex !== -1 && stackMaxSize > 1) {
+								while (loot[existingItemIndex].quantity < stackMaxSize && quantity > 0) {
+									loot[existingItemIndex].quantity++
+									quantity--
+								}
+							}
+
+							if (stackMaxSize > 1) {
+								while (quantity > 0) {
+									const stackQuantity = Math.min(quantity, stackMaxSize)
+									loot.push({ itemId: item.itemId, quantity: stackQuantity })
+									quantity -= stackMaxSize
+								}
+							} else {
+								while (quantity > 0) {
+									loot.push({ itemId: item.itemId, quantity: 1 })
+									quantity--
+								}
+							}
+						}
+					}
+				}
+			}
 
 			if (loot.length > 0) {
 				const timingMap = {
@@ -1056,7 +1109,9 @@ var app = new Vue({
 					level: enemy.level,
 					type: enemy.type,
 					timing: timing,
-					baseTiming: timing
+					baseTiming: timing,
+					id: this.generateUniqueId(),
+					open: false,
 				};
 
 				this.deadEnemies.push(deadEnemy);
@@ -1075,6 +1130,7 @@ var app = new Vue({
 
 		openLootFrame(enemy) {
 			this.lootFrameOpen = enemy
+			enemy.open = true
 			this.lootFramePosition()
 			if (this.shiftPressed) { // shift click
 				for (let i = enemy.loots.length - 1; i >= 0; i--) {
@@ -1088,6 +1144,18 @@ var app = new Vue({
 				this.lootFrameOpen = false
 			} else if (deadEnemy === 'merchant' || deadEnemy === 'close') {
 				this.lootFrameOpen = false
+			}
+		},
+
+		lootAll() {
+			for (let i = this.deadEnemies.length - 1; i >= 0; i--) {
+				this.lootFrameOpen = this.deadEnemies[i];
+
+				for (let j = this.deadEnemies[i].loots.length - 1; j >= 0; j--) {
+					this.lootItem(this.deadEnemies[i].loots[j].itemId, this.deadEnemies[i].loots[j].quantity);
+				}
+
+				this.closeLootFrame(this.deadEnemies[i]);
 			}
 		},
 
@@ -1165,15 +1233,20 @@ var app = new Vue({
 				}
 			}
 
-			this.clearItemFromCorpse(id) // besoin de modifier plus tard, si le sac est plein mais que l'item que l'on ramasse possède 3 piles (stackables sur le même item dans le sac), il va se supprimer même si 2 piles sont ramassées (et qu'il en reste donc une)
+			this.clearItemFromCorpse(id, newQuantity)
 		},
 
-		clearItemFromCorpse(itemId) {
+		clearItemFromCorpse(itemId, quantity) {
 			if (this.lootFrameOpen) {
 				for (let i = 0; i < this.lootFrameOpen.loots.length; i++) {
 					let currentItem = this.lootFrameOpen.loots[i];
 					if (currentItem.itemId === itemId) {
-						this.lootFrameOpen.loots.splice(i, 1);
+						if (quantity > 0) {
+							currentItem.quantity -= quantity;
+						} else {
+							this.lootFrameOpen.loots.splice(i, 1);
+						}
+
 						if (this.lootFrameOpen.loots.length === 0) {
 							this.removeEmptyCorpse(this.lootFrameOpen);
 							this.lootFrameOpen = false;
@@ -2014,6 +2087,9 @@ var app = new Vue({
 		},
 
 		toggleItemUpgradeFrame() {
+			if (this.talentTree.open) {
+				this.talentTree.open = false
+			}
 			if (this.upgradeItemFrame.open) {
 				this.closePlayerRelatedWindow()
 			} else {
@@ -2022,9 +2098,23 @@ var app = new Vue({
 			}
 		},
 
+		toggleTalentTree() {
+			if (this.talentTree.unlocked) {
+				if (this.upgradeItemFrame.open) {
+					this.closePlayerRelatedWindow()
+				}
+				if (this.talentTree.open) {
+					this.talentTree.open = false
+				} else {
+					this.talentTree.open = true
+				}
+			}
+		},
+
 		closePlayerRelatedWindow() { // put all windows here
 			this.takeOffItemFromUpgrade()
 			this.upgradeItemFrame.open = false
+			this.talentTree.open = false
 		},
 
 		isItAnUpgrade(oldstat, newstat) {
@@ -2270,6 +2360,9 @@ var app = new Vue({
 			}
 			if (event.keyCode === this.keybinds.merchant) { // 'M'
 				this.toggleMerchantFrame()
+			}
+			if (event.keyCode === this.keybinds.talentTree) { // 'K'
+				this.toggleTalentTree()
 			}
 			if (event.keyCode === 222) { // '²'
 				this.itemCheatMenu = !this.itemCheatMenu
