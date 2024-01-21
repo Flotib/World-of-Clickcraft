@@ -1561,6 +1561,13 @@ a {
 	width: 100%;
 }
 
+.upgrade-item-stats-change p {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
 .upgrade-item-stats-change > div:last-child {
 	margin: 0 !important;
 }
